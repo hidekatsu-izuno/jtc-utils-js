@@ -1,5 +1,5 @@
 export default function isWindows31J(value: any) {
-    if (typeof value !== "string") {
+    if (!value || typeof value !== "string") {
         return false
     }
 
