@@ -1,7 +1,5 @@
-import isString from "./isString.js"
-
 export default function isWindows31J(value: any) {
-    if (!isString(value)) {
+    if (typeof value !== "string") {
         return false
     }
 
