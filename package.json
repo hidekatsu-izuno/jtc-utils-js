@@ -1,0 +1,39 @@
+{
+  "name": "jtc-utils",
+  "version": "0.0.1",
+  "description": "Utilities for Japanese Traditional Companies",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "test": "vitest --config vite.config.ts",
+    "lint": "eslint"
+  },
+  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./module/index.d.ts",
+        "default": "./module/index.js"
+      },
+      "require": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.38.0",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.0"
+  },
+  "dependencies": {
+    "date-fns": "^2.29.3",
+    "date-fns-tz": "^2.0.0"
+  }
+}
