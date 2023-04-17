@@ -1,0 +1,4 @@
+
+> jtc-utils@0.0.1 generate:isJapaneseFullwidth
+> ts-node  --esm ./scripts/generate_isJapaneseFullwidth.ts
+

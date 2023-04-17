@@ -3,5 +3,5 @@ export default function isKatakana(value: any) {
     return false
   }
 
-  return /^[ 0-9A-Zｱ-ﾝﾞﾟ()｢｣/.\\-]+$/.test(value)
+  return /^[\u3000\u30FB\u30FC\u30A1-\u30FA]+$/.test(value)
 }

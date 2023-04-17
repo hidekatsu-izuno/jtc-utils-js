@@ -3,5 +3,5 @@ export default function isZenginKana(value: any) {
     return false
   }
 
-  return /^[ 0-9A-Zｱ-ﾝﾞﾟ()｢｣/.\\-]+$/.test(value)
+  return /^[\x200-9A-Z()/.\\\uFF62\uFF63\uFF71-\uFF9F-]+$/.test(value)
 }

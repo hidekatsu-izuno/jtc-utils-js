@@ -3,5 +3,5 @@ export default function isHiragana(value: any) {
     return false
   }
 
-  return /^[ 0-9A-Zｱ-ﾝﾞﾟ()｢｣/.\\-]+$/.test(value)
+  return /^[\u3000\u30FB\u30FC\u3041-\u3094]+$/.test(value)
 }
