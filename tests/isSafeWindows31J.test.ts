@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import isWindows31J from '../src/isWindows31J.js'
+import isSafeWindows31J from '../src/isSafeWindows31J.js'
 
 describe('isWindows31J', () => {
 
@@ -10,17 +10,17 @@ describe('isWindows31J', () => {
       }
       return asciiList
   })())("test ascii '%s'", (c) => {
-      expect(isWindows31J(c)).toBe(true)
+    expect(isSafeWindows31J(c)).toBe(true)
   })
 
   test("test fullwidth symbol", () => {
-    expect(isWindows31J("　")).toBe(true)
-    expect(isWindows31J("、")).toBe(true)
-    expect(isWindows31J("￦")).toBe(false)
+    expect(isSafeWindows31J("　")).toBe(true)
+    expect(isSafeWindows31J("、")).toBe(true)
+    expect(isSafeWindows31J("￦")).toBe(false)
   })
 
   test("test fullwidth kanji", () => {
-    expect(isWindows31J("亜")).toBe(true)
-    expect(isWindows31J("腕")).toBe(true)
+    expect(isSafeWindows31J("亜")).toBe(true)
+    expect(isSafeWindows31J("腕")).toBe(true)
   })
 })

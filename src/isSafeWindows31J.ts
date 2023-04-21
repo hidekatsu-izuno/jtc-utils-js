@@ -1,4 +1,4 @@
-export default function isWindows31J(value: any) {
+export default function isSafeWindows31J(value: any) {
     if (!value || typeof value !== "string") {
         return false
     }
