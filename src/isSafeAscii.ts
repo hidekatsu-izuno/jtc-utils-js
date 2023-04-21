@@ -1,6 +1,6 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
 
-export default function isSafeAscii(value: any, options?: CharRangeOptions) {
+export function isSafeAscii(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
     return false
   }

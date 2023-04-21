@@ -1,6 +1,6 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
 
-export default function isSafeUnicode(value: any, options?: CharRangeOptions) {
+export function isSafeUnicode(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
     return false
   }
