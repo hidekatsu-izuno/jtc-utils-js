@@ -1,51 +1,74 @@
-export function isSafeWindows31J(value: any) {
-    if (!value || typeof value !== "string") {
-        return false
-    }
+import { CharRangeOptions } from "./CharRangeOption.js"
 
-    for (let i = 0; i < value.length; i++) {
-        const n = value.codePointAt(i);
-        if (!isWindows31JChar(n)) {
-            return false
-        }
-    }
-    return true
+export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
+  if (!value || typeof value !== "string") {
+      return false
+  }
+
+  for (let i = 0; i < value.length; i++) {
+      const n = value.codePointAt(i);
+      if (!isWindows31JChar(n)) {
+          return false
+      }
+  }
+
+  // Default excludes
+  if (options?.linebreak !== true && /[\r\n]/.test(value)) {
+    return false
+  }
+  if (options?.privateUse !== true && /\p{Co}/u.test(value)) {
+    return false
+  }
+
+  // Default includes
+  if (options?.punct === false && /[\p{P}\p{S}]/u.test(value)) {
+    return false
+  }
+  if (options?.space === false && /[\t\p{Zs}]/u.test(value)) {
+    return false
+  }
+  if (options?.supplementary === false && /\p{Cs}/u.test(value)) {
+    return false
+  }
+
+  return true
 }
 
 const M = new Map<number, number>([
-	[0, 0],
-	[1, 11],
-	[8, 15],
-	[9, 30],
-	[12, 41],
-	[19, 58],
-	[20, 75],
-	[21, 108],
-	[22, 141],
-	[23, 174],
-	[24, 207],
-	[25, 240],
-	[26, 273],
-	[27, 306],
-	[28, 339],
-	[29, 372],
-	[30, 405],
-	[31, 438],
-	[32, 467],
-	[33, 500],
-	[34, 533],
-	[35, 563],
-	[36, 593],
-	[37, 626],
-	[38, 653],
-	[39, 683],
-	[62, 709],
-	[63, 714],
+  [0, 0],
+  [1, 11],
+  [8, 15],
+  [9, 30],
+  [12, 41],
+  [19, 58],
+  [20, 75],
+  [21, 108],
+  [22, 141],
+  [23, 174],
+  [24, 207],
+  [25, 240],
+  [26, 273],
+  [27, 306],
+  [28, 339],
+  [29, 372],
+  [30, 405],
+  [31, 438],
+  [32, 467],
+  [33, 500],
+  [34, 533],
+  [35, 563],
+  [36, 593],
+  [37, 626],
+  [38, 653],
+  [39, 683],
+  [62, 709],
+  [63, 714],
 ])
+
 const A = new Uint32Array([
-/*===*/
+  /*key: 0*/
   0xf700000e,
-  0xffffffff,
+  0x640000,
   0xffffffff,
   0xffffffff,
   0xffffffff,
@@ -55,12 +78,12 @@ const A = new Uint32Array([
   0x7fff,
   0xdfc07fff,
   0xdfc00000,
-/*===*/
+  /*key: 1*/
   0xe0000000,
   0x4000ffff,
   0xffffffff,
   0xffff4000,
-/*===*/
+  /*key: 8*/
   0xc0dafc80,
   0x84cc,
   0xc600b012,
@@ -76,7 +99,7 @@ const A = new Uint32Array([
   0x33000000,
   0x4000001,
   0x2000,
-/*===*/
+  /*key: 9*/
   0x10e7b000,
   0xfffff000,
   0xf009999c,
@@ -88,7 +111,7 @@ const A = new Uint32Array([
   0x6000000,
   0xa0000000,
   0x250000,
-/*===*/
+  /*key: 12*/
   0xbf0044fe,
   0xf7fffc05,
   0x7fffffff,
@@ -106,7 +129,7 @@ const A = new Uint32Array([
   0x3000e,
   0x40000000,
   0x8040000,
-/*===*/
+  /*key: 19*/
   0xffff,
   0xd1f6cfc2,
   0x42a462d9,
@@ -124,7 +147,7 @@ const A = new Uint32Array([
   0xc0170601,
   0x3866c9b5,
   0x5c0316a3,
-/*===*/
+  /*key: 20*/
   0xffffffff,
   0x6556a63,
   0x7efc0240,
@@ -158,7 +181,7 @@ const A = new Uint32Array([
   0x86c6b210,
   0x30fe0b55,
   0x7cfff3a0,
-/*===*/
+  /*key: 21*/
   0xffffffff,
   0x58ffc015,
   0x825e02de,
@@ -192,7 +215,7 @@ const A = new Uint32Array([
   0xb8289000,
   0x93923a09,
   0x90000968,
-/*===*/
+  /*key: 22*/
   0xffffffff,
   0xa6300444,
   0x4821cc24,
@@ -226,7 +249,7 @@ const A = new Uint32Array([
   0x3e029ec1,
   0xbf48b897,
   0x6fda96a3,
-/*===*/
+  /*key: 23*/
   0xffffffff,
   0x6ff75222,
   0xa88440ff,
@@ -260,7 +283,7 @@ const A = new Uint32Array([
   0xc0e6194c,
   0x140c03ce,
   0x8810c495,
-/*===*/
+  /*key: 24*/
   0xffffffff,
   0x3a65c,
   0xc7f14020,
@@ -294,7 +317,7 @@ const A = new Uint32Array([
   0xf5f82c12,
   0x9a41a230,
   0x50420e20,
-/*===*/
+  /*key: 25*/
   0xffffffff,
   0x2051308,
   0x28c0a22,
@@ -328,7 +351,7 @@ const A = new Uint32Array([
   0xe2411bd0,
   0xca23d8a6,
   0x294b5c13,
-/*===*/
+  /*key: 26*/
   0xffffffff,
   0x78001302,
   0x607028cc,
@@ -362,7 +385,7 @@ const A = new Uint32Array([
   0x8317d39,
   0x86163a91,
   0x191000,
-/*===*/
+  /*key: 27*/
   0xffffffff,
   0x815910,
   0x18000983,
@@ -396,7 +419,7 @@ const A = new Uint32Array([
   0x58205440,
   0xf2000c91,
   0xc81b5622,
-/*===*/
+  /*key: 28*/
   0xffffffff,
   0x455144b7,
   0x388a002,
@@ -430,7 +453,7 @@ const A = new Uint32Array([
   0x403014,
   0xa0e62202,
   0x94264482,
-/*===*/
+  /*key: 29*/
   0xffffffff,
   0x17400000,
   0x26623e21,
@@ -464,7 +487,7 @@ const A = new Uint32Array([
   0x840c925d,
   0x1040138,
   0x35471008,
-/*===*/
+  /*key: 30*/
   0xffffffff,
   0x20082c00,
   0xc7002821,
@@ -498,7 +521,7 @@ const A = new Uint32Array([
   0x40244880,
   0xcb590004,
   0x8e441300,
-/*===*/
+  /*key: 31*/
   0xfffff87f,
   0x81047901,
   0x51300187,
@@ -528,7 +551,7 @@ const A = new Uint32Array([
   0x58c322c4,
   0x46282c00,
   0xc2509058,
-/*===*/
+  /*key: 32*/
   0xffffffff,
   0xde18a5c8,
   0x40801215,
@@ -562,7 +585,7 @@ const A = new Uint32Array([
   0xa0b04404,
   0x452a1289,
   0x8051eb14,
-/*===*/
+  /*key: 33*/
   0xffffffff,
   0x191e1000,
   0xa068448c,
@@ -596,7 +619,7 @@ const A = new Uint32Array([
   0x20111034,
   0x8b10a000,
   0x80012352,
-/*===*/
+  /*key: 34*/
   0xfffffff8,
   0x5074600,
   0x71004250,
@@ -627,7 +650,7 @@ const A = new Uint32Array([
   0x404b12b9,
   0x219e905,
   0x902ab260,
-/*===*/
+  /*key: 35*/
   0x7f9fffff,
   0x121,
   0x42aa8420,
@@ -658,7 +681,7 @@ const A = new Uint32Array([
   0x1187e139,
   0x2c024820,
   0x267589e4,
-/*===*/
+  /*key: 36*/
   0xffffffff,
   0xd617df67,
   0xf10266ca,
@@ -692,7 +715,7 @@ const A = new Uint32Array([
   0x90e8040,
   0x1280c386,
   0x4c800080,
-/*===*/
+  /*key: 37*/
   0xf81fffff,
   0x110098e0,
   0x401046a0,
@@ -720,7 +743,7 @@ const A = new Uint32Array([
   0x92941800,
   0x12901008,
   0x63611,
-/*===*/
+  /*key: 38*/
   0xf7eff7ff,
   0x7689f1a0,
   0x480c099c,
@@ -751,7 +774,7 @@ const A = new Uint32Array([
   0x80b64850,
   0x82616a10,
   0x7880e400,
-/*===*/
+  /*key: 39*/
   0xf1ff9ffc,
   0x8aecbc10,
   0x4c07a072,
@@ -778,13 +801,13 @@ const A = new Uint32Array([
   0xf3282300,
   0x4040c,
   0x80000000,
-/*===*/
+  /*key: 62*/
   0x42c000,
   0x400000,
   0x8,
   0x3ffff,
   0xfffc0000,
-/*===*/
+  /*key: 63*/
   0xf9,
   0x7fffffff,
   0xffffffff,
@@ -799,9 +822,9 @@ function isWindows31JChar(n?: number) {
     return false
   }
 
-  const b0 = (n & 0b1111110000000000) >>> 10
-  const b1 = (n & 0b0000001111100000) >>> 5
-  const b2 = (n & 0b0000000000011111)
+  const b0 = (n & 0b111111_00000_00000) >>> 10
+  const b1 = (n & 0b000000_11111_00000) >>> 5
+  const b2 = (n & 0b000000_00000_11111)
 
   const pos0 = M.get(b0)
   if (pos0 != null) {

@@ -59,9 +59,9 @@ try {
 
 const root = new Map<number, Map<number, number>>()
 for (const pair of WIN31J_MAP) {
-  /*if (pair.unicode < 0x20 && pair.unicode != 0x09 && pair.unicode != 0x0A && pair.unicode != 0x0D) {
+  if (pair.unicode < 0x20 && pair.unicode != 0x09 && pair.unicode != 0x0A && pair.unicode != 0x0D) {
     continue
-  } else */if ((pair.unicode >= 0xe000 && pair.unicode <= 0xf8ff)) {
+  } else if ((pair.unicode >= 0xe000 && pair.unicode <= 0xf8ff)) {
     continue
   }
 
@@ -78,7 +78,9 @@ for (const pair of WIN31J_MAP) {
 
 const output = await fs.open("./src/isSafeWindows31J.ts", "w")
 try {
-await output.write(`export function isSafeWindows31J(value: any) {
+await output.write(`import { CharRangeOptions } from "./CharRangeOption.js"
+
+export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
       return false
   }
@@ -89,6 +91,26 @@ await output.write(`export function isSafeWindows31J(value: any) {
           return false
       }
   }
+
+  // Default excludes
+  if (options?.linebreak !== true && /[\\r\\n]/.test(value)) {
+    return false
+  }
+  if (options?.privateUse !== true && /\\p{Co}/u.test(value)) {
+    return false
+  }
+
+  // Default includes
+  if (options?.punct === false && /[\\p{P}\\p{S}]/u.test(value)) {
+    return false
+  }
+  if (options?.space === false && /[\\t\\p{Zs}]/u.test(value)) {
+    return false
+  }
+  if (options?.supplementary === false && /\\p{Cs}/u.test(value)) {
+    return false
+  }
+
   return true
 }\n\n`)
 
@@ -108,7 +130,7 @@ for (const [key, map] of root) {
           pattern = pattern | (1 << (31 - pos));
       }
   }
-  await output.write(`/*===*/\n`)
+  await output.write(`  /*key: ${key}*/\n`)
   await output.write(`  0x${toHex32(pattern)},\n`)
   const skeys = Array.from(map.keys()).sort((a, b) => a - b)
   for (const key2 of skeys) {
