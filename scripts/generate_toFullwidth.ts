@@ -1,8 +1,8 @@
 import { promises as fs }  from "node:fs"
 
 const CONVERT_MAP = new Array<{
-  fullwidth: string,
   halfwidth: string,
+  fullwidth: string,
 }>()
 
 function step(line: string, index: number) {
@@ -12,8 +12,8 @@ function step(line: string, index: number) {
   }
 
   CONVERT_MAP.push({
-    fullwidth: m[0].replace(/(.{4})/g, "\\u$1"),
     halfwidth: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    fullwidth: m[0].replace(/(.{4})/g, "\\u$1"),
   })
 }
 
@@ -48,10 +48,10 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toHalfwidth.ts", "w")
+const output = await fs.open("./src/toFullwidth.ts", "w")
 try {
 await output.write(`
-export function toHalfwidth(value?: string) {
+export function toFullwidth(value?: string) {
   if (!value) {
     return value
   }
@@ -59,18 +59,26 @@ export function toHalfwidth(value?: string) {
   let result = ""
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
-    result += toHalfwidthChar(c)
+    if (i + 1 < value.length) {
+      const c2 = value.charAt(i+1)
+      if (c2 === "\\uFF9E") {
+        result += toFullwidthChar(c + c2)
+        i++
+        continue
+      }
+    }
+    result += toFullwidthChar(c)
   }
   return result
 }
 
 const M = new Map<string, string>([\n`)
 for (const pair of CONVERT_MAP) {
-  await output.write(`\t["${pair.fullwidth}", "${pair.halfwidth}"],\n`)
+  await output.write(`\t["${pair.halfwidth}", "${pair.fullwidth}"],\n`)
 }
 await output.write(`])
 
-function toHalfwidthChar(c: string) {
+function toFullwidthChar(c: string) {
   return M.get(c) ?? c
 }
 `)

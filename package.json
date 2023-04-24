@@ -8,7 +8,8 @@
     "test": "vitest --config vite.config.ts",
     "lint": "eslint",
     "generate:isSafeWindows31J": "ts-node --esm ./scripts/generate_isSafeWindows31J.ts",
-    "generate:toHalfwidth": "ts-node --esm ./scripts/generate_toHalfwidth.ts"
+    "generate:toHalfwidth": "ts-node --esm ./scripts/generate_toHalfwidth.ts",
+    "generate:toFullwidth": "ts-node --esm ./scripts/generate_toFullwidth.ts"
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
