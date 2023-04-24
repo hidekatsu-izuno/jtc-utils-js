@@ -1,17 +1,17 @@
 import { promises as fs }  from "node:fs"
 
-const WIN31J_MAP = new Array<{
+const CONVERT_MAP = new Array<{
   unicode: number,
   win31j: number,
 }>()
 
 function step(line: string, index: number) {
   const m = line.split(/,/g)
-  if (index === 0 || m.length !== 2) {
+  if (index === 0 || m.length < 2) {
     return
   }
 
-  WIN31J_MAP.push({
+  CONVERT_MAP.push({
     unicode: Number.parseInt(m[0], 16),
     win31j: Number.parseInt(m[1], 16),
   })
@@ -58,7 +58,7 @@ try {
 }
 
 const root = new Map<number, Map<number, number>>()
-for (const pair of WIN31J_MAP) {
+for (const pair of CONVERT_MAP) {
   if (pair.unicode < 0x20 && pair.unicode != 0x09 && pair.unicode != 0x0A && pair.unicode != 0x0D) {
     continue
   } else if ((pair.unicode >= 0xe000 && pair.unicode <= 0xf8ff)) {
@@ -120,9 +120,9 @@ for (const [key, map] of root) {
   await output.write(`  [${key}, ${start}],\n`)
   start += 1 + map.size
 }
-await output.write(`])\n\n`)
+await output.write(`])
 
-await output.write(`const A = new Uint32Array([\n`)
+const A = new Uint32Array([\n`)
 for (const [key, map] of root) {
   let pattern = 0;
   for (let pos = 0; pos < 32; pos++) {
@@ -137,9 +137,9 @@ for (const [key, map] of root) {
     await output.write(`  0x${toHex32(map.get(key2) || 0)},\n`);
   }
 }
-await output.write(`])\n\n`)
+await output.write(`])
 
-await output.write(`function isWindows31JChar(n?: number) {
+function isWindows31JChar(n?: number) {
   if (n == null) {
     return false
   }
