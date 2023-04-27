@@ -1,8 +1,8 @@
 import { promises as fs }  from "node:fs"
 
 const CONVERT_MAP = new Array<{
-  fullwidth: string,
-  halfwidth: string,
+  from: string,
+  to: string,
 }>()
 
 function step(line: string, index: number) {
@@ -12,8 +12,8 @@ function step(line: string, index: number) {
   }
 
   CONVERT_MAP.push({
-    fullwidth: m[0].replace(/(.{4})/g, "\\u$1"),
-    halfwidth: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    from: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    to: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
   })
 }
 
@@ -66,7 +66,7 @@ export function toHalfwidth(value?: string) {
 
 const M = new Map<string, string>([\n`)
 for (const pair of CONVERT_MAP) {
-  await output.write(`\t["${pair.fullwidth}", "${pair.halfwidth}"],\n`)
+  await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
 }
 await output.write(`])
 

@@ -12,12 +12,12 @@ function step(line: string, index: number) {
   }
 
   CONVERT_MAP.push({
-    from: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
-    to: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    from: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    to: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
   })
 }
 
-const input = await fs.open("./data/fullwidth-halfwidth.csv")
+const input = await fs.open("./data/zengin.csv")
 try {
   let index = 0
   let buf = ""
@@ -48,10 +48,10 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toFullwidth.ts", "w")
+const output = await fs.open("./src/toZenginKana.ts", "w")
 try {
 await output.write(`
-export function toFullwidth(value?: string) {
+export function toZenginKana(value?: string) {
   if (!value) {
     return value
   }
@@ -59,15 +59,7 @@ export function toFullwidth(value?: string) {
   let result = ""
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
-      if (c2 === "\\uFF9E") {
-        result += toFullwidthChar(c + c2)
-        i++
-        continue
-      }
-    }
-    result += toFullwidthChar(c)
+    result += toZenginKanaChar(c)
   }
   return result
 }
@@ -78,7 +70,7 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
-function toFullwidthChar(c: string) {
+function toZenginKanaChar(c: string) {
   return M.get(c) ?? c
 }
 `)
