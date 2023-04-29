@@ -1,20 +1,38 @@
 import {
-  parse as _parseDate,
+  parse,
   parseISO,
   isValid,
 } from "date-fns"
+import { zonedTimeToUtc } from "date-fns-tz"
 
-export default function parseDate(str: string | null | undefined, format?: string) {
+const current = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+export default function parseDate(str: string | null | undefined, format?: string, timeZone?: string) {
   if (!str) {
     return null
   }
 
   try {
-    const tmp = format ? _parseDate(str, format, new Date()) : parseISO(str)
-    if (isValid(tmp)) {
-      return tmp
+    if (format) {
+      let tmp = parse(str, format, new Date())
+      if (isValid(tmp)) {
+        if (timeZone && timeZone !== current && !/[Xx]/.test(format)) {
+          tmp = zonedTimeToUtc(tmp, timeZone)
+        }
+        return tmp
+      } else {
+        return null
+      }
     } else {
-      return null
+      let tmp = parseISO(str)
+      if (isValid(tmp)) {
+        if (timeZone && timeZone !== current && !/[+-]/.test(str)) {
+          tmp = zonedTimeToUtc(tmp, timeZone)
+        }
+        return tmp
+      } else {
+        return null
+      }
     }
   } catch (err) {
     if (err instanceof RangeError) {

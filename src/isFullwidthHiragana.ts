@@ -1,6 +1,6 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
 
-export function isHiragana(value: any, options?: CharRangeOptions) {
+export function isFullwidthHiragana(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
     return false
   }
