@@ -1,5 +1,5 @@
 
-export function toHiragana(value?: string) {
+export function toFullwidthHiragana(value?: string) {
   if (!value) {
     return null
   }
@@ -10,12 +10,12 @@ export function toHiragana(value?: string) {
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
       if (c2 >= "\uFF9E") {
-        result += toHiraganaChar(c + c2)
+        result += toFullwidthHiraganaChar(c + c2)
         i++
         continue
       }
     }
-    result += toHiraganaChar(c)
+    result += toFullwidthHiraganaChar(c)
   }
   return result
 }
@@ -198,6 +198,6 @@ const M = new Map<string, string>([
 	["\uff9f", "\u309a"],
 ])
 
-function toHiraganaChar(c: string) {
+function toFullwidthHiraganaChar(c: string) {
   return M.get(c) ?? c
 }

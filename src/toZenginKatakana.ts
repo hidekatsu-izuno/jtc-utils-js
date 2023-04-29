@@ -1,5 +1,5 @@
 
-export function toZenginKana(value?: string) {
+export function toZenginKatakana(value?: string) {
   if (!value) {
     return null
   }
@@ -7,7 +7,7 @@ export function toZenginKana(value?: string) {
   let result = ""
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
-    result += toZenginKanaChar(c)
+    result += toZenginKatakanaChar(c)
   }
   return result
 }
@@ -188,6 +188,6 @@ const M = new Map<string, string>([
 	["\uffe5", "\u005c"],
 ])
 
-function toZenginKanaChar(c: string) {
+function toZenginKatakanaChar(c: string) {
   return M.get(c) ?? c
 }

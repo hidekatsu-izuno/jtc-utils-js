@@ -1,6 +1,6 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
 
-export function isZenginKana(value: any, options?: CharRangeOptions) {
+export function isZenginKanakana(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
     return false
   }

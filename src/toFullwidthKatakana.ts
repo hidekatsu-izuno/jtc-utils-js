@@ -1,5 +1,5 @@
 
-export function toKatakana(value?: string) {
+export function toFullwidthKatakana(value?: string) {
   if (!value) {
     return null
   }
@@ -10,12 +10,12 @@ export function toKatakana(value?: string) {
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
       if (c2 >= "\u3099") {
-        result += toKatakanaChar(c + c2)
+        result += toFullwidthKatakanaChar(c + c2)
         i++
         continue
       }
     }
-    result += toKatakanaChar(c)
+    result += toFullwidthKatakanaChar(c)
   }
   return result
 }
@@ -198,6 +198,6 @@ const M = new Map<string, string>([
 	["\u309a", "\uff9f"],
 ])
 
-function toKatakanaChar(c: string) {
+function toFullwidthKatakanaChar(c: string) {
   return M.get(c) ?? c
 }

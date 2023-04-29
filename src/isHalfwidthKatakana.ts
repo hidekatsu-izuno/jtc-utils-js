@@ -1,11 +1,11 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
 
-export function isKatakana(value: any, options?: CharRangeOptions) {
+export function isHalfwidthKatakana(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
     return false
   }
 
-  const result = /^[\r\n\u3000\u30FB\u30FC\u30A1-\u30FA]+$/.test(value)
+  const result = /^[\t\r\n\x20-\x7E\uFF61-\uFF9F]+$/.test(value)
   if (result) {
     // Default excludes
     if (options?.linebreak !== true && /[\r\n]/.test(value)) {
@@ -13,10 +13,10 @@ export function isKatakana(value: any, options?: CharRangeOptions) {
     }
 
     // Default includes
-    if (options?.punct === false && /[\u30FB]/u.test(value)) {
+    if (options?.punct === false && /[!-/:-@[-`{-~\uFF61-\uFF65]/u.test(value)) {
       return false
     }
-    if (options?.space === false && /[\u3000]/u.test(value)) {
+    if (options?.space === false && /[\t\x20]/.test(value)) {
       return false
     }
   }
