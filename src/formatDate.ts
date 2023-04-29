@@ -4,7 +4,7 @@ import {
   isValid,
 } from "date-fns"
 
-export default function formatDate(date: number | Date | string | null | undefined, format: string) {
+export function formatDate(date: number | Date | string | null | undefined, format: string) {
   if (!date) {
     return ""
   } else if (typeof date === "string") {

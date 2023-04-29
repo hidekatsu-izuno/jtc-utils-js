@@ -1,6 +1,6 @@
-import NumberFormat from "./NumberFormat.js"
+import { NumberFormat } from "./NumberFormat.js"
 
-export default function parseNumber(str: string | null | undefined, format?: string) {
+export function parseNumber(str: string | null | undefined, format?: string) {
   if (!str) {
     return null
   }

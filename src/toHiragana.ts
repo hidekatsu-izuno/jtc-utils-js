@@ -1,7 +1,7 @@
 
 export function toHiragana(value?: string) {
   if (!value) {
-    return value
+    return null
   }
 
   let result = ""

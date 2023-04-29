@@ -1,7 +1,7 @@
 
 export function toZenginKana(value?: string) {
   if (!value) {
-    return value
+    return null
   }
 
   let result = ""

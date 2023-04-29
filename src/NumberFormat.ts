@@ -10,7 +10,7 @@ declare type NumberFormatPattern = {
 
 const NumberFormatCache = new Map<string, NumberFormat>()
 
-export default class NumberFormat {
+export class NumberFormat {
   static get(format: string, locale: string = "en-US") {
       const cached = NumberFormatCache.get(format)
       if (cached) {

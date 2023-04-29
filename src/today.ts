@@ -4,11 +4,12 @@ import now from "./now.js"
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export default function today() {
-    const tz = timeZone
-    const dt = now()
-    if (tz === "Asia/Tokyo") {
-        return startOfDay(dt)
-    }
-    return zonedTimeToUtc(startOfDay(utcToZonedTime(dt, "Asia/Tokyo")), "Asia/Tokyo")    
+export function today() {
+  let dt = now()
+  if (timeZone === "Asia/Tokyo") {
+    dt = startOfDay(dt)
+  } else {
+    dt = zonedTimeToUtc(startOfDay(utcToZonedTime(dt, "Asia/Tokyo")), "Asia/Tokyo")
+  }
+  return dt
 }

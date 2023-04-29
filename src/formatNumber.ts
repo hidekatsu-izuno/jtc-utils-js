@@ -1,5 +1,5 @@
-import NumberFormat from "./NumberFormat.js"
-import parseNumber from "./parseNumber.js"
+import { NumberFormat } from "./NumberFormat.js"
+import { parseNumber } from "./parseNumber.js"
 
 export function formatNumber(num: string | number | null | undefined, format?: string) {
   if (num == null) {

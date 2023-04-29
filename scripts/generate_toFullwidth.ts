@@ -53,7 +53,7 @@ try {
 await output.write(`
 export function toFullwidth(value?: string) {
   if (!value) {
-    return value
+    return null
   }
 
   let result = ""
