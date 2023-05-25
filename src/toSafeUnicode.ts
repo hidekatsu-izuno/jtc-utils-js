@@ -4,5 +4,9 @@ export function toSafeUnicode(value?: string) {
     return value
   }
 
-  return value.replace(/[\p{Cn}\p{Cc}\p{Cf}\p{Zl}\p{Zp}\uD800-\uDFFF\uFEFF\uFFF0-\uFFFF&&[^\t\r\n]]$/ug, "")
+  let result = value.replace(/[\p{Cn}\p{Cf}\p{Zl}\p{Zp}\uD800-\uDFFF\uFEFF\uFFF0-\uFFFF]/ug, "")
+  result = result.replace(/([\p{Cc}])/ug, m => {
+    return m === "\t" || m === "\r" || m === "\n" ? m : ""
+  })
+  return result
 }
