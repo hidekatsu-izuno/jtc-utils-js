@@ -1,4 +1,5 @@
 import { CharRangeOptions } from "./CharRangeOption.js"
+import { isSafeUnicode } from "./isSafeUnicode.js";
 
 export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
   if (!value || typeof value !== "string") {
@@ -12,26 +13,7 @@ export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
       }
   }
 
-  // Default excludes
-  if (options?.linebreak !== true && /[\r\n]/.test(value)) {
-    return false
-  }
-  if (options?.privateUse !== true && /\p{Co}/u.test(value)) {
-    return false
-  }
-
-  // Default includes
-  if (options?.punct === false && /[\p{P}\p{S}]/u.test(value)) {
-    return false
-  }
-  if (options?.space === false && /[\t\p{Zs}]/u.test(value)) {
-    return false
-  }
-  if (options?.supplementary === false && /\p{Cs}/u.test(value)) {
-    return false
-  }
-
-  return true
+  return isSafeUnicode(value, options)
 }
 
 const M = new Map<number, number>([

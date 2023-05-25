@@ -1,16 +1,18 @@
 import { describe, expect, test } from 'vitest'
-import isSafeWindows31J from '../src/isSafeWindows31J.js'
+import { isSafeWindows31J } from '../src/isSafeWindows31J.js'
 
 describe('isWindows31J', () => {
 
-  test.each((() => {
-      const asciiList = new Array<string>()
-      for (let i = 0x00; i <= 0x7F; i++) {
-        asciiList.push(String.fromCharCode(i))
-      }
-      return asciiList
-  })())("test ascii '%s'", (c) => {
-    expect(isSafeWindows31J(c)).toBe(true)
+  test("test ascii", () => {
+    expect(isSafeWindows31J('\x00')).toBe(false)
+    expect(isSafeWindows31J('\t')).toBe(true)
+    expect(isSafeWindows31J('\r')).toBe(false)
+    expect(isSafeWindows31J('\n')).toBe(false)
+    expect(isSafeWindows31J(' ')).toBe(true)
+    expect(isSafeWindows31J('a')).toBe(true)
+    expect(isSafeWindows31J('0')).toBe(true)
+    expect(isSafeWindows31J('@')).toBe(true)
+    expect(isSafeWindows31J('\x7F')).toBe(false)
   })
 
   test("test fullwidth symbol", () => {

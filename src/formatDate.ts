@@ -2,20 +2,22 @@ import {
   parseISO,
   isValid,
 } from "date-fns"
-import { utcToZonedTime, formatInTimeZone } from "date-fns-tz"
+import { utcToZonedTime, format as _format, formatInTimeZone } from "date-fns-tz"
 
 const current = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function formatDate(date: Date | number | string | null | undefined, format: string, timeZone?: string) {
   if (!date) {
     return ""
+  }
+
+  if (date instanceof Date) {
+    if (timeZone && timeZone !== current) {
+      date = utcToZonedTime(date, timeZone)
+    }
   } else if (typeof date === "number") {
     if (timeZone && timeZone !== current) {
       date = utcToZonedTime(new Date(date), timeZone)
-    }
-  } else if (date instanceof Date) {
-    if (timeZone && timeZone !== current) {
-      date = utcToZonedTime(date, timeZone)
     }
   } else if (typeof date === "string") {
     try {
@@ -35,7 +37,11 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   try {
-    return formatInTimeZone(date, timeZone || current, format)
+    if (timeZone && timeZone !== current) {
+      return formatInTimeZone(date, timeZone, format)
+    } else {
+      return _format(date, format)
+    }
   } catch (err) {
     if (err instanceof RangeError) {
       return date.toString()
