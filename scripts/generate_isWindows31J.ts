@@ -76,11 +76,9 @@ for (const pair of CONVERT_MAP) {
   map.set(pos1, (map.get(pos1) ?? 0) | (1 << (31 - pos2)))
 }
 
-const output = await fs.open("./src/isSafeWindows31J.ts", "w")
+const output = await fs.open("./src/isWindows31J.ts", "w")
 try {
-await output.write(`import { CharRangeOptions } from "./CharRangeOption.js"
-
-export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
+await output.write(`export function isWindows31J(value: any) {
   if (!value || typeof value !== "string") {
       return false
   }
@@ -90,25 +88,6 @@ export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
       if (!isWindows31JChar(n)) {
           return false
       }
-  }
-
-  // Default excludes
-  if (options?.linebreak !== true && /[\\r\\n]/.test(value)) {
-    return false
-  }
-  if (options?.privateUse !== true && /\\p{Co}/u.test(value)) {
-    return false
-  }
-
-  // Default includes
-  if (options?.punct === false && /[\\p{P}\\p{S}]/u.test(value)) {
-    return false
-  }
-  if (options?.space === false && /[\\t\\p{Zs}]/u.test(value)) {
-    return false
-  }
-  if (options?.supplementary === false && /\\p{Cs}/u.test(value)) {
-    return false
   }
 
   return true

@@ -8,7 +8,7 @@
     "test": "vitest --config vite.config.ts",
     "lint": "eslint",
     "generate": "npm-run-all 'generate:*'",
-    "generate:isSafeWindows31J": "ts-node --esm ./scripts/generate_isSafeWindows31J.ts",
+    "generate:isWindows31J": "ts-node --esm ./scripts/generate_isWindows31J.ts",
     "generate:toHalfwidth": "ts-node --esm ./scripts/generate_toHalfwidth.ts",
     "generate:toFullwidth": "ts-node --esm ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthHiragana": "ts-node --esm ./scripts/generate_toFullwidthHiragana.ts",

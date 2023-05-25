@@ -1,7 +1,4 @@
-import { CharRangeOptions } from "./CharRangeOption.js"
-import { isSafeUnicode } from "./isSafeUnicode.js";
-
-export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
+export function isWindows31J(value: any) {
   if (!value || typeof value !== "string") {
       return false
   }
@@ -13,7 +10,7 @@ export function isSafeWindows31J(value: any, options?: CharRangeOptions) {
       }
   }
 
-  return isSafeUnicode(value, options)
+  return true
 }
 
 const M = new Map<number, number>([
