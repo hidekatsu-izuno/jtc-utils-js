@@ -1,10 +1,8 @@
-export type * from "./CharRangeOption.js"
-
 export * from "./formatDate.js"
 export * from "./formatNumber.js"
 export * from "./isFullwidthHiragana.js"
 export * from "./isFullwidthKatakana.js"
-export * from "./isHalfwidthKatakana.js"
+export * from "./isHalfwidth.js"
 export * from "./isUsAscii.js"
 export * from "./isWindows31J.js"
 export * from "./isZenginKatakana.js"

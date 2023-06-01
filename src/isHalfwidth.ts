@@ -1,4 +1,4 @@
-export function isHalfwidthKatakana(value: any, options?: {
+export function isHalfwidth(value: any, options?: {
   linebreak?: boolean,
   space?: boolean,
   punct?: boolean,
