@@ -1,4 +1,4 @@
-export function isZenginKanakana(value: any, options?: {
+export function isZenginKatakana(value: any, options?: {
   linebreak?: boolean,
   space?: boolean,
   punct?: boolean,

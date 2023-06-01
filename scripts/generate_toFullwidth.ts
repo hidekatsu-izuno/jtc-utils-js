@@ -61,7 +61,7 @@ export function toFullwidth(value?: string) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
-      if (c2 === "\\uFF9E") {
+      if (c2 === "\\uFF9E" || c2 === "\\uFF9F") {
         result += toFullwidthChar(c + c2)
         i++
         continue
