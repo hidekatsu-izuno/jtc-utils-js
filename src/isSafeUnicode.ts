@@ -1,6 +1,12 @@
-import { CharRangeOptions } from "./CharRangeOption.js"
-
-export function isSafeUnicode(value: any, options?: CharRangeOptions) {
+export function isSafeUnicode(value: any, options?: {
+  linebreak?: boolean,
+  space?: boolean,
+  punct?: boolean,
+  supplementary?: boolean,
+  privateUse?: boolean,
+  emoji?: boolean
+  variation?: boolean,
+}) {
   if (!value || typeof value !== "string") {
     return false
   }
@@ -8,19 +14,9 @@ export function isSafeUnicode(value: any, options?: CharRangeOptions) {
   if (/[\p{Cn}\p{Cc}\p{Cf}\p{Zl}\p{Zp}\uD800-\uDFFF\uFEFF\uFFF0-\uFFFF]/u.test(value.replace(/[\t\r\n]/g, ""))) {
     return false
   }
-
-  // Default excludes
-  if (options?.linebreak !== true && /[\r\n]/.test(value)) {
+  if (options?.linebreak === false && /[\r\n]/.test(value)) {
     return false
   }
-  if (options?.privateUse !== true && /\p{Co}/u.test(value)) {
-    return false
-  }
-  if (options?.variation !== true && /[\uFE00-\uFE0F\u{E0100}-\u{E01EF}]/u.test(value)) {
-    return false
-  }
-
-  // Default includes
   if (options?.punct === false && /[\p{P}\p{S}]/u.test(value)) {
     return false
   }
@@ -28,6 +24,15 @@ export function isSafeUnicode(value: any, options?: CharRangeOptions) {
     return false
   }
   if (options?.supplementary === false && /\p{Cs}/u.test(value)) {
+    return false
+  }
+  if (options?.privateUse === false && /\p{Co}/u.test(value)) {
+    return false
+  }
+  if (options?.variation === false && /[\uFE00-\uFE0F\u{E0100}-\u{E01EF}]/u.test(value)) {
+    return false
+  }
+  if (options?.emoji === false && /[\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F]/u.test(value)) {
     return false
   }
 
