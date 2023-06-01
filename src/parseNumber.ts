@@ -18,6 +18,8 @@ export function parseNumber(str: string | null | undefined, format?: string) {
     }
   }
 
-  const num = Number.parseFloat(str.replace(/^[^0-9-]+/, "").replaceAll(",", ""))
+  str = str.replace(/^[^0-9-]+/, "").replaceAll(",", "")
+
+  const num = Number.parseFloat(str)
   return Number.isFinite(num) ? num : null
 }

@@ -1,7 +1,7 @@
 import { NumberFormat } from "./NumberFormat.js"
 import { parseNumber } from "./parseNumber.js"
 
-export function formatNumber(num: string | number | null | undefined, format?: string) {
+export function formatNumber(num: string | number | null | undefined, format?: string, locale?: string) {
   if (num == null) {
     return ""
   } else if (typeof num === "string") {
@@ -17,7 +17,7 @@ export function formatNumber(num: string | number | null | undefined, format?: s
     return toPlainString(num)
   }
 
-  return NumberFormat.get(format).format(num)
+  return NumberFormat.get(format, locale).format(num)
 }
 
 function toPlainString(num: number | string) {
