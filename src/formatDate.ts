@@ -1,8 +1,9 @@
 import {
   parseISO,
   isValid,
+  format as _format,
 } from "date-fns"
-import { utcToZonedTime, format as _format, formatInTimeZone } from "date-fns-tz"
+import { utcToZonedTime, formatInTimeZone } from "date-fns-tz"
 
 const current = Intl.DateTimeFormat().resolvedOptions().timeZone
 

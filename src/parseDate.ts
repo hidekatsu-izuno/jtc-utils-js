@@ -3,11 +3,11 @@ import {
   parseISO,
   isValid,
 } from "date-fns"
-import { zonedTimeToUtc } from "date-fns-tz"
+import { utcToZonedTime } from "date-fns-tz"
 
 const current = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export default function parseDate(str: string | null | undefined, format?: string, timeZone?: string) {
+export function parseDate(str: string | null | undefined, format?: string, timeZone?: string) {
   if (!str) {
     return null
   }
@@ -17,7 +17,7 @@ export default function parseDate(str: string | null | undefined, format?: strin
       let tmp = parse(str, format, new Date())
       if (isValid(tmp)) {
         if (timeZone && timeZone !== current && !/[Xx]/.test(format)) {
-          tmp = zonedTimeToUtc(tmp, timeZone)
+          tmp = utcToZonedTime(tmp, timeZone)
         }
         return tmp
       } else {
@@ -27,7 +27,7 @@ export default function parseDate(str: string | null | undefined, format?: strin
       let tmp = parseISO(str)
       if (isValid(tmp)) {
         if (timeZone && timeZone !== current && !/[+-]/.test(str)) {
-          tmp = zonedTimeToUtc(tmp, timeZone)
+          tmp = utcToZonedTime(tmp, timeZone)
         }
         return tmp
       } else {
