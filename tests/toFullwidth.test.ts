@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { toFullwidth } from '../src/toFullwidth.js'
 
 describe('toFullwidth', () => {
-  test("test full width", () => {
+  test("test converting to full width", () => {
     expect(toFullwidth("\0")).toBe("\0")
     expect(toFullwidth("!")).toBe("！")
     expect(toFullwidth("0")).toBe("０")
