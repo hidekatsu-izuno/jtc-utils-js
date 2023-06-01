@@ -12,12 +12,12 @@ function step(line: string, index: number) {
   }
 
   CONVERT_MAP.push({
-    from: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
-    to: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    from: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    to: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
   })
 }
 
-const input = await fs.open("./data/katakana-hiragana.csv")
+const input = await fs.open("./data/hiragana-katakana.csv")
 try {
   let index = 0
   let buf = ""
@@ -48,10 +48,10 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toFullwidthKatakana.ts", "w")
+const output = await fs.open("./src/toKatakana.ts", "w")
 try {
 await output.write(`
-export function toFullwidthKatakana(value?: string) {
+export function toKatakana(value?: string) {
   if (!value) {
     return null
   }
@@ -61,13 +61,13 @@ export function toFullwidthKatakana(value?: string) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
-      if (c2 >= "\\u3099") {
-        result += toFullwidthKatakanaChar(c + c2)
+      if (c2 == "\\u3099" || c2 == "\\u309A") {
+        result += toKatakanaChar(c + c2)
         i++
         continue
       }
     }
-    result += toFullwidthKatakanaChar(c)
+    result += toKatakanaChar(c)
   }
   return result
 }
@@ -78,7 +78,7 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
-function toFullwidthKatakanaChar(c: string) {
+function toKatakanaChar(c: string) {
   return M.get(c) ?? c
 }
 `)

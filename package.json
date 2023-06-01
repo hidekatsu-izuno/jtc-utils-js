@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
-    "test": "vitest --config vite.config.ts",
+    "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate": "npm-run-all 'generate:*'",
     "generate:isWindows31J": "ts-node --esm ./scripts/generate_isWindows31J.ts",
     "generate:toHalfwidth": "ts-node --esm ./scripts/generate_toHalfwidth.ts",
     "generate:toFullwidth": "ts-node --esm ./scripts/generate_toFullwidth.ts",
-    "generate:toFullwidthHiragana": "ts-node --esm ./scripts/generate_toFullwidthHiragana.ts",
-    "generate:toFullwidthKatakana": "ts-node --esm ./scripts/generate_toFullwidthKatakana.ts",
+    "generate:toHiragana": "ts-node --esm ./scripts/generate_toHiragana.ts",
+    "generate:toKatakana": "ts-node --esm ./scripts/generate_toKatakana.ts",
     "generate:toZenginKatakana": "ts-node --esm ./scripts/generate_toZenginKatakana.ts"
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",

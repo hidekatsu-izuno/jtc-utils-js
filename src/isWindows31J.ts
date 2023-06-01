@@ -47,7 +47,7 @@ const M = new Map<number, number>([
 const A = new Uint32Array([
   /*key: 0*/
   0xf700000e,
-  0x640000,
+  0xffffffff,
   0xffffffff,
   0xffffffff,
   0xffffffff,
@@ -815,10 +815,6 @@ function isWindows31JChar(n?: number) {
         return (pat1 & (1 << (31 - b2))) !== 0
       }
     }
-  }
-
-  if (n >= 0xE000 && n <= 0xE757) /* User defined characters */ {
-    return true
   }
 
   return false

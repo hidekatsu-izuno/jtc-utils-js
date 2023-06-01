@@ -48,10 +48,10 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toFullwidthHiragana.ts", "w")
+const output = await fs.open("./src/toHiragana.ts", "w")
 try {
 await output.write(`
-export function toFullwidthHiragana(value?: string) {
+export function toHiragana(value?: string) {
   if (!value) {
     return null
   }
@@ -61,13 +61,13 @@ export function toFullwidthHiragana(value?: string) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
-      if (c2 >= "\\uFF9E") {
-        result += toFullwidthHiraganaChar(c + c2)
+      if (c2 == "\\uFF9E" || c2 == "\\uFF9F") {
+        result += toHiraganaChar(c + c2)
         i++
         continue
       }
     }
-    result += toFullwidthHiraganaChar(c)
+    result += toHiraganaChar(c)
   }
   return result
 }
@@ -78,7 +78,7 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
-function toFullwidthHiraganaChar(c: string) {
+function toHiraganaChar(c: string) {
   return M.get(c) ?? c
 }
 `)

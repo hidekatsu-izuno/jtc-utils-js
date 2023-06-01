@@ -7,7 +7,7 @@ describe('toSafeUnicode', () => {
     expect(toSafeUnicode("\t")).toBe("\t")
     expect(toSafeUnicode("\r")).toBe("\n")
     expect(toSafeUnicode("\n")).toBe("\n")
-    expect(toSafeUnicode("\r\n")).toBe("\r\n")
+    expect(toSafeUnicode("\r\n")).toBe("\n")
     expect(toSafeUnicode(" ")).toBe(" ")
     expect(toSafeUnicode("A")).toBe("A")
     expect(toSafeUnicode("a")).toBe("a")

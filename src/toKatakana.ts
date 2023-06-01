@@ -1,5 +1,5 @@
 
-export function toFullwidthKatakana(value?: string) {
+export function toKatakana(value?: string) {
   if (!value) {
     return null
   }
@@ -9,13 +9,13 @@ export function toFullwidthKatakana(value?: string) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
       const c2 = value.charAt(i+1)
-      if (c2 >= "\u3099") {
-        result += toFullwidthKatakanaChar(c + c2)
+      if (c2 == "\u3099" || c2 == "\u309A") {
+        result += toKatakanaChar(c + c2)
         i++
         continue
       }
     }
-    result += toFullwidthKatakanaChar(c)
+    result += toKatakanaChar(c)
   }
   return result
 }
@@ -113,91 +113,8 @@ const M = new Map<string, string>([
 	["\u3092\u3099", "\u30fa"],
 	["\u309d", "\u30fd"],
 	["\u309e", "\u30fe"],
-	["\u3092", "\uff66"],
-	["\u3041", "\uff67"],
-	["\u3043", "\uff68"],
-	["\u3045", "\uff69"],
-	["\u3047", "\uff6a"],
-	["\u3049", "\uff6b"],
-	["\u3083", "\uff6c"],
-	["\u3085", "\uff6d"],
-	["\u3087", "\uff6e"],
-	["\u3063", "\uff6f"],
-	["\u3042", "\uff71"],
-	["\u3044", "\uff72"],
-	["\u3046", "\uff73"],
-	["\u3094", "\uff73\uff9e"],
-	["\u3048", "\uff74"],
-	["\u304a", "\uff75"],
-	["\u304b", "\uff76"],
-	["\u304c", "\uff76\uff9e"],
-	["\u304d", "\uff77"],
-	["\u304e", "\uff77\uff9e"],
-	["\u304f", "\uff78"],
-	["\u3050", "\uff78\uff9e"],
-	["\u3051", "\uff79"],
-	["\u3052", "\uff79\uff9e"],
-	["\u3053", "\uff7a"],
-	["\u3054", "\uff7a\uff9e"],
-	["\u3055", "\uff7b"],
-	["\u3056", "\uff7b\uff9e"],
-	["\u3057", "\uff7c"],
-	["\u3058", "\uff7c\uff9e"],
-	["\u3059", "\uff7d"],
-	["\u305a", "\uff7d\uff9e"],
-	["\u305b", "\uff7e"],
-	["\u305c", "\uff7e\uff9e"],
-	["\u305d", "\uff7f"],
-	["\u305e", "\uff7f\uff9e"],
-	["\u305f", "\uff80"],
-	["\u3060", "\uff80\uff9e"],
-	["\u3061", "\uff81"],
-	["\u3062", "\uff81\uff9e"],
-	["\u3064", "\uff82"],
-	["\u3065", "\uff82\uff9e"],
-	["\u3066", "\uff83"],
-	["\u3067", "\uff83\uff9e"],
-	["\u3068", "\uff84"],
-	["\u3069", "\uff84\uff9e"],
-	["\u306a", "\uff85"],
-	["\u306b", "\uff86"],
-	["\u306c", "\uff87"],
-	["\u306d", "\uff88"],
-	["\u306e", "\uff89"],
-	["\u306f", "\uff8a"],
-	["\u3070", "\uff8a\uff9e"],
-	["\u3071", "\uff8a\uff9f"],
-	["\u3072", "\uff8b"],
-	["\u3073", "\uff8b\uff9e"],
-	["\u3074", "\uff8b\uff9f"],
-	["\u3075", "\uff8c"],
-	["\u3076", "\uff8c\uff9e"],
-	["\u3077", "\uff8c\uff9f"],
-	["\u3078", "\uff8d"],
-	["\u3079", "\uff8d\uff9e"],
-	["\u307a", "\uff8d\uff9f"],
-	["\u307b", "\uff8e"],
-	["\u307c", "\uff8e\uff9e"],
-	["\u307d", "\uff8e\uff9f"],
-	["\u307e", "\uff8f"],
-	["\u307f", "\uff90"],
-	["\u3080", "\uff91"],
-	["\u3081", "\uff92"],
-	["\u3082", "\uff93"],
-	["\u3084", "\uff94"],
-	["\u3086", "\uff95"],
-	["\u3088", "\uff96"],
-	["\u3089", "\uff97"],
-	["\u308a", "\uff98"],
-	["\u308b", "\uff99"],
-	["\u308c", "\uff9a"],
-	["\u308d", "\uff9b"],
-	["\u308f", "\uff9c"],
-	["\u3093", "\uff9d"],
-	["\u3099", "\uff9e"],
-	["\u309a", "\uff9f"],
 ])
 
-function toFullwidthKatakanaChar(c: string) {
+function toKatakanaChar(c: string) {
   return M.get(c) ?? c
 }

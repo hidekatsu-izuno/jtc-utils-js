@@ -59,12 +59,6 @@ try {
 
 const root = new Map<number, Map<number, number>>()
 for (const pair of CONVERT_MAP) {
-  if (pair.unicode < 0x20 && pair.unicode != 0x09 && pair.unicode != 0x0A && pair.unicode != 0x0D) {
-    continue
-  } else if ((pair.unicode >= 0xe000 && pair.unicode <= 0xf8ff)) {
-    continue
-  }
-
   const pos0 = (pair.unicode & 0b111111_00000_00000) >>> 10
   const pos1 = (pair.unicode & 0b000000_11111_00000) >>> 5
   const pos2 = (pair.unicode & 0b000000_00000_11111)
@@ -137,10 +131,6 @@ function isWindows31JChar(n?: number) {
         return (pat1 & (1 << (31 - b2))) !== 0
       }
     }
-  }
-
-  if (n >= 0xE000 && n <= 0xE757) /* User defined characters */ {
-    return true
   }
 
   return false
