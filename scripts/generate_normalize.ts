@@ -57,9 +57,12 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
-export function normalize<T>(value: T): T extends string ? string : T extends null | undefined ?null {
+export function normalize(str: string): string;
+export function normalize(str: null): null;
+export function normalize(str: undefined): undefined;
+export function normalize(value: string | null | undefined) {
   if (!value) {
-    return null
+    return value
   }
 
   return value.replace(/(\\r\\n?|.[\\u3099\\u309A])/g, m => M.get(m) ?? m)

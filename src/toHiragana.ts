@@ -181,6 +181,9 @@ function toHiraganaChar(c: string) {
   return M.get(c) ?? c
 }
 
+export function toHiragana(str: string): string;
+export function toHiragana(str: null): null;
+export function toHiragana(str: undefined): undefined;
 export function toHiragana(value: string | null | undefined) {
   if (!value) {
     return value

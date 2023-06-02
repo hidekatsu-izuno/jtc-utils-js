@@ -57,8 +57,11 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
+export function toZenginKana(str: string): string;
+export function toZenginKana(str: null): null;
+export function toZenginKana(str: undefined): undefined;
 export function toZenginKana(value: string | null | undefined) {
-  if (value == null) {
+  if (!value) {
     return value
   }
 

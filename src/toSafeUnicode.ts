@@ -1,5 +1,8 @@
 import { normalize } from "./normalize.js"
 
+export function toSafeUnicode(str: string): string;
+export function toSafeUnicode(str: null): null;
+export function toSafeUnicode(str: undefined): undefined;
 export function toSafeUnicode(value: string | null | undefined) {
   if (!value) {
     return value

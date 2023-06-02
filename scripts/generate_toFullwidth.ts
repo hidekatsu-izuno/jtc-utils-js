@@ -61,6 +61,9 @@ function toFullwidthChar(c: string) {
   return M.get(c) ?? c
 }
 
+export function toFullwidth(str: string): string;
+export function toFullwidth(str: null): null;
+export function toFullwidth(str: undefined): undefined;
 export function toFullwidth(value: string | null | undefined) {
   if (!value) {
     return value

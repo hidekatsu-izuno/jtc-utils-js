@@ -258,6 +258,9 @@ function toHalfwidthChar(c: string) {
   return M.get(c) ?? c
 }
 
+export function toHalfwidth(str: string): string;
+export function toHalfwidth(str: null): null;
+export function toHalfwidth(str: undefined): undefined;
 export function toHalfwidth(value: string | null | undefined) {
   if (!value) {
     return value

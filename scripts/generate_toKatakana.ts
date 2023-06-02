@@ -61,6 +61,9 @@ function toKatakanaChar(c: string) {
   return M.get(c) ?? c
 }
 
+export function toKatakana(str: string): string;
+export function toKatakana(str: null): null;
+export function toKatakana(str: undefined): undefined;
 export function toKatakana(value: string | null | undefined) {
   if (!value) {
     return value
