@@ -48,30 +48,26 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toZenginKatakana.ts", "w")
+const output = await fs.open("./src/toZenginKana.ts", "w")
 try {
 await output.write(`
-export function toZenginKatakana(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    result += toZenginKatakanaChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([\n`)
 for (const pair of CONVERT_MAP) {
   await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
 }
 await output.write(`])
 
-function toZenginKatakanaChar(c: string) {
-  return M.get(c) ?? c
+export function toZenginKana(value: string | null | undefined) {
+  if (value == null) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    result += M.get(c) ?? c
+  }
+  return result
 }
 `)
 } finally {

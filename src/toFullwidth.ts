@@ -1,25 +1,4 @@
 
-export function toFullwidth(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
-      if (c2 === "\uFF9E" || c2 === "\uFF9F") {
-        result += toFullwidthChar(c + c2)
-        i++
-        continue
-      }
-    }
-    result += toFullwidthChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([
 	["\uffa1", "\u1100"],
 	["\uffa2", "\u1101"],
@@ -277,4 +256,25 @@ const M = new Map<string, string>([
 
 function toFullwidthChar(c: string) {
   return M.get(c) ?? c
+}
+
+export function toFullwidth(value: string | null | undefined) {
+  if (!value) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    if (i + 1 < value.length) {
+      const c2 = value.charAt(i+1)
+      if (c2 === "\uFF9E" || c2 === "\uFF9F") {
+        result += toFullwidthChar(c + c2)
+        i++
+        continue
+      }
+    }
+    result += toFullwidthChar(c)
+  }
+  return result
 }

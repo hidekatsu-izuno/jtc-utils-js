@@ -7,9 +7,11 @@ import { utcToZonedTime } from "date-fns-tz"
 
 const current = Intl.DateTimeFormat().resolvedOptions().timeZone
 
+export function parseDate(str: string, format?: string, timeZone?: string): Date;
+export function parseDate(str: null | undefined, format?: string, timeZone?: string): undefined;
 export function parseDate(str: string | null | undefined, format?: string, timeZone?: string) {
-  if (!str) {
-    return null
+  if (str == null) {
+    return undefined
   }
 
   try {

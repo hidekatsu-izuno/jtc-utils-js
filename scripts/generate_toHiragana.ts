@@ -51,9 +51,19 @@ try {
 const output = await fs.open("./src/toHiragana.ts", "w")
 try {
 await output.write(`
-export function toHiragana(value?: string) {
+const M = new Map<string, string>([\n`)
+for (const pair of CONVERT_MAP) {
+  await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
+}
+await output.write(`])
+
+function toHiraganaChar(c: string) {
+  return M.get(c) ?? c
+}
+
+export function toHiragana(value: string | null | undefined) {
   if (!value) {
-    return null
+    return value
   }
 
   let result = ""
@@ -70,16 +80,6 @@ export function toHiragana(value?: string) {
     result += toHiraganaChar(c)
   }
   return result
-}
-
-const M = new Map<string, string>([\n`)
-for (const pair of CONVERT_MAP) {
-  await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
-}
-await output.write(`])
-
-function toHiraganaChar(c: string) {
-  return M.get(c) ?? c
 }
 `)
 } finally {

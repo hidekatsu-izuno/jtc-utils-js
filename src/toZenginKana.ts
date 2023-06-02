@@ -1,17 +1,4 @@
 
-export function toZenginKatakana(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    result += toZenginKatakanaChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([
 	["\u002C", "\u002E"],
 	["\u005B", "\u0028"],
@@ -188,6 +175,15 @@ const M = new Map<string, string>([
 	["\uffe5", "\u005c"],
 ])
 
-function toZenginKatakanaChar(c: string) {
-  return M.get(c) ?? c
+export function toZenginKana(value: string | null | undefined) {
+  if (value == null) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    result += M.get(c) ?? c
+  }
+  return result
 }

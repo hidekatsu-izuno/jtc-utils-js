@@ -72,22 +72,8 @@ for (const pair of CONVERT_MAP) {
 
 const output = await fs.open("./src/isWindows31J.ts", "w")
 try {
-await output.write(`export function isWindows31J(value: any) {
-  if (!value || typeof value !== "string") {
-      return false
-  }
-
-  for (let i = 0; i < value.length; i++) {
-      const n = value.codePointAt(i);
-      if (!isWindows31JChar(n)) {
-          return false
-      }
-  }
-
-  return true
-}\n\n`)
-
-await output.write(`const M = new Map<number, number>([\n`)
+await output.write(`
+const M = new Map<number, number>([\n`)
 let start = 0;
 for (const [key, map] of root) {
   await output.write(`  [${key}, ${start}],\n`)
@@ -143,6 +129,21 @@ function bitcount(n: number) {
   n = n + (n >>> 8);
   n = n + (n >>> 16);
   return n & 0x3f;
+}
+
+export function isWindows31J(value: string | null | undefined) {
+  if (!value) {
+      return false
+  }
+
+  for (let i = 0; i < value.length; i++) {
+      const n = value.codePointAt(i);
+      if (!isWindows31JChar(n)) {
+          return false
+      }
+  }
+
+  return true
 }
 `)
 } finally {

@@ -1,8 +1,10 @@
 import { NumberFormat } from "./NumberFormat.js"
 
+export function parseNumber(str: string, format?: string): number;
+export function parseNumber(str: null | undefined, format?: string): undefined;
 export function parseNumber(str: string | null | undefined, format?: string) {
-  if (!str) {
-    return null
+  if (str == null) {
+    return undefined
   }
 
   if (format) {
@@ -21,5 +23,5 @@ export function parseNumber(str: string | null | undefined, format?: string) {
   str = str.replace(/^[^0-9-]+/, "").replaceAll(",", "")
 
   const num = Number.parseFloat(str)
-  return Number.isFinite(num) ? num : null
+  return Number.isFinite(num) ? num : undefined
 }

@@ -1,17 +1,4 @@
 
-export function toHalfwidth(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    result += toHalfwidthChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([
 	["\u1100", "\uffa1"],
 	["\u1101", "\uffa2"],
@@ -269,4 +256,17 @@ const M = new Map<string, string>([
 
 function toHalfwidthChar(c: string) {
   return M.get(c) ?? c
+}
+
+export function toHalfwidth(value: string | null | undefined) {
+  if (!value) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    result += toHalfwidthChar(c)
+  }
+  return result
 }

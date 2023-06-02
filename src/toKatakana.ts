@@ -1,25 +1,4 @@
 
-export function toKatakana(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
-      if (c2 == "\u3099" || c2 == "\u309A") {
-        result += toKatakanaChar(c + c2)
-        i++
-        continue
-      }
-    }
-    result += toKatakanaChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([
 	["\u3041", "\u30a1"],
 	["\u3042", "\u30a2"],
@@ -105,8 +84,8 @@ const M = new Map<string, string>([
 	["\u3092", "\u30f2"],
 	["\u3093", "\u30f3"],
 	["\u3094", "\u30f4"],
-	["\u304b", "\u30f5"],
-	["\u3051", "\u30f6"],
+	["\u3095", "\u30f5"],
+	["\u3096", "\u30f6"],
 	["\u308f\u3099", "\u30f7"],
 	["\u3090\u3099", "\u30f8"],
 	["\u3091\u3099", "\u30f9"],
@@ -117,4 +96,25 @@ const M = new Map<string, string>([
 
 function toKatakanaChar(c: string) {
   return M.get(c) ?? c
+}
+
+export function toKatakana(value: string | null | undefined) {
+  if (!value) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    if (i + 1 < value.length) {
+      const c2 = value.charAt(i+1)
+      if (c2 == "\u3099" || c2 == "\u309A") {
+        result += toKatakanaChar(c + c2)
+        i++
+        continue
+      }
+    }
+    result += toKatakanaChar(c)
+  }
+  return result
 }

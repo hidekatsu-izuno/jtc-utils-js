@@ -51,19 +51,6 @@ try {
 const output = await fs.open("./src/toHalfwidth.ts", "w")
 try {
 await output.write(`
-export function toHalfwidth(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    result += toHalfwidthChar(c)
-  }
-  return result
-}
-
 const M = new Map<string, string>([\n`)
 for (const pair of CONVERT_MAP) {
   await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
@@ -72,6 +59,19 @@ await output.write(`])
 
 function toHalfwidthChar(c: string) {
   return M.get(c) ?? c
+}
+
+export function toHalfwidth(value: string | null | undefined) {
+  if (!value) {
+    return value
+  }
+
+  let result = ""
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charAt(i)
+    result += toHalfwidthChar(c)
+  }
+  return result
 }
 `)
 } finally {

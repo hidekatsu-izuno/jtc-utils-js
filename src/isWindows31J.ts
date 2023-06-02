@@ -1,17 +1,3 @@
-export function isWindows31J(value: any) {
-  if (!value || typeof value !== "string") {
-      return false
-  }
-
-  for (let i = 0; i < value.length; i++) {
-      const n = value.codePointAt(i);
-      if (!isWindows31JChar(n)) {
-          return false
-      }
-  }
-
-  return true
-}
 
 const M = new Map<number, number>([
   [0, 0],
@@ -827,4 +813,19 @@ function bitcount(n: number) {
   n = n + (n >>> 8);
   n = n + (n >>> 16);
   return n & 0x3f;
+}
+
+export function isWindows31J(value: string | null | undefined) {
+  if (!value) {
+      return false
+  }
+
+  for (let i = 0; i < value.length; i++) {
+      const n = value.codePointAt(i);
+      if (!isWindows31JChar(n)) {
+          return false
+      }
+  }
+
+  return true
 }

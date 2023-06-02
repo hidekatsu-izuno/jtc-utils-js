@@ -12,12 +12,12 @@ function step(line: string, index: number) {
   }
 
   CONVERT_MAP.push({
-    from: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
-    to: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    from: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
+    to: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
   })
 }
 
-const input = await fs.open("./data/fullwidth-halfwidth.csv")
+const input = await fs.open("./data/normalize.csv")
 try {
   let index = 0
   let buf = ""
@@ -48,7 +48,7 @@ try {
   await input.close()
 }
 
-const output = await fs.open("./src/toFullwidth.ts", "w")
+const output = await fs.open("./src/normalize.ts", "w")
 try {
 await output.write(`
 const M = new Map<string, string>([\n`)
@@ -57,29 +57,12 @@ for (const pair of CONVERT_MAP) {
 }
 await output.write(`])
 
-function toFullwidthChar(c: string) {
-  return M.get(c) ?? c
-}
-
-export function toFullwidth(value: string | null | undefined) {
+export function normalize<T>(value: T): T extends string ? string : T extends null | undefined ?null {
   if (!value) {
-    return value
+    return null
   }
 
-  let result = ""
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
-      if (c2 === "\\uFF9E" || c2 === "\\uFF9F") {
-        result += toFullwidthChar(c + c2)
-        i++
-        continue
-      }
-    }
-    result += toFullwidthChar(c)
-  }
-  return result
+  return value.replace(/(\\r\\n?|.[\\u3099\\u309A])/g, m => M.get(m) ?? m)
 }
 `)
 } finally {
