@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
   "scripts": {
