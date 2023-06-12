@@ -3,6 +3,9 @@
   "version": "0.2.0-alpha.0",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
+  "main": "./lib/index.js",
+  "module": "./module/index.js",
+  "types": "./module/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vitest.config.ts",
