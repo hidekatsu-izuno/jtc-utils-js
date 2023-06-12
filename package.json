@@ -14,7 +14,14 @@
     "generate:toFullwidth": "ts-node --esm ./scripts/generate_toFullwidth.ts",
     "generate:toHiragana": "ts-node --esm ./scripts/generate_toHiragana.ts",
     "generate:toKatakana": "ts-node --esm ./scripts/generate_toKatakana.ts",
-    "generate:toZenginKana": "ts-node --esm ./scripts/generate_toZenginKana.ts"
+    "generate:toZenginKana": "ts-node --esm ./scripts/generate_toZenginKana.ts",
+    "version.major": "npm run build && standard-version --release-as major",
+    "version.major.alpha": "npm run build && standard-version --release-as major --prerelease alpha",
+    "version.minor": "npm run build && standard-version --release-as minor",
+    "version.minor.alpha": "npm run build && standard-version --release-as minor --prerelease alpha",
+    "version.patch": "npm run build && standard-version --release-as patch",
+    "release": "git push --follow-tags origin main && npm publish",
+    "release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
