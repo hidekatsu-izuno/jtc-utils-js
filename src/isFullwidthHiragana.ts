@@ -3,5 +3,5 @@ export function isFullwidthHiragana(value: any) {
     return false
   }
 
-  return /^[\u3000\u3041-\u3094\u30FC]*$/.test(value)
+  return /^[\u3000\u3041-\u3096\u30FC]*$/.test(value)
 }
