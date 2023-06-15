@@ -85,7 +85,28 @@ export class NumberFormat {
       }
       const zero = patterns[2] || patterns[0]
 
-      const dformat = new NumberFormat(positive, negative, zero)
+      // https://observablehq.com/@mbostock/localized-number-parsing
+      const map = new Map<string, string>()
+      let n = 9
+      for (const sc of new Intl.NumberFormat(locale, { useGrouping: false }).format(9876543210)) {
+        const dc = n.toString()
+        if (sc !== dc) {
+          map.set(sc, dc)
+        }
+        n--
+      }
+
+      const parts = new Intl.NumberFormat(locale).formatToParts(12345.6)
+      const decimalSeparator = parts.find(d => d.type === "decimal")?.value
+      if (decimalSeparator && decimalSeparator !== ".") {
+        map.set(decimalSeparator, ".")
+      }
+      const groupingSeparator = parts.find(d => d.type === "group")?.value
+      if (groupingSeparator) {
+        map.set(groupingSeparator, "")
+      }
+
+      const dformat = new NumberFormat(positive, negative, zero, map)
       NumberFormatCache.set(format, dformat)
       return dformat
   }
@@ -93,7 +114,8 @@ export class NumberFormat {
   private constructor(
     public positive: NumberFormatPattern,
     public negative: NumberFormatPattern,
-    public zero: NumberFormatPattern
+    public zero: NumberFormatPattern,
+    public map: Map<string, string>,
   ) {
   }
 
@@ -110,5 +132,31 @@ export class NumberFormat {
       formatted = formatted.substring(0, sep).replace(re, ",") + ((sep !== -1) ? formatted.substring(sep) : "")
     }
     return format.prefix + formatted + format.suffix
+  }
+
+  parse(value: string) {
+    if (!value) {
+      return Number.NaN
+    }
+
+    if (this.positive.prefix.length + this.positive.suffix.length < value.length
+      && value.startsWith(this.positive.prefix)
+      && value.endsWith(this.positive.suffix)) {
+        // skip
+    } else if (this.negative.prefix.length + this.negative.suffix.length < value.length
+      && value.startsWith(this.negative.prefix)
+      && value.endsWith(this.negative.suffix)) {
+        value = "-" + value.substring(this.negative.prefix.length, value.length - this.negative.suffix.length)
+    }
+
+    if (this.map.size > 0) {
+      let value2 = ""
+      for (const c of value) {
+        value2 += this.map.get(c) ?? c
+      }
+      value = value2
+    }
+
+    return Number.parseFloat(value)
   }
 }

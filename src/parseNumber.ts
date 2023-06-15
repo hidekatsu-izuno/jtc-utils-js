@@ -1,27 +1,18 @@
 import { NumberFormat } from "./NumberFormat.js"
 
-export function parseNumber(str: string, format?: string): number;
-export function parseNumber(str: null | undefined, format?: string): undefined;
-export function parseNumber(str: string | null | undefined, format?: string) {
+export function parseNumber(str: string, format?: string, locale?: string): number;
+export function parseNumber(str: null | undefined, format?: string, locale?: string): undefined;
+export function parseNumber(str: string | null | undefined, format?: string, locale?: string) {
   if (str == null) {
     return undefined
   }
 
+  let num
   if (format) {
-    const dformat = NumberFormat.get(format)
-    if (dformat.positive.prefix.length + dformat.positive.suffix.length < str.length
-      && str.startsWith(dformat.positive.prefix)
-      && str.endsWith(dformat.positive.suffix)) {
-        // skip
-    } else if (dformat.negative.prefix.length + dformat.negative.suffix.length < str.length
-      && str.startsWith(dformat.negative.prefix)
-      && str.endsWith(dformat.negative.suffix)) {
-      str = "-" + str.substring(dformat.negative.prefix.length, str.length - dformat.negative.suffix.length)
-    }
+    num = NumberFormat.get(format, locale).parse(str)
+  } else {
+    num = Number.parseFloat(str.replace(/^[^0-9,-]+/g, ""))
   }
 
-  str = str.replace(/^[^0-9-]+/, "").replaceAll(",", "")
-
-  const num = Number.parseFloat(str)
   return Number.isFinite(num) ? num : undefined
 }
