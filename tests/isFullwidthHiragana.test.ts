@@ -79,6 +79,7 @@ describe('isFullwidthHiragana', () => {
     expect(isFullwidthHiragana("ｶﾞ")).toBe(false)
     expect(isFullwidthHiragana("ﾊﾟ")).toBe(false)
     expect(isFullwidthHiragana("ｳﾞ")).toBe(false)
+    expect(isFullwidthHiragana("ﾝ")).toBe(false)
   })
 
   test("test fullwidth kanji", () => {

@@ -3,5 +3,5 @@ export function isFullwidthKatakana(value: any) {
     return false
   }
 
-  return /^[\u3000\u30A0-\u30FA\u30FC]+$/.test(value)
+  return /^[\u3000\u30A1-\u30FA\u30FC]+$/.test(value)
 }
