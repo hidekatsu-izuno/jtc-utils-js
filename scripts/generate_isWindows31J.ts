@@ -132,7 +132,7 @@ function bitcount(n: number) {
 }
 
 export function isWindows31J(value: string | null | undefined) {
-  if (value == null) {
+  if (!value) {
       return false
   }
 

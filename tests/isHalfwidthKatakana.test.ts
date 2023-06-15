@@ -2,6 +2,18 @@ import { describe, expect, test } from 'vitest'
 import { isHalfwidthKatakana } from '../src/isHalfwidthKatakana.js'
 
 describe('isHalfwidthKatakana', () => {
+  test("test no string", () => {
+    expect(isHalfwidthKatakana(undefined)).toBe(false)
+    expect(isHalfwidthKatakana(null)).toBe(false)
+    expect(isHalfwidthKatakana("")).toBe(false)
+  })
+
+  test("test basic sequcence", () => {
+    expect(isHalfwidthKatakana('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ')).toBe(true)
+    expect(isHalfwidthKatakana('あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ')).toBe(false)
+    expect(isHalfwidthKatakana('ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ')).toBe(false)
+  })
+
   test("test ascii", () => {
     expect(isHalfwidthKatakana('\0')).toBe(false)
     expect(isHalfwidthKatakana('\t')).toBe(false)

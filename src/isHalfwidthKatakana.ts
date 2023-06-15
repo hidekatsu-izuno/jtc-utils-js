@@ -1,5 +1,5 @@
-export function isHalfwidthKatakana(value: any) {
-  if (value == null || typeof value !== "string") {
+export function isHalfwidthKatakana(value: string | null | undefined) {
+  if (!value) {
     return false
   }
 

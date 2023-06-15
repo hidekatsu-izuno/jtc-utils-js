@@ -2,6 +2,18 @@ import { describe, expect, test } from 'vitest'
 import { isFullwidthHiragana } from '../src/isFullwidthHiragana.js'
 
 describe('isFullwidthHiragana', () => {
+  test("test no string", () => {
+    expect(isFullwidthHiragana(undefined)).toBe(false)
+    expect(isFullwidthHiragana(null)).toBe(false)
+    expect(isFullwidthHiragana("")).toBe(false)
+  })
+
+  test("test basic sequcence", () => {
+    expect(isFullwidthHiragana('あいうえお')).toBe(true)
+    expect(isFullwidthHiragana('あイうエお')).toBe(false)
+    expect(isFullwidthHiragana('アいウえオ')).toBe(false)
+  })
+
   test("test ascii", () => {
     expect(isFullwidthHiragana('\0')).toBe(false)
     expect(isFullwidthHiragana('\t')).toBe(false)

@@ -3,6 +3,19 @@ import { isWindows31J } from '../src/isWindows31J.js'
 
 describe('isWindows31J', () => {
 
+  test("test no string", () => {
+    expect(isWindows31J(undefined)).toBe(false)
+    expect(isWindows31J(null)).toBe(false)
+    expect(isWindows31J("")).toBe(false)
+  })
+
+  test("test basic sequcence", () => {
+    expect(isWindows31J('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ')).toBe(true)
+    expect(isWindows31J('あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ')).toBe(true)
+    expect(isWindows31J('ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ')).toBe(true)
+    expect(isWindows31J('亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ')).toBe(true)
+  })
+
   test("test ascii", () => {
     expect(isWindows31J('\0')).toBe(true)
     expect(isWindows31J('\t')).toBe(true)
