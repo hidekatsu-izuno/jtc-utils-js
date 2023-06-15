@@ -1,11 +1,11 @@
 export function isURL(value: string | null | undefined) {
-  if (value == null) {
+  if (!value) {
     return false
   }
 
   try {
     const url = new URL(value)
-    return /^https?$/.test(url.protocol)
+    return /^https?:$/.test(url.protocol)
   } catch (e) {
     return false
   }

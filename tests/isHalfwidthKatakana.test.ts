@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { isHalfwidthKatakana } from '../src/isHalfwidthKatakana.js'
 
 describe('isHalfwidthKatakana', () => {
-  test("test no string", () => {
+  test("test empty", () => {
     expect(isHalfwidthKatakana(undefined)).toBe(false)
     expect(isHalfwidthKatakana(null)).toBe(false)
     expect(isHalfwidthKatakana("")).toBe(false)

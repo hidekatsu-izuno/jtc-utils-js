@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { isFullwidthHiragana } from '../src/isFullwidthHiragana.js'
 
 describe('isFullwidthHiragana', () => {
-  test("test no string", () => {
+  test("test empty", () => {
     expect(isFullwidthHiragana(undefined)).toBe(false)
     expect(isFullwidthHiragana(null)).toBe(false)
     expect(isFullwidthHiragana("")).toBe(false)
