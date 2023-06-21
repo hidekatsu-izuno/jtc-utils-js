@@ -62,10 +62,10 @@
     "vitest": "^0.30.0"
   },
   "dependencies": {
+    "@kayahr/text-encoding": "^1.2.0",
     "csv-parse": "^5.4.0",
     "csv-stringify": "^6.4.0",
     "date-fns": "^2.29.3",
-    "date-fns-tz": "^2.0.0",
-    "iconv-lite": "^0.6.3"
+    "date-fns-tz": "^2.0.0"
   }
 }

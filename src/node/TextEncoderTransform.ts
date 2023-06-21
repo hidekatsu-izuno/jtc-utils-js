@@ -1,11 +1,12 @@
 import { Transform, TransformOptions, TransformCallback } from "node:stream"
+import { TextEncoder } from "@kayahr/text-encoding"
 
-export class TextDecoderTransform extends Transform {
-  private decoder: TextDecoder
+export class TextEncoderTransform extends Transform {
+  private encoder: TextEncoder
 
   constructor(encoding: string, options?: TransformOptions) {
     super(options)
-    this.decoder = new TextDecoder(encoding)
+    this.encoder = new TextEncoder(encoding)
   }
 
   _transform(chunk: any, encoding: string, callback: TransformCallback) {
@@ -14,15 +15,10 @@ export class TextDecoderTransform extends Transform {
         throw new TypeError("chunk must be buffer.")
       }
 
-      const str = this.decoder.decode(chunk, { stream: true })
+      const str = this.encoder.encode(chunk)
       callback(undefined, str)
     } catch (err) {
       callback(err as Error)
     }
-  }
-
-  _flush(callback: TransformCallback): void {
-    const str = this.decoder.decode(undefined, { stream: false })
-    callback(undefined, str ? str : undefined)
   }
 }

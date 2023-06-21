@@ -2,7 +2,6 @@ import { describe, expect, test } from "vitest"
 
 import { MemoryWritable } from "../../src/node/MemoryWritable"
 import { CsvWriter } from "../../src/node/CsvWriter"
-import fs from "node:fs"
 
 describe('CsvWriter', () => {
   test("test write utf-8 csv with bom", async () => {

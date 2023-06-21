@@ -1,7 +1,7 @@
 import { Writable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
-import iconv from "iconv-lite"
 import { stringify, Stringifier, Options } from 'csv-stringify'
+import { TextEncoderTransform } from "./TextEncoderTransform.js"
 
 export class CsvWriter {
   private stringifier: Stringifier
@@ -40,7 +40,7 @@ export class CsvWriter {
 
     this.stringifier = stringify(sopts)
     if (options?.encoding != null && sopts.defaultEncoding == null) {
-      this.stringifier.pipe(iconv.encodeStream(options.encoding)).pipe(this.dest)
+      this.stringifier.pipe(new TextEncoderTransform(options.encoding)).pipe(this.dest)
     } else {
       this.stringifier.pipe(this.dest)
     }
