@@ -1,4 +1,5 @@
 import { Writable } from "node:stream"
+import { FileHandle } from "node:fs/promises"
 import iconv from "iconv-lite"
 import { stringify, Stringifier, Options } from 'csv-stringify'
 
@@ -7,7 +8,7 @@ export class CsvWriter {
   private dest: NodeJS.WritableStream
 
   constructor(
-    dest: Writable | WritableStream<Uint8Array>,
+    dest: FileHandle | Writable | WritableStream<Uint8Array>,
     options?: {
       encoding?: string,
       bom?: boolean,
@@ -29,10 +30,12 @@ export class CsvWriter {
       options?.encoding != null ? /^(utf|ucs)/i.test(options.encoding) :
       true
 
-    if (dest instanceof WritableStream) {
+    if (dest instanceof Writable) {
+      this.dest = dest
+    } else if (dest instanceof WritableStream) {
       this.dest = Writable.fromWeb(dest)
     } else {
-      this.dest = dest
+      this.dest = dest.createWriteStream()
     }
 
     this.stringifier = stringify(sopts)

@@ -1,4 +1,5 @@
 import { Readable } from "node:stream"
+import { FileHandle } from "node:fs/promises"
 import { parse, Options } from 'csv-parse'
 import { TextDecoderTransform } from "./TextDecoderTransfom.js"
 
@@ -6,7 +7,7 @@ export class CsvReader {
   private stream: Readable
 
   constructor(
-    src: string | Uint8Array | Readable | ReadableStream<Uint8Array>,
+    src: string | Uint8Array | FileHandle | Readable | ReadableStream<Uint8Array>,
     options?: {
       encoding?: string,
       bom?: boolean,
@@ -15,13 +16,16 @@ export class CsvReader {
     }
   ) {
     let stream: NodeJS.ReadableStream
-    if (typeof src === "string" || src instanceof Uint8Array) {
+    if (src instanceof Readable) {
+      stream = src
+    } else if (typeof src === "string" || src instanceof Uint8Array) {
       stream = Readable.from(src)
     } else if (src instanceof ReadableStream) {
       stream = Readable.fromWeb(src as any)
     } else {
-      stream = src
+      stream = src.createReadStream()
     }
+
     const popts: Options = {
       relax_column_count: true,
       delimiter: options?.fieldSeparator,
