@@ -1,12 +1,12 @@
 import { Readable } from "node:stream"
-import iconv from "iconv-lite"
 import { parse, Options } from 'csv-parse'
+import { TextDecoderTransform } from "./TextDecoderTransfom.js"
 
 export class CsvReader {
   private stream: Readable
 
   constructor(
-    src: string | Uint8Array | Readable,
+    src: string | Uint8Array | Readable | ReadableStream<Uint8Array>,
     options?: {
       encoding?: string,
       bom?: boolean,
@@ -17,6 +17,8 @@ export class CsvReader {
     let stream: NodeJS.ReadableStream
     if (typeof src === "string" || src instanceof Uint8Array) {
       stream = Readable.from(src)
+    } else if (src instanceof ReadableStream) {
+      stream = Readable.fromWeb(src as any)
     } else {
       stream = src
     }
@@ -26,14 +28,14 @@ export class CsvReader {
       record_delimiter: options?.lineSeparator,
     }
     if (options?.encoding != null) {
-      if (/^(ascii|utf-?8|utf16le|ucs-?2|base64(url)?|latin1|binary|hex)$/i.test(options.encoding)) {
-        popts.encoding = options.encoding.toLowerCase() as BufferEncoding
+      if (Buffer.isEncoding(options.encoding)) {
+        popts.encoding = options.encoding
       } else {
-        stream = stream.pipe(iconv.decodeStream(options.encoding))
+        stream = stream.pipe(new TextDecoderTransform(options.encoding))
       }
     }
     popts.bom = options?.bom != null ? options?.bom :
-      options?.encoding != null ? /^(utf-?8|utf16le|ucs-?2)$/i.test(options.encoding) :
+      options?.encoding != null ? /^(utf|ucs)/i.test(options.encoding) :
       true
     this.stream = stream.pipe(parse(popts))
   }

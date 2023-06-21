@@ -1,5 +1,4 @@
 import { Writable, WritableOptions } from "node:stream"
-import iconv from "iconv-lite"
 
 export class MemoryWritable extends Writable {
   private buf: Array<Uint8Array> = []
@@ -22,12 +21,10 @@ export class MemoryWritable extends Writable {
   }
 
   toString(encoding: string = "uft-8") {
-    const flag = /^(ascii|utf-?8|utf16le|ucs-?2|base64(url)?|latin1|binary|hex)$/i.test(encoding)
-
-    if (flag) {
-      return this.toBuffer().toString(encoding as BufferEncoding)
+    if (Buffer.isEncoding(encoding)) {
+      return this.toBuffer().toString(encoding)
     } else {
-      return iconv.decode(this.toBuffer(), encoding)
+      return new TextDecoder(encoding).decode(this.toBuffer())
     }
   }
 }

@@ -7,7 +7,7 @@ export class CsvWriter {
   private dest: NodeJS.WritableStream
 
   constructor(
-    dest: Writable,
+    dest: Writable | WritableStream<Uint8Array>,
     options?: {
       encoding?: string,
       bom?: boolean,
@@ -21,19 +21,25 @@ export class CsvWriter {
       record_delimiter: options?.lineSeparator ?? "\r\n",
     }
     if (options?.encoding != null) {
-      if (/^(ascii|utf-?8|utf16le|ucs-?2|base64(url)?|latin1|binary|hex)$/i.test(options.encoding)) {
-        sopts.defaultEncoding = options.encoding.toLowerCase() as BufferEncoding
+      if (Buffer.isEncoding(options.encoding)) {
+        sopts.defaultEncoding = options.encoding
       }
     }
     sopts.bom = options?.bom != null ? options?.bom :
-      options?.encoding != null ? /^(utf-?8|utf16le|ucs-?2)$/i.test(options.encoding) :
+      options?.encoding != null ? /^(utf|ucs)/i.test(options.encoding) :
       true
-    this.stringifier = stringify(sopts)
-    this.dest = dest
-    if (options?.encoding != null && sopts.defaultEncoding == null) {
-      this.stringifier.pipe(iconv.encodeStream(options.encoding)).pipe(dest)
+
+    if (dest instanceof WritableStream) {
+      this.dest = Writable.fromWeb(dest)
     } else {
-      this.stringifier.pipe(dest)
+      this.dest = dest
+    }
+
+    this.stringifier = stringify(sopts)
+    if (options?.encoding != null && sopts.defaultEncoding == null) {
+      this.stringifier.pipe(iconv.encodeStream(options.encoding)).pipe(this.dest)
+    } else {
+      this.stringifier.pipe(this.dest)
     }
   }
 
