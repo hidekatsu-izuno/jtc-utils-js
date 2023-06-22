@@ -26,6 +26,6 @@ export class MemoryWritableStream extends WritableStream {
   }
 
   toString(encoding: string = "uft-8") {
-    return new TextDecoder(encoding).decode(this.toUint8Array())
+    return new TextDecoder(encoding, { ignoreBOM: true }).decode(this.toUint8Array())
   }
 }

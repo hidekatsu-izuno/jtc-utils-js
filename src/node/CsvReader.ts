@@ -1,56 +1,25 @@
 import { Readable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
-import { parse, Options } from 'csv-parse'
-import { TextDecoderTransform } from "./TextDecoderTransfom.js"
+import { CsvReader as WebCsvReader } from "../CsvReader.js"
 
-export class CsvReader {
-  private stream: Readable
-
+export class CsvReader extends WebCsvReader {
   constructor(
-    src: string | Uint8Array | FileHandle | Readable | ReadableStream<Uint8Array>,
+    src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
     options?: {
       encoding?: string,
       bom?: boolean,
       fieldSeparator?: string,
-      lineSeparator?: string,
+      skipEmptyLine?: boolean
     }
   ) {
-    let stream: NodeJS.ReadableStream
-    if (src instanceof Readable) {
-      stream = src
-    } else if (typeof src === "string" || src instanceof Uint8Array) {
-      stream = Readable.from(src)
-    } else if (src instanceof ReadableStream) {
-      stream = Readable.fromWeb(src as any)
+    let newSrc
+    if (typeof src === "string" || src instanceof Uint8Array || src instanceof Blob || src instanceof ReadableStream) {
+      newSrc = src
+    } else if (src instanceof Readable) {
+      newSrc = Readable.toWeb(src) as ReadableStream<Uint8Array>
     } else {
-      stream = src.createReadStream()
+      newSrc = Readable.toWeb(src.createReadStream()) as ReadableStream<Uint8Array>
     }
-
-    const popts: Options = {
-      relax_column_count: true,
-      delimiter: options?.fieldSeparator,
-      record_delimiter: options?.lineSeparator,
-    }
-    if (options?.encoding != null) {
-      if (Buffer.isEncoding(options.encoding)) {
-        popts.encoding = options.encoding
-      } else {
-        stream = stream.pipe(new TextDecoderTransform(options.encoding))
-      }
-    }
-    popts.bom = options?.bom != null ? options?.bom :
-      options?.encoding != null ? /^(utf|ucs)/i.test(options.encoding) :
-      true
-    this.stream = stream.pipe(parse(popts))
-  }
-
-  async *read(): AsyncGenerator<string[]> {
-    for await (const row of this.stream) {
-      yield row
-    }
-  }
-
-  async close() {
-    this.stream.destroy()
+    super(newSrc, options)
   }
 }
