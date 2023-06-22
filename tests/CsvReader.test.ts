@@ -13,6 +13,7 @@ describe('CsvReader', () => {
     ["\"あい\"\"う\"\r\n", [["あい\"う"]]],
     ["あいう,えお", [["あいう", "えお"]]],
     ["あいう,えお\n", [["あいう", "えお"]]],
+    ["\"あい\"\"う\"\n\nえお", [["あい\"う"],[],["えお"]]],
     ["\"あい\"\"う\",えお", [["あい\"う", "えお"]]],
     ["あいう,\"え\nお\"\n", [["あいう", "え\nお"]]],
     ["あいう,\"え\nお\"\nかきく,\"け\nこ\"", [["あいう", "え\nお"],["かきく", "け\nこ"]]],
@@ -30,8 +31,34 @@ describe('CsvReader', () => {
     }
   })
 
-  test("test read string for a bug", async () => {
-    const reader = new CsvReader("あいう,\"え\nお\"\nかきく,\"け\nこ\"")
+  test("test empty line exists", async () => {
+    const reader = new CsvReader("\"あい\"\"う\"\n\nえお\r\n\r\n", {
+      skipEmptyLine: true
+    })
+    try {
+      const list = new Array<any>()
+      for await (const item of reader.read()) {
+        list.push(item)
+      }
+      expect(list).toStrictEqual([["あい\"う"],["えお"]])
+    } finally {
+      await reader.close()
+    }
+  })
+
+  test("test read ReadableStream", async () => {
+    const reader = new CsvReader(new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(Buffer.from("あい"))
+        controller.enqueue(Buffer.from("う,\""))
+        controller.enqueue(Buffer.from("え\n"))
+        controller.enqueue(Buffer.from("お\"\r"))
+        controller.enqueue(Buffer.from("\nかきく,"))
+        controller.enqueue(Buffer.from("\"け\n"))
+        controller.enqueue(Buffer.from("こ\"\n"))
+        controller.close()
+      }
+    }))
     try {
       const list = new Array<any>()
       for await (const item of reader.read()) {

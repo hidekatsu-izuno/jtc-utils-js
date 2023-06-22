@@ -50,50 +50,84 @@ export class CsvReader {
   }
 
   async *read() {
-    const re = new RegExp(`"((?:""|[^"])*)(?:$|"(${this.fieldSeparator}|\n|\r\n?|$))|(.*?)(${this.fieldSeparator}|\n|\r\n?)`, "y")
+    const re = new RegExp(`\n|\r\n?|${this.fieldSeparator}`, "g")
+
+    let done = false
+    let isCrEnd = false
+
     let buf = ""
+    let pos = 0
+
     let items = []
 
-    while (true) {
-      const { done, value } = await this.reader.read()
-      if (!buf) {
-        buf = value || ""
-      } else if (value) {
-        buf += value
+    loop:
+    do {
+      const readed = await this.reader.read()
+      done = readed.done
+
+      if (readed.value) {
+        if (isCrEnd && readed.value.startsWith("\n")) {
+          readed.value = readed.value.substring(1)
+          isCrEnd = false
+        }
+        if (readed.value.endsWith("\r")) {
+          isCrEnd = true
+        }
+
+        buf = buf ? buf + readed.value : readed.value
       }
 
-      if (buf) {
-        let last = 0
-
-        re.lastIndex = 0
-        let m
-        while ((m = re.exec(buf))) {
-          last = re.lastIndex
-
-          items.push(m[1] ? m[1].replaceAll('""', '"') : m[3] ?? "")
-          if ((m[1] ? m[2] : m[4]) !== ",") {
-            if (items.length > 0 || !this.skipEmptyLine) {
-              yield items
-            }
-            items = []
+      while (pos < buf.length) {
+        if (buf.startsWith('"')) {
+          if (pos === 0) {
+            pos = 1
+          }
+          const lpos = buf.indexOf('"', pos)
+          if (lpos === -1) {
+            pos = buf.length
+            continue loop
+          } else if (buf.startsWith('"', lpos + 1)) {
+            pos = lpos + 2
+            continue
+          } else {
+            const unquoted = buf.substring(1, lpos).replaceAll('""', '"')
+            buf = unquoted + buf.substring(lpos + 1)
+            pos = unquoted.length
+            continue
           }
         }
 
-        if (last < buf.length) {
-          buf = buf.substring(last)
+        re.lastIndex = pos
+        if (re.test(buf)) {
+          const item = buf.substring(0, re.lastIndex - (buf.endsWith("\r\n", re.lastIndex) ? 2 : 1))
+          if (!this.skipEmptyLine || item || items.length > 0) {
+            if (!buf.endsWith(this.fieldSeparator, re.lastIndex)) {
+              if (item || items.length > 0) {
+                items.push(item)
+              }
+              yield items
+              items = []
+            } else {
+              items.push(item)
+            }
+          }
+          buf = buf.substring(re.lastIndex)
+          pos = 0
         } else {
-          buf = ""
+          pos = buf.length
+          continue loop
         }
       }
 
       if (done) {
-        if (buf.length > 0 || items.length > 0) {
+        if (buf || items.length > 0) {
           items.push(buf)
+        }
+        if (items.length > 0) {
           yield items
         }
-        break
       }
-    }
+    } while (!done)
   }
 
   async close() {

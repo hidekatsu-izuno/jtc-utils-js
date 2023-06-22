@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
 
-describe('CsvReader', () => {
+describe('node.CsvReader', () => {
 
   test("test read string csv", async () => {
     const reader = new CsvReader("あいう,かきく")
