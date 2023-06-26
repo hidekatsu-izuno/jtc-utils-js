@@ -112,30 +112,37 @@ export class ShiftJISEncoder implements Encoder {
   }
 
   encode(str: string): Uint8Array {
-    const out = new Array<number>()
+    const out = new Uint8Array(str.length * 2)
+    let pos = 0
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
-        out.push(cp)
+        out[pos++] = cp
       } else if (cp >= 0x0391 && cp <= 0x03A1) { // Α～Ρ
         const sjis = cp - 0x0391 + 0x839F
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0x03A3 && cp <= 0x03A9) { // Σ～Ω
         const sjis = cp - 0x03A3 + 0x83B0
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0x03B1 && cp <= 0x03C1) { // α～ρ
         const sjis = cp - 0x03B1 + 0x83BF
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0x03C3 && cp <= 0x03C9) { // σ～ω
         const sjis = cp - 0x03C3 + 0x83D0
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0x3041 && cp <= 0x3093) { // ぁ～ん
         const sjis = cp - 0x3041 + 0x829F
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0x30A1 && cp <= 0x30F6) { // ァ～ヶ
         const sjis = (cp >= 0x30E0) ? cp - 0x30E0 + 0x8380
           : cp - 0x30A1 + 0x8340
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+          out[pos++] = (sjis >>> 8) & 0xFF
+          out[pos++] = sjis & 0xFF
       } else if (cp >= 0xE000 && cp <= 0xE757) { // ユーザー外字
         const sjis = (cp >= 0xE6DB) ? cp - 0xE6DB + 0xF980
           : (cp >= 0xE69C) ? cp - 0xE69C + 0xF940
@@ -157,18 +164,22 @@ export class ShiftJISEncoder implements Encoder {
           : (cp >= 0xE0BC) ? cp - 0xE0BC + 0xF140
           : (cp >= 0xE03F) ? cp - 0xE03F + 0xF080
           : cp - 0xE000 + 0xF040
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0xFF10 && cp <= 0xFF19) { // ０～９
         const sjis = cp - 0xFF10 + 0x824F
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0xFF21 && cp <= 0xFF3A) { // Ａ～Ｚ
         const sjis = cp - 0xFF21 + 0x8260
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0xFF41 && cp <= 0xFF5A) { // ａ～ｚ
         const sjis = cp - 0xFF41 + 0x8281
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        out[pos++] = (sjis >>> 8) & 0xFF
+        out[pos++] = sjis & 0xFF
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
-        out.push(cp - 0xFF61 + 0xA1)
+        out[pos++] = cp - 0xFF61 + 0xA1
       } else {
         const key1 = cp >>> 4
         const key2 = cp & 0xF
@@ -176,14 +187,15 @@ export class ShiftJISEncoder implements Encoder {
         const count = array ? bitcount(array[0] >>> (15 - key2)) : 0
         if (count !== 0) {
           const sjis = array[count]
-          out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+          out[pos++] = (sjis >>> 8) & 0xFF
+          out[pos++] = sjis & 0xFF
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
         } else {
-          out.push(0x1A)
+          out[pos++] = 0x1A
         }
       }
     }
-    return new Uint8Array(out)
+    return out.subarray(0, pos)
   }
 }

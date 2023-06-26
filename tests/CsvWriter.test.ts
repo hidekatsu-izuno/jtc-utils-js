@@ -46,14 +46,14 @@ describe('CsvWriter', () => {
     }
     try {
       writer.write(["aaa", "b\"b\nb", "ccc"])
-      writer.write(["ΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ"])
+      writer.write(["ΑΡΣΩαρσωАЯанояぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ"])
       writer.write([userDefined])
 
     } finally {
       await writer.close()
     }
 
-    expect(buf.toString("windows-31j")).toStrictEqual("aaa,\"b\"\"b\nb\",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n" + userDefined + "\r\n")
+    expect(buf.toString("windows-31j")).toStrictEqual("aaa,\"b\"\"b\nb\",ccc\r\nΑΡΣΩαρσωАЯанояぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n" + userDefined + "\r\n")
   })
 
   test("test write utf-16le csv", async () => {
