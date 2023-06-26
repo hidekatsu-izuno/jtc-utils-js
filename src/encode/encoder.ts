@@ -1,4 +1,5 @@
 import { ShiftJISEncoder } from "./ShiftJISEncoder.js"
+import { Utf16Encoder } from "./Utf16Encoder.js"
 import { Utf8Encoder } from "./Utf8Encoder.js"
 
 export interface Encoder {
@@ -27,6 +28,11 @@ export function createEncoder(encoding: string) {
     case "utf8":
     case "unicode-1-1-utf-8":
       return new Utf8Encoder()
+    case "utf-16":
+    case "utf-16le":
+      return new Utf16Encoder(false)
+    case "utf-16be":
+      return new Utf16Encoder(true)
     case "csshiftjis":
     case "ms_kanji":
     case "shift-jis":
