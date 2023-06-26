@@ -40,13 +40,63 @@ describe('CsvWriter', () => {
     const writer = new CsvWriter(buf, {
       encoding: "Windows-31j",
     })
+    let userDefined = ""
+    for (let c = 0xE000; c <= 0xE757; c++) {
+      userDefined += String.fromCharCode(c)
+    }
     try {
       writer.write(["aaa", "b\"b\nb", "ccc"])
-      writer.write(["あいう"])
+      writer.write(["ΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ"])
+      writer.write([userDefined])
+
     } finally {
       await writer.close()
     }
 
-    expect(buf.toString("windows-31j")).toStrictEqual("aaa,\"b\"\"b\nb\",ccc\r\nあいう\r\n")
+    expect(buf.toString("windows-31j")).toStrictEqual("aaa,\"b\"\"b\nb\",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n" + userDefined + "\r\n")
+  })
+
+  test("test write utf-16le csv", async () => {
+    const buf = new MemoryWritableStream()
+
+    const writer = new CsvWriter(buf, {
+      encoding: "utf-16le",
+    })
+    let userDefined = ""
+    for (let c = 0xE000; c <= 0xE757; c++) {
+      userDefined += String.fromCharCode(c)
+    }
+    try {
+      writer.write(["aaa", "b\"b\nb", "ccc"])
+      writer.write(["ΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ"])
+      writer.write([userDefined])
+
+    } finally {
+      await writer.close()
+    }
+
+    expect(buf.toString("utf-16le")).toStrictEqual("\uFEFFaaa,\"b\"\"b\nb\",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n" + userDefined + "\r\n")
+  })
+
+  test("test write utf-16be csv", async () => {
+    const buf = new MemoryWritableStream()
+
+    const writer = new CsvWriter(buf, {
+      encoding: "utf-16be",
+    })
+    let userDefined = ""
+    for (let c = 0xE000; c <= 0xE757; c++) {
+      userDefined += String.fromCharCode(c)
+    }
+    try {
+      writer.write(["aaa", "b\"b\nb", "ccc"])
+      writer.write(["ΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ"])
+      writer.write([userDefined])
+
+    } finally {
+      await writer.close()
+    }
+
+    expect(buf.toString("utf-16be")).toStrictEqual("\uFEFFaaa,\"b\"\"b\nb\",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n" + userDefined + "\r\n")
   })
 })

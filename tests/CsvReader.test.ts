@@ -33,7 +33,7 @@ describe('CsvReader', () => {
   })
 
   test("test empty line exists", async () => {
-    const reader = new CsvReader("\"あい\"\"う\"\n\nえお\r\n\r\n", {
+    const reader = new CsvReader("\"あい\"\"う\"\n\nえお\r\n\r\n\"かきく\"", {
       skipEmptyLine: true
     })
     try {
@@ -41,7 +41,7 @@ describe('CsvReader', () => {
       for await (const item of reader.read()) {
         list.push(item)
       }
-      expect(list).toStrictEqual([["あい\"う"],["えお"]])
+      expect(list).toStrictEqual([["あい\"う"],["えお"],["かきく"]])
     } finally {
       await reader.close()
     }
@@ -50,7 +50,7 @@ describe('CsvReader', () => {
   test("test read ReadableStream", async () => {
     const reader = new CsvReader(new ReadableStream<Uint8Array>({
       start(controller) {
-        controller.enqueue(Buffer.from("あい"))
+        controller.enqueue(Buffer.from("\uFEFFあい"))
         controller.enqueue(Buffer.from("う,\""))
         controller.enqueue(Buffer.from("え\n"))
         controller.enqueue(Buffer.from("お\"\r"))

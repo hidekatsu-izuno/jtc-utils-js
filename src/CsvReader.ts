@@ -15,6 +15,8 @@ export class CsvReader {
       skipEmptyLine?: boolean
     }
   ) {
+    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+
     if (typeof src === "string") {
       this.reader = new ReadableStream<string>({
         start(controller) {
@@ -37,7 +39,7 @@ export class CsvReader {
         stream = src
       }
 
-      const decoder = new TextDecoderStream(options?.encoding ?? "utf-8", {
+      const decoder = new TextDecoderStream(encoding, {
         fatal: true,
         ignoreBOM: options?.bom ? !options?.bom : false,
       })

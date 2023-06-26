@@ -24,7 +24,7 @@ export class MemoryWritable extends Writable {
     if (Buffer.isEncoding(encoding)) {
       return this.toBuffer().toString(encoding)
     } else {
-      return new TextDecoder(encoding).decode(this.toBuffer())
+      return new TextDecoder(encoding.toLowerCase()).decode(this.toBuffer())
     }
   }
 }

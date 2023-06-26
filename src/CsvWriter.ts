@@ -21,7 +21,8 @@ export class CsvWriter {
       quoteAlways?: boolean
     },
   ) {
-    const encoding = (options?.encoding ?? "utf-8").toLowerCase()
+    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+
     this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? true : false
     this.encoder = createEncoder(encoding)
 

@@ -1,3 +1,5 @@
+import { createEncoder } from "./encode/encoder.js"
+
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>
   private decoder: TextDecoder
@@ -8,7 +10,7 @@ export class FixlenReader {
   private index: number = 0
 
   constructor(
-    src: Uint8Array | Blob | ReadableStream<Uint8Array>,
+    src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
     lineLength: number,
     options?: {
       encoding?: string,
@@ -16,8 +18,18 @@ export class FixlenReader {
       columns: number[] | ((line: Uint8Array, lineNumber: number) => number[])
     }
   ) {
+    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+
     let stream
-    if (src instanceof Uint8Array) {
+    if (typeof src === "string") {
+      stream = new ReadableStream<Uint8Array>({
+        start(controller) {
+          const encoder = createEncoder(encoding)
+          controller.enqueue(encoder.encode(src))
+          controller.close()
+        }
+      })
+    } else if (src instanceof Uint8Array) {
       stream = new ReadableStream<Uint8Array>({
         start(controller) {
           controller.enqueue(src)
@@ -36,7 +48,7 @@ export class FixlenReader {
       Array.isArray(columns) ? (line: Uint8Array, lineNumber: number) => columns :
       columns
 
-    this.decoder = new TextDecoder(options?.encoding ?? "utf-8", {
+    this.decoder = new TextDecoder(encoding, {
       fatal: true,
       ignoreBOM: options?.bom ? !options?.bom : false,
     })

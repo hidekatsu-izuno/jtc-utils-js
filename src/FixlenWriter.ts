@@ -22,12 +22,13 @@ export class FixlenWriter {
       quoteAlways?: boolean
     },
   ) {
+    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+
     const columns = options?.columns
     this.columns = !columns ? () => new Array<number>() :
       Array.isArray(columns) ? () => columns :
       columns
 
-    const encoding = (options?.encoding ?? "utf-8").toLowerCase()
     this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? false : false
     this.encoder = createEncoder(encoding)
     this.lineSeparator = this.encoder.encode(options?.lineSeparator ?? "\r\n")

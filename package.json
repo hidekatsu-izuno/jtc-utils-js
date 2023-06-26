@@ -11,21 +11,11 @@
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate": "npm-run-all 'generate:*'",
-    "generate:ShiftJISEncoder": "node --loader ts-node/esm ./scripts/generate_ShiftJISEncoder.ts",
-    "generate:isWindows31J": "node --loader ts-node/esm ./scripts/generate_isWindows31J.ts",
-    "generate:normalize": "node --loader ts-node/esm ./scripts/generate_normalize.ts",
     "generate:toHalfwidth": "node --loader ts-node/esm ./scripts/generate_toHalfwidth.ts",
     "generate:toFullwidth": "node --loader ts-node/esm ./scripts/generate_toFullwidth.ts",
     "generate:toHiragana": "node --loader ts-node/esm ./scripts/generate_toHiragana.ts",
     "generate:toKatakana": "node --loader ts-node/esm ./scripts/generate_toKatakana.ts",
-    "generate:toZenginKana": "node --loader ts-node/esm ./scripts/generate_toZenginKana.ts",
-    "version.major": "npm run build && standard-version --release-as major",
-    "version.major.alpha": "npm run build && standard-version --release-as major --prerelease alpha",
-    "version.minor": "npm run build && standard-version --release-as minor",
-    "version.minor.alpha": "npm run build && standard-version --release-as minor --prerelease alpha",
-    "version.patch": "npm run build && standard-version --release-as patch",
-    "release": "git push --follow-tags origin main && npm publish",
-    "release.alpha": "git push --follow-tags origin main && npm publish --tag alpha"
+    "generate:toZenginKana": "node --loader ts-node/esm ./scripts/generate_toZenginKana.ts"
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -53,23 +43,16 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.2",
-    "@types/papaparse": "^5.3.7",
-    "@types/unicode-trie": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.60.0",
-    "@typescript-eslint/parser": "^5.60.0",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",
-    "standard-version": "^4.4.0",
+    "release-please": "^15.11.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.3",
+    "typescript": "^5.1.5",
     "vitest": "^0.32.2"
   },
   "dependencies": {
-    "@kayahr/text-encoding": "^1.2.0",
-    "csv-parse": "^5.4.0",
-    "csv-stringify": "^6.4.0",
     "date-fns": "^2.30.0",
-    "date-fns-tz": "^2.0.0",
-    "install": "^0.13.0",
-    "npm": "^9.7.2"
+    "date-fns-tz": "^2.0.0"
   }
 }
