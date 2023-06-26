@@ -1,12 +1,12 @@
-import { TextEncoder as LegacyTextEncoder } from "@kayahr/text-encoding"
+import { Encoder, createEncoder, isUnicodeEncoding } from "./encode/encoder.js"
 
 export class FixlenWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>
-  private encoder: TextEncoder
+  private encoder: Encoder
 
   private columns: ((values: Array<any>, lineNumber: number) => number[])
 
-  private bom: boolean = false
+  private bom: boolean
   private lineSeparator: Uint8Array
 
   private index: number = 0
@@ -28,15 +28,8 @@ export class FixlenWriter {
       columns
 
     const encoding = (options?.encoding ?? "utf-8").toLowerCase()
-    if (encoding === "utf-8" || encoding === "utf8" || encoding === "unicode-1-1-utf-8") {
-      this.encoder = new TextEncoder()
-      this.bom = options?.bom ?? false
-    } else {
-      this.encoder = new LegacyTextEncoder(encoding)
-      if (encoding === "utf-16" || encoding === "utf-16le" || encoding === "utf-16be") {
-        this.bom = options?.bom ?? false
-      }
-    }
+    this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? false : false
+    this.encoder = createEncoder(encoding)
     this.lineSeparator = this.encoder.encode(options?.lineSeparator ?? "\r\n")
 
     this.writer = dest.getWriter()

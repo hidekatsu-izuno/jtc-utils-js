@@ -1,10 +1,10 @@
-import { TextEncoder as LegacyTextEncoder } from "@kayahr/text-encoding"
+import { Encoder, createEncoder, isUnicodeEncoding } from "./encode/encoder.js"
 
 export class CsvWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>
-  private encoder: TextEncoder
+  private encoder: Encoder
 
-  private bom: boolean = false
+  private bom: boolean
   private fieldSeparator: string
   private lineSeparator: string
   private quoteAlways: boolean
@@ -22,15 +22,8 @@ export class CsvWriter {
     },
   ) {
     const encoding = (options?.encoding ?? "utf-8").toLowerCase()
-    if (encoding === "utf-8" || encoding === "utf8" || encoding === "unicode-1-1-utf-8") {
-      this.encoder = new TextEncoder()
-      this.bom = options?.bom ?? true
-    } else {
-      this.encoder = new LegacyTextEncoder(encoding)
-      if (encoding === "utf-16" || encoding === "utf-16le" || encoding === "utf-16be") {
-        this.bom = options?.bom ?? true
-      }
-    }
+    this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? true : false
+    this.encoder = createEncoder(encoding)
 
     this.writer = dest.getWriter()
     this.fieldSeparator = options?.fieldSeparator ?? ","

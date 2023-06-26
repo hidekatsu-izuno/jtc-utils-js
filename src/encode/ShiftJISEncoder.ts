@@ -56,47 +56,50 @@ function bitcount(n: number) {
 }
 
 export class ShiftJISEncoder implements Encoder {
-
-  get requiredBufferLength(): number {
-      return 2
-  }
-
-  canEncode(cp: number) {
-    if (cp <= 0x7F) {
-      return true
-    } else if (cp >= 0xF040 && cp <= 0xF9FC) {
-      return true
-    } else if (cp >= 0xFF61 && cp <= 0xFF9F) {
-      return true
-    } else {
-      const key1 = cp >>> 4
-      const key2 = cp & 0xF
-      const array = M.get(key1)
-      return array && (array[0] & (1 << (15 - key2))) !== 0
-    }
-  }
-
-  encode(cp: number, buffer: Uint8Array) {
-    if (cp <= 0x7F) {
-      buffer[0] = cp
-      return 1
-    } else if (cp >= 0xF040 && cp <= 0xF9FC) {
-      buffer[0] = cp - 0xF040 + 0xE000
-      return 1
-    } else if (cp >= 0xFF61 && cp <= 0xFF9F) {
-      buffer[0] = cp - 0xFF61 + 0xA1
-      return 1
-    } else {
-      const key1 = cp >>> 4
-      const key2 = cp & 0xF
-      const array = M.get(key1)
-      if (array) {
-        const sjis = array[bitcount(array[0] >>> (15 - key2)) + 1]
-        buffer[0] = (sjis >> 8) & 0xFF
-        buffer[1] = sjis & 0xFF
-        return 2
+  canEncode(str: string) {
+    for (let i = 0; i < str.length; i++) {
+      const cp = str.charCodeAt(i)
+      if (cp <= 0x7F) {
+        // no handle
+      } else if (cp >= 0xF040 && cp <= 0xF9FC) {
+        // no handle
+      } else if (cp >= 0xFF61 && cp <= 0xFF9F) {
+        // no handle
+      } else {
+        const key1 = cp >>> 4
+        const key2 = cp & 0xF
+        const array = M.get(key1)
+        if (!array || (array[0] & (1 << (15 - key2))) === 0) {
+          return false
+        }
       }
-      return 0
     }
+
+    return true
+  }
+
+  encode(str: string): Uint8Array {
+    const out = new Array<number>()
+    for (let i = 0; i < str.length; i++) {
+      const cp = str.charCodeAt(i)
+      if (cp <= 0x7F) {
+        out.push(cp)
+      } else if (cp >= 0xF040 && cp <= 0xF9FC) {
+        out.push(cp - 0xF040 + 0xE000)
+      } else if (cp >= 0xFF61 && cp <= 0xFF9F) {
+        out.push(cp - 0xFF61 + 0xA1)
+      } else {
+        const key1 = cp >>> 4
+        const key2 = cp & 0xF
+        const array = M.get(key1)
+        if (array) {
+          const sjis = array[bitcount(array[0] >>> (15 - key2)) + 1]
+          out.push((sjis >> 8) & 0xFF)
+          out.push(sjis & 0xFF)
+        }
+        throw TypeError(`The code point ${cp} could not be encoded`)
+      }
+    }
+    return new Uint8Array(out)
   }
 }
