@@ -16,6 +16,7 @@ export class FixlenReader {
       encoding?: string,
       bom?: boolean,
       columns: number[] | ((line: Uint8Array, lineNumber: number) => number[])
+      fatal?: boolean,
     }
   ) {
     const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
@@ -49,8 +50,8 @@ export class FixlenReader {
       columns
 
     this.decoder = new TextDecoder(encoding, {
-      fatal: true,
-      ignoreBOM: options?.bom ? !options?.bom : false,
+      fatal: options?.fatal ?? true,
+      ignoreBOM: options?.bom != null ? !options.bom : false,
     })
     this.reader = stream.getReader()
   }

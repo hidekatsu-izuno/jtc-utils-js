@@ -12,7 +12,8 @@ export class CsvReader {
       encoding?: string,
       bom?: boolean,
       fieldSeparator?: string,
-      skipEmptyLine?: boolean
+      skipEmptyLine?: boolean,
+      fatal?: boolean,
     }
   ) {
     const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
@@ -40,8 +41,8 @@ export class CsvReader {
       }
 
       const decoder = new TextDecoderStream(encoding, {
-        fatal: true,
-        ignoreBOM: options?.bom ? !options?.bom : false,
+        fatal: options?.fatal ?? true,
+        ignoreBOM: options?.bom != null ? !options.bom : false,
       })
 
       this.reader = stream

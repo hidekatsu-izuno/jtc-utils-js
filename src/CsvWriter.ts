@@ -19,12 +19,15 @@ export class CsvWriter {
       fieldSeparator?: string,
       lineSeparator?: string,
       quoteAlways?: boolean
+      fatal?: boolean,
     },
   ) {
     const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
 
     this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? true : false
-    this.encoder = createEncoder(encoding)
+    this.encoder = createEncoder(encoding, {
+      fatal: options?.fatal ?? true
+    })
 
     this.writer = dest.getWriter()
     this.fieldSeparator = options?.fieldSeparator ?? ","

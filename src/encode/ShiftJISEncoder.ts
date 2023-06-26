@@ -62,10 +62,13 @@ function bitcount(n: number) {
 }
 
 export class ShiftJISEncoder implements Encoder {
-  constructor() {
+  private fatal
+
+  constructor(options?: { fatal?: boolean }) {
     if (M.size === 0) {
       initM()
     }
+    this.fatal = options?.fatal ?? true
   }
 
   canEncode(str: string) {
@@ -170,15 +173,15 @@ export class ShiftJISEncoder implements Encoder {
         const key1 = cp >>> 4
         const key2 = cp & 0xF
         const array = M.get(key1)
-        if (!array) {
+        const count = array ? bitcount(array[0] >>> (15 - key2)) : 0
+        if (count !== 0) {
+          const sjis = array[count]
+          out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
+        } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
+        } else {
+          out.push(0x1A)
         }
-        const count = bitcount(array[0] >>> (15 - key2))
-        if (count === 0) {
-          throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
-        }
-        const sjis = array[count]
-        out.push((sjis >>> 8) & 0xFF, sjis & 0xFF)
       }
     }
     return new Uint8Array(out)
