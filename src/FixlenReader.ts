@@ -1,4 +1,4 @@
-import { createEncoder } from "./encode/encoder.js"
+import { createEncoder } from "./encoder/encoder.js"
 
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>

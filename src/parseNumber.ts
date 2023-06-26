@@ -1,4 +1,4 @@
-import { NumberFormat } from "./NumberFormat.js"
+import { NumberFormat } from "./format/NumberFormat.js"
 
 export function parseNumber(str: string, format?: string, locale?: string): number;
 export function parseNumber(str: null | undefined, format?: string, locale?: string): undefined;

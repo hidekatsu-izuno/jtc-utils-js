@@ -1,4 +1,4 @@
-import { ShiftJISEncoder } from "./encode/ShiftJISEncoder.js"
+import { ShiftJISEncoder } from "./encoder/ShiftJISEncoder.js"
 
 const encoder = new ShiftJISEncoder()
 

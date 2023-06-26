@@ -1,4 +1,4 @@
-import { Encoder, createEncoder, isUnicodeEncoding } from "./encode/encoder.js"
+import { Encoder, createEncoder, isUnicodeEncoding } from "./encoder/encoder.js"
 
 export class FixlenWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>

@@ -1,3 +1,5 @@
+import { escapeRegExp } from "./escapeRegExp.js"
+
 export class CsvReader {
   private reader: ReadableStreamDefaultReader<string>
 
@@ -55,7 +57,7 @@ export class CsvReader {
   }
 
   async *read() {
-    const re = new RegExp(`\n|\r\n?|${this.fieldSeparator}`, "g")
+    const re = new RegExp(`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`, "g")
 
     let done = false
     let endsWithCR = false
