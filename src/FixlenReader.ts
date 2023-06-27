@@ -1,37 +1,38 @@
 import { createEncoder } from "./encoder/encoder.js"
 
-declare type ColumnLayout = {
-  start: number,
-  end?: number,
-  trim?: "left" | "right" | "both",
-  type?: "number" | "int" | "uint" | "zoned" | "packed",
+export declare type FixlenReaderLayout = {
+  lineLength: number,
+  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, lineNumber: number) => FixlenReaderColumn[]),
 }
 
-interface ReaderStatus {
-  get lineNumber(): number
-  value(layout: ColumnLayout): string
+export declare type FixlenReaderColumn = {
+  start: number,
+  length?: number,
+  trim?: "left" | "right" | "both",
+  type?: "decimal" | "int-le" | "int-be" | "uint-le" | "uint-be" |"zoned" | "packed",
+}
+
+export interface FixlenLineDecoder {
+  decode(layout: FixlenReaderColumn): string
 }
 
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>
   private decoder: TextDecoder
-
-  private lineLength: number
-  private columns: (status: ReaderStatus) => ColumnLayout[]
+  private fatal: boolean
 
   private index: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
-    lineLength: number,
     options?: {
-      columns: ColumnLayout[] | ((status: ReaderStatus) => ColumnLayout[])
       encoding?: string,
       bom?: boolean,
       fatal?: boolean,
     }
   ) {
     const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+    this.fatal = options?.fatal ?? true
 
     let stream
     if (typeof src === "string") {
@@ -55,31 +56,25 @@ export class FixlenReader {
       stream = src
     }
 
-    this.lineLength = lineLength
-    const columns = options?.columns
-    this.columns = !columns ? (status: ReaderStatus) => [{ start: 0 }] :
-      Array.isArray(columns) ? (status: ReaderStatus) => columns :
-      columns
-
     this.decoder = new TextDecoder(encoding, {
-      fatal: options?.fatal ?? true,
+      fatal: this.fatal,
       ignoreBOM: options?.bom != null ? !options.bom : false,
     })
     this.reader = stream.getReader()
   }
 
-  async *read() {
+  async *read(layout: FixlenReaderLayout) {
     let done = false
 
     let buf = new Uint8Array()
     let line: Uint8Array
 
-    const status = <ReaderStatus> {
-      get lineNumber() {
-        return this.lineNumber
-      },
-      value: (layout: ColumnLayout) => {
-        return this.decoder.decode(line.subarray(layout.start, layout.end))
+    const lineDecoder = <FixlenLineDecoder> {
+      decode: (layout: FixlenReaderColumn) => {
+        return this.decoder.decode(line.subarray(
+          layout.start,
+          layout.length ? layout.start + layout.length : undefined,
+        ))
       },
     }
 
@@ -89,34 +84,30 @@ export class FixlenReader {
       if (readed.value) {
         buf = buf.length > 0 ? this.concat(buf, readed.value) : readed.value
       }
-      if (!done && buf.length < this.lineLength) {
+      if (!done && buf.length < layout.lineLength) {
         continue
       }
 
-      line = buf.slice(0, this.lineLength)
+      line = buf.slice(0, layout.lineLength)
       if (done && line.length === 0) {
         break
       }
 
-      buf = buf.subarray(this.lineLength)
-      const columns = this.columns(status)
+      buf = buf.subarray(layout.lineLength)
+      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.index + 1)
 
-      const items = new Array<string | number | null>()
-      if (columns && columns.length > 0) {
-        for (let i = 0; i < columns.length; i++) {
-          const start = columns[i].start
-          const end = columns[i].end ?? ((i + 1 < columns.length) ? columns[i + 1].start : line.length)
-          const item = line.subarray(start, end)
-          if (columns[i].type === "int" || columns[i].type === "uint") {
-            const len = end - start
-            if (len !== 1 && len !== 2 && len !== 4) {
-
-            }
-          } else {
+      const items = new Array<string | number | BigInt | null>()
+      if (cols && cols.length > 0) {
+        for (let i = 0; i < cols.length; i++) {
+          const start = cols[i].start
+          const len = cols[i].length
+          const end = len != null ? start + len : ((i + 1 < cols.length) ? cols[i + 1].start : line.length)
+          const type = cols[i].type
+          if (!type || type === "decimal") {
             let text = ""
             if (start < end) {
-              text = this.decoder.decode(item)
-              switch (columns[i].trim) {
+              text = this.decoder.decode(line.subarray(start, end))
+              switch (cols[i].trim) {
                 case "left":
                   text = text.trimStart()
                   break
@@ -128,18 +119,52 @@ export class FixlenReader {
                   break
               }
             }
-            if (columns[i].type === "number") {
+            if (type === "decimal") {
               let value = null
               if (text) {
                 value = Number.parseFloat(text)
-                if (!Number.isNaN(value)) {
-                  value = text
+                if (this.fatal && Number.isNaN(value)) {
+                  throw new RangeError("byte length must be 1, 2, 4 or 8.")
                 }
               }
               items.push(value)
             } else {
               items.push(text)
             }
+          } else if (type.startsWith("int-")) {
+            const view = new DataView(line.buffer)
+            const littleEndien = type === "int-le"
+            if (len === 4) {
+              items.push(view.getInt32(start, littleEndien))
+            } else if (len === 2) {
+              items.push(view.getInt16(start, littleEndien))
+            } else if (len === 1) {
+              items.push(view.getInt8(start))
+            } else if (this.fatal) {
+              throw new RangeError("byte length must be 1, 2 or 4.")
+            } else {
+              items.push(Number.NaN)
+            }
+          } else if (type.startsWith("uint-")) {
+            const view = new DataView(line.buffer)
+            const littleEndien = type === "uint-le"
+            if (len === 4) {
+              items.push(view.getUint32(start, littleEndien))
+            } else if (len === 2) {
+              items.push(view.getUint16(start, littleEndien))
+            } else if (len === 1) {
+              items.push(view.getUint8(start))
+            } else if (this.fatal) {
+              throw new RangeError("byte length must be 1, 2 or 4.")
+            } else {
+              items.push(Number.NaN)
+            }
+          } else if (cols[i].type === "zoned") {
+            //TODO
+          } else if (cols[i].type === "packed") {
+            //TODO
+          } else {
+            throw new RangeError(`unknown column type: ${cols[i].type}`)
           }
         }
       }

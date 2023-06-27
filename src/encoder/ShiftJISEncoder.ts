@@ -1,6 +1,6 @@
 import { Encoder } from "./encoder.js"
 
-const M = new Map()
+const M = new Map<number, Uint16Array>()
 
 function initM() {
   const decoder = new TextDecoder("shift_jis")
@@ -22,18 +22,18 @@ function initM() {
         }
       }
     }
-    setM(0xA5, 0x5C)
-    setM(0xAB, 0x81E1)
-    setM(0xAC, 0x81CA)
-    setM(0xAF, 0x8150)
-    setM(0xB5, 0x83CA)
-    setM(0xB7, 0x8145)
-    setM(0xB8, 0x8143)
-    setM(0xBB, 0x81E2)
-    setM(0x203E, 0x7E)
   }
-  for (const key of M.keys()) {
-    M.set(key, new Uint16Array(M.get(key).filter((item?: number) => item != null)))
+  setM(0xA5, 0x5C)
+  setM(0xAB, 0x81E1)
+  setM(0xAC, 0x81CA)
+  setM(0xAF, 0x8150)
+  setM(0xB5, 0x83CA)
+  setM(0xB7, 0x8145)
+  setM(0xB8, 0x8143)
+  setM(0xBB, 0x81E2)
+  setM(0x203E, 0x7E)
+  for (const [key, value] of M.entries()) {
+    M.set(key, new Uint16Array(value.filter((item?: number) => item != null)))
   }
 }
 
@@ -41,7 +41,7 @@ function setM(cp: number, sjis: number) {
   const key1 = cp >>> 4
   const key2 = cp & 0xF
 
-  let array = M.get(key1)
+  let array = M.get(key1) as any
   if (!array) {
     array = [0]
     M.set(key1, array)
@@ -184,15 +184,15 @@ export class ShiftJISEncoder implements Encoder {
         const key1 = cp >>> 4
         const key2 = cp & 0xF
         const array = M.get(key1)
-        const count = array ? bitcount(array[0] >>> (15 - key2)) : 0
-        if (count !== 0) {
-          const sjis = array[count]
+        let shifted = 0
+        if (array && ((shifted = (array[0] >>> (15 - key2))) & 0x1) !== 0) {
+          const sjis = array[bitcount(shifted)]
           out[pos++] = (sjis >>> 8) & 0xFF
           out[pos++] = sjis & 0xFF
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
         } else {
-          out[pos++] = 0x1A
+          out[pos++] = 0x5F // ?
         }
       }
     }

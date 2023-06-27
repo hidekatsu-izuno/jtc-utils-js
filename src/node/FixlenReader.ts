@@ -5,11 +5,10 @@ import { FixlenReader as WebFixlenReader } from "../FixlenReader.js"
 export class CsvReader extends WebFixlenReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
-    lineLength: number,
     options?: {
       encoding?: string,
       bom?: boolean,
-      columns: number[] | ((line: Uint8Array, lineNumber: number) => number[])
+      fatal?: boolean,
     }
   ) {
     let newSrc
@@ -20,6 +19,6 @@ export class CsvReader extends WebFixlenReader {
     } else {
       newSrc = Readable.toWeb(src.createReadStream()) as ReadableStream<Uint8Array>
     }
-    super(newSrc, lineLength, options)
+    super(newSrc, options)
   }
 }

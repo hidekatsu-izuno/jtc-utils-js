@@ -1,3 +1,4 @@
+import { EucJPEncoder } from "./EucJPEncoder.js"
 import { ShiftJISEncoder } from "./ShiftJISEncoder.js"
 import { Utf16BeEncoder } from "./Utf16BeEncoder.js"
 import { Utf16LeEncoder } from "./Utf16LeEncoder.js"
@@ -27,6 +28,10 @@ export function isUnicodeEncoding(encoding: string) {
   }
 }
 
+export function isEbcdicEncoding(encoding: string) {
+  return false
+}
+
 export function createEncoder(encoding: string, options?: EncoderOptions) {
   switch (encoding) {
     case "utf-8":
@@ -46,6 +51,10 @@ export function createEncoder(encoding: string, options?: EncoderOptions) {
     case "windows-31j":
     case "x-sjis":
       return new ShiftJISEncoder(options)
+    case "cseucpkdfmtjapanese":
+    case "euc-jp":
+    case "x-euc-jp":
+      return new EucJPEncoder(options)
     default:
       throw new RangeError(`The encoding label provided ('${encoding}') is invalid.`)
   }

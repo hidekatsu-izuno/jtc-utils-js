@@ -1,16 +1,16 @@
 import { describe, expect, test } from "vitest"
-import { FixlenReader } from "../src/FixlenReader"
+import { FixlenReader, FixlenReaderLayout } from "../src/FixlenReader"
 import fs from "node:fs"
 import { Readable } from "node:stream"
 
 describe('FixlenReader', () => {
   test("test read string", async () => {
-    const reader = new FixlenReader("01234567890123456789", 10, {
-      columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7 }]
-    })
+    const reader = new FixlenReader("01234567890123456789")
+
+    const layout = { lineLength: 10, columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7 }] }
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader.read(layout)) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -23,12 +23,12 @@ describe('FixlenReader', () => {
   })
 
   test("test read string with linebreak", async () => {
-    const reader = new FixlenReader("0123456789\r\n0123456789\r\n", 12, {
-      columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7, end: 10 }]
-    })
+    const reader = new FixlenReader("0123456789\r\n0123456789\r\n")
+
+    const layout = { lineLength: 12, columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7, end: 10 }] }
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader.read(layout)) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -41,13 +41,14 @@ describe('FixlenReader', () => {
   })
 
   test("test read shift_jis string with linebreak", async () => {
-    const reader = new FixlenReader("0123４５６789\r\n0123４５６789\r\n", 15, {
+    const reader = new FixlenReader("0123４５６789\r\n0123４５６789\r\n", {
       encoding: "shift_jis",
-      columns: [{ start: 0 }, { start: 3, end: 8 }, { start: 10, end: 13 }]
     })
+
+    const layout = { lineLength: 15, columns: [{ start: 0 }, { start: 3, end: 8 }, { start: 10, end: 13 }] }
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader.read(layout)) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -60,19 +61,22 @@ describe('FixlenReader', () => {
   })
 
   test("test read mutiple layout shift_jis with linebreak", async () => {
-    const layout1 = [{ start: 1, end: 11 }]
-    const layout2 = [{ start: 1 }, { start: 6 }, { start: 11, end: 16 }]
-
-    const reader = new FixlenReader("1あいうえお     \r\n0ABCDEabcde01234\r\n", 18, {
-      encoding: "shift_jis",
-      columns: (status) => {
-        const flag = status.value({ start: 0, end: 1 })
-        return (flag === "1") ? layout1 : layout2
+    const columns1 = [{ start: 1, length: 10 }]
+    const columns2 = [{ start: 1 }, { start: 6 }, { start: 11, length: 5 }]
+    const layout: FixlenReaderLayout = {
+      lineLength: 18,
+      columns(line) {
+        const flag = line.decode({ start: 0, length: 1 })
+        return (flag === "1") ? columns1 : columns2
       }
+    }
+
+    const reader = new FixlenReader("1あいうえお     \r\n0ABCDEabcde01234\r\n", {
+      encoding: "shift_jis"
     })
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader.read(layout)) {
         list.push(item)
       }
       expect(list).toStrictEqual([
