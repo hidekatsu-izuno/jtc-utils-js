@@ -1,5 +1,12 @@
 import { Encoder, createEncoder, isUnicodeEncoding } from "./encoder/encoder.js"
 
+declare type ColumnLayout = {
+  start: number,
+  end?: number,
+  filler?: string,
+  type?: "number" | "int" | "uint" | "zoned" | "packed",
+}
+
 export class FixlenWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>
   private encoder: Encoder
