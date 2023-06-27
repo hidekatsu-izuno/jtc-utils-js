@@ -100,8 +100,8 @@ export class FixlenReader {
       if (cols && cols.length > 0) {
         for (let i = 0; i < cols.length; i++) {
           const start = cols[i].start
-          const len = cols[i].length
-          const end = len != null ? start + len : ((i + 1 < cols.length) ? cols[i + 1].start : line.length)
+          const clen = cols[i].length
+          const end = clen != null ? start + clen : ((i + 1 < cols.length) ? cols[i + 1].start : line.length)
           const type = cols[i].type
           if (!type || type === "decimal") {
             let text = ""
@@ -134,6 +134,7 @@ export class FixlenReader {
           } else if (type.startsWith("int-")) {
             const view = new DataView(line.buffer)
             const littleEndien = type === "int-le"
+            const len = end - start
             if (len === 4) {
               items.push(view.getInt32(start, littleEndien))
             } else if (len === 2) {
@@ -148,6 +149,7 @@ export class FixlenReader {
           } else if (type.startsWith("uint-")) {
             const view = new DataView(line.buffer)
             const littleEndien = type === "uint-le"
+            const len = end - start
             if (len === 4) {
               items.push(view.getUint32(start, littleEndien))
             } else if (len === 2) {
@@ -159,10 +161,35 @@ export class FixlenReader {
             } else {
               items.push(Number.NaN)
             }
-          } else if (cols[i].type === "zoned") {
-            //TODO
-          } else if (cols[i].type === "packed") {
-            //TODO
+          } else if (type === "zoned") {
+            let num = 0
+            for (let i = start; i < end; i++) {
+              if (i + 1 === end) {
+                num = num *10 + line[i] & 0xF
+                const sign = (line[i] >>> 4) & 0xF
+                if (sign === 0xB || sign === 0xD) {
+                  num = -1 * num
+                }
+              } else {
+                num = num * 10 + (line[i] & 0xF)
+              }
+            }
+            items.push(num)
+          } else if (type === "packed") {
+            let num = 0
+            for (let i = start; i < end; i++) {
+              if (i + 1 === end) {
+                num = num * 10 + (line[i] & 0xF)
+                const sign = (line[i] >> 8) & 0xF
+                if (sign === 0xB || sign === 0xD) {
+                  num = -1 * num
+                }
+              } else {
+                num = num * 10 + ((line[i] >> 8) & 0xF)
+                num = num * 10 + (line[i] & 0xF)
+              }
+            }
+            items.push(num)
           } else {
             throw new RangeError(`unknown column type: ${cols[i].type}`)
           }

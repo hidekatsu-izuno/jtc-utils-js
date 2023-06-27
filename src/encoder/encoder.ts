@@ -1,4 +1,6 @@
 import { EucJPEncoder } from "./EucJPEncoder.js"
+import { IBM930Encoder } from "./IBM930Encoder.js"
+import { IBM939Encoder } from "./IBM939Encoder.js"
 import { ShiftJISEncoder } from "./ShiftJISEncoder.js"
 import { Utf16BeEncoder } from "./Utf16BeEncoder.js"
 import { Utf16LeEncoder } from "./Utf16LeEncoder.js"
@@ -55,6 +57,10 @@ export function createEncoder(encoding: string, options?: EncoderOptions) {
     case "euc-jp":
     case "x-euc-jp":
       return new EucJPEncoder(options)
+    case "cp930":
+      return new IBM930Encoder(options)
+    case "cp939":
+      return new IBM939Encoder(options)
     default:
       throw new RangeError(`The encoding label provided ('${encoding}') is invalid.`)
   }
