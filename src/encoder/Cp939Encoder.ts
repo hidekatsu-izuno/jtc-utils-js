@@ -2,7 +2,7 @@ import { Encoder } from "./encoder.js"
 
 const EBCDIC = []
 
-export class IBM930Encoder implements Encoder {
+export class Cp939Encoder implements Encoder {
   private fatal
 
   constructor(options?: { fatal?: boolean }) {
