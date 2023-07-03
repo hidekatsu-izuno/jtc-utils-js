@@ -5,7 +5,7 @@ import fs from "node:fs"
 
 describe('ShiftJISEncoder', () => {
   test("compare shift_jis encoder output", async () => {
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/windows-31j.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/windows-31j.encode.csv"))
     const map = new Map()
     for await (const line of reader.read()) {
       map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
