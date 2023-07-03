@@ -1,4 +1,4 @@
-import { Encoder, EncoderOptions } from "./encoder.js"
+import { Encoder } from "./encoder.js"
 
 export class Utf8Encoder implements Encoder {
   private encoder = new TextEncoder()

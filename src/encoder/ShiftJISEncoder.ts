@@ -1,11 +1,47 @@
+import { PackedMap } from "../PackedMap.js"
 import { Encoder } from "./encoder.js"
-import { encodeJIS } from "./encodeJIS.js"
+import { JISEncodeMap } from "./JISEncodeMap.js"
+
+const ShiftJISMap = new PackedMap((m) => {
+  const decoder = new TextDecoder("shift_jis")
+
+  // Shift-JIS additional mapping
+  m.set(0xA5, 0x5C)
+  m.set(0xAB, 0x81E1)
+  m.set(0xAF, 0x8150)
+  m.set(0xB5, 0x83CA)
+  m.set(0xB7, 0x8145)
+  m.set(0xB8, 0x8143)
+  m.set(0xBB, 0x81E2)
+  m.set(0x203E, 0x7E)
+  m.set(0x2212, 0x817C)
+  m.set(0x3094, 0x8394)
+  const buf = new Uint8Array(2)
+  for (const hba of [[0xFA, 0xFC], [0xED, 0xEE]]) {
+    for (let hb = hba[0]; hb <= hba[1]; hb++) {
+      buf[0] = hb
+      for (const lba of [[0x40, 0x7E], [0x80, 0xFC]]) {
+        for (let lb = lba[0]; lb <= lba[1]; lb++) {
+          buf[1] = lb
+
+          const decoded = decoder.decode(buf)
+          if (decoded !== "\uFFFD") {
+            m.set(decoded.charCodeAt(0), hb << 8 | lb)
+          }
+        }
+      }
+    }
+  }
+})
 
 export class ShiftJISEncoder implements Encoder {
   private fatal
 
   constructor(options?: { fatal?: boolean }) {
     this.fatal = options?.fatal ?? true
+
+    JISEncodeMap.initialize()
+    ShiftJISMap.initialize()
   }
 
   canEncode(str: string) {
@@ -18,13 +54,10 @@ export class ShiftJISEncoder implements Encoder {
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
         // no handle
       } else {
-        const jis = encodeJIS(cp) ?? 0xFF000000
-        const plane = (jis >>> 24)
-        if (plane === 0) {
+        let enc = JISEncodeMap.get(cp)
+        if (enc != null) {
           // no handle
-        } else if (plane === 1) {
-          // no handle
-        } else if (plane === 2) {
+        } else if ((enc = ShiftJISMap.get(cp)) != null) {
           // no handle
         } else {
           return false
@@ -67,20 +100,20 @@ export class ShiftJISEncoder implements Encoder {
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
         out[pos++] = cp - 0xFF61 + 0xA1
       } else {
-        let jis = encodeJIS(cp)
-        if (jis != null) {
-          let hb = (jis >>> 8) & 0xFF
-          let lb = jis & 0xFF
+        let enc = JISEncodeMap.get(cp)
+        if (enc != null) {
+          let hb = (enc >>> 8) & 0xFF
+          let lb = enc & 0xFF
           lb += (hb & 1) ? (lb < 0x60) ? 0x1F : 0x20 : 0x7E
           hb = (hb < 0x5F) ? ((hb + 0xE1) >>> 1) : ((hb + 0x161) >>> 1)
           out[pos++] = hb
           out[pos++] = lb
-        } else if ((jis = encodeJIS(0x01000000 | cp)) != null) {
-          if (jis > 0xFF) {
-            out[pos++] = (jis >>> 8) & 0xFF
-            out[pos++] = jis & 0xFF
+        } else if ((enc = ShiftJISMap.get(cp)) != null) {
+          if (enc > 0xFF) {
+            out[pos++] = (enc >>> 8) & 0xFF
+            out[pos++] = enc & 0xFF
           } else {
-            out[pos++] = jis & 0xFF
+            out[pos++] = enc & 0xFF
           }
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)

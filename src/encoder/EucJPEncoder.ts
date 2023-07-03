@@ -1,5 +1,41 @@
+import { PackedMap } from "../PackedMap.js"
 import { Encoder } from "./encoder.js"
-import { encodeJIS } from "./encodeJIS.js"
+import { JISEncodeMap } from "./JISEncodeMap.js"
+
+const EucJPMap = new PackedMap((m) => {
+  const decoder = new TextDecoder("euc-jp")
+  // EUC-JP additional mapping
+  m.set(0xA5, 0x5C)
+  m.set(0x203E, 0x7E)
+  m.set(0x2170, 0x8FF3F3)
+  m.set(0x2171, 0x8FF3F4)
+  m.set(0x2172, 0x8FF3F5)
+  m.set(0x2173, 0x8FF3F6)
+  m.set(0x2174, 0x8FF3F7)
+  m.set(0x2175, 0x8FF3F8)
+  m.set(0x2176, 0x8FF3F9)
+  m.set(0x2177, 0x8FF3FA)
+  m.set(0x2178, 0x8FF3FB)
+  m.set(0x2179, 0x8FF3FC)
+  m.set(0x2212, 0xA1DD)
+  m.set(0x2225, 0xA1C2)
+  m.set(0x301C, 0xA1C1)
+  const buf = new Uint8Array(3)
+  buf[0] = 0x8F
+  for (const hba of [[0xA1, 0xAB], [0xB0, 0xED], [0xF3, 0xF4]]) {
+    for (let hb = hba[0]; hb <= hba[1]; hb++) {
+      buf[1] = hb
+      for (let lb = 0xA1; lb <= 0xFE; lb++) {
+        buf[2] = lb
+
+        const decoded = decoder.decode(buf)
+        if (decoded !== "\uFFFD") {
+          m.set(decoded.charCodeAt(0), 0x8F << 16 | hb << 8 | lb)
+        }
+      }
+    }
+  }
+})
 
 export class EucJPEncoder implements Encoder {
   private fatal
@@ -13,16 +49,13 @@ export class EucJPEncoder implements Encoder {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
         // no handle
-      } else if (cp >= 0xE000 && cp <= 0xE757) { // ユーザー外字
-        // no handle
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
         // no handle
       } else {
-        const jis = encodeJIS(cp) ?? 0xFF000000
-        const plane = (jis >>> 24)
-        if (plane === 0) {
+        let jis = JISEncodeMap.get(cp)
+        if (jis != null) {
           // no handle
-        } else if (plane === 2) {
+        } else if ((jis = EucJPMap.get(cp)) != null) {
           // no handle
         } else {
           return false
@@ -43,11 +76,11 @@ export class EucJPEncoder implements Encoder {
         out[pos++] = 0x8E
         out[pos++] = cp - 0xFF61 + 0xA1
       } else {
-        let jis = encodeJIS(cp)
+        let jis = JISEncodeMap.get(cp)
         if (jis != null) {
           out[pos++] = ((jis >>> 8) + 0x80) & 0xFF
           out[pos++] = (jis + 0x80) & 0xFF
-        } else if ((jis = encodeJIS(0x02000000 | cp)) != null) {
+        } else if ((jis = EucJPMap.get(cp)) != null) {
           if (jis > 0xFFFF) {
             out[pos++] = (jis >>> 16) & 0xFF
             out[pos++] = (jis >>> 8) & 0xFF
