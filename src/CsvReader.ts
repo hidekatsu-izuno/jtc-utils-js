@@ -56,7 +56,7 @@ export class CsvReader {
     this.skipEmptyLine = options?.skipEmptyLine ?? false
   }
 
-  async *read() {
+  async *read(): AsyncGenerator<string[]> {
     const re = new RegExp(`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`, "g")
 
     let done = false

@@ -63,7 +63,7 @@ export class FixlenReader {
     this.reader = stream.getReader()
   }
 
-  async *read(layout: FixlenReaderLayout) {
+  async *read(layout: FixlenReaderLayout): AsyncGenerator<(string | number | BigInt | null)[]> {
     let done = false
 
     let buf = new Uint8Array()

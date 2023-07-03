@@ -11,6 +11,7 @@
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate": "npm-run-all 'generate:*'",
+    "generate:IBMKanjiDecodeMap": "node --loader ts-node/esm ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toHalfwidth": "node --loader ts-node/esm ./scripts/generate_toHalfwidth.ts",
     "generate:toFullwidth": "node --loader ts-node/esm ./scripts/generate_toFullwidth.ts",
     "generate:toHiragana": "node --loader ts-node/esm ./scripts/generate_toHiragana.ts",
