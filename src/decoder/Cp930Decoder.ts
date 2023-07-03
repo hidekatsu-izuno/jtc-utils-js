@@ -30,36 +30,46 @@ export class Cp930Decoder implements Decoder {
 
   decode(input: Uint8Array): string {
     const array = new Array<number>()
-    let state = 0
+    let shifted = false
+    let fail = false
     for (let i = 0; i < input.length; i++) {
       let n = input[i]
-      if (n === 0x00) {
-        array.push(0x00)
-      } else if (n === 0x0E) {
-        state = 1
+      if (n === 0x0E) {
+        shifted = true
       } else if (n === 0x0F) {
-        state = 0
-      } else if (state === 0) {
-        const c = EbcdicMap[n]
-        if (c !== 0) {
-          array.push(c)
-        } else if (this.fatal) {
-          throw TypeError(`The input ${n.toString(16)} could not be encoded`)
-        } else {
-          array.push(0xFFFD)
+        shifted = false
+      } else if (shifted) {
+        if (i + 1 < input.length) {
+          i++
+          let enc = IBMKanjiDecodeMap.get(n << 8 | input[i])
+          if (enc === 0xFF0D) {
+            array.push(0x2212)
+          } else if (enc) {
+            array.push(enc)
+          } else {
+            fail = true
+          }
         }
-      } else if (state === 1) {
-        state = 2
       } else {
-        let enc = IBMKanjiDecodeMap.get(n << 8 | input[i-1])
-        if (enc) {
-          array.push(enc)
-        } else if (this.fatal) {
+        if (n === 0x00) {
+          array.push(0x00)
+        } else {
+          const c = EbcdicMap[n]
+          if (c !== 0) {
+            array.push(c)
+          } else {
+            fail = true
+          }
+        }
+      }
+
+      if (fail) {
+        if (this.fatal) {
           throw TypeError(`The input ${n.toString(16)} could not be encoded`)
         } else {
           array.push(0xFFFD)
+          fail = false
         }
-        state = 1
       }
     }
     return String.fromCharCode(...array)

@@ -1,7 +1,7 @@
 import { Decoder } from "./decoder.js"
 import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.js"
 
-const EbcdicMap = Uint8Array.of(
+const EbcdicMap = Uint16Array.of(
   //   0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F
   0x0000, 0x0001, 0x0002, 0x0003, 0x009c, 0x0009, 0x0086, 0x007f, 0x0097, 0x008d, 0x008e, 0x000b, 0x000c, 0x000d,      0,      0, // 0x
   0x0010, 0x0011, 0x0012, 0x0013, 0x009d, 0x000a, 0x0008, 0x0087, 0x0018, 0x0019, 0x0092, 0x008f, 0x001c, 0x001d, 0x001e, 0x001f, // 1x
@@ -30,36 +30,44 @@ export class Cp939Decoder implements Decoder {
 
   decode(input: Uint8Array): string {
     const array = new Array<number>()
-    let state = 0
+    let shifted = false
+    let fail = false
     for (let i = 0; i < input.length; i++) {
       let n = input[i]
-      if (n === 0x00) {
-        array.push(0x00)
-      } else if (n === 0x0E) {
-        state = 1
+      if (n === 0x0E) {
+        shifted = true
       } else if (n === 0x0F) {
-        state = 0
-      } else if (state === 0) {
-        const c = EbcdicMap[n]
-        if (c !== 0) {
-          array.push(c)
-        } else if (this.fatal) {
-          throw TypeError(`The input ${n.toString(16)} could not be encoded`)
-        } else {
-          array.push(0xFFFD)
+        shifted = false
+      } else if (shifted) {
+        if (i + 1 < input.length) {
+          i++
+          let enc = IBMKanjiDecodeMap.get(n << 8 | input[i])
+          if (enc) {
+            array.push(enc)
+          } else {
+            fail = true
+          }
         }
-      } else if (state === 1) {
-        state = 2
       } else {
-        let enc = IBMKanjiDecodeMap.get(n << 8 | input[i-1])
-        if (enc) {
-          array.push(enc)
-        } else if (this.fatal) {
+        if (n === 0x00) {
+          array.push(0x00)
+        } else {
+          const c = EbcdicMap[n]
+          if (c !== 0) {
+            array.push(c)
+          } else {
+            fail = true
+          }
+        }
+      }
+
+      if (fail) {
+        if (this.fatal) {
           throw TypeError(`The input ${n.toString(16)} could not be encoded`)
         } else {
           array.push(0xFFFD)
+          fail = false
         }
-        state = 1
       }
     }
     return String.fromCharCode(...array)

@@ -1,7 +1,7 @@
 import { promises as fs }  from "node:fs"
 import { CsvReader } from "../src/node/CsvReader.js"
 
-const input = await fs.open("./data/cp930.decode.csv")
+const input = await fs.open("./data/cp939.decode.csv")
 
 const reader = new CsvReader(input.createReadStream(), {
   skipEmptyLine: true,
