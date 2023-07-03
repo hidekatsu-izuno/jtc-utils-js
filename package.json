@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
   "main": "./lib/index.js",
@@ -20,6 +20,17 @@
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
   "exports": {
+    "./node": {
+      "import": {
+        "types": "./module/node/index.d.ts",
+        "default": "./module/node/index.js"
+      },
+      "require": {
+        "types": "./lib/node/index.d.ts",
+        "default": "./lib/node/index.js"
+      },
+      "default": "./lib/node/index.js"
+    },
     ".": {
       "import": {
         "types": "./module/index.d.ts",
