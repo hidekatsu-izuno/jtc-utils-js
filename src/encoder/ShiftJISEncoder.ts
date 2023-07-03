@@ -67,18 +67,21 @@ export class ShiftJISEncoder implements Encoder {
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
         out[pos++] = cp - 0xFF61 + 0xA1
       } else {
-        const jis = encodeJIS(cp) ?? 0xFF000000
-        const plane = (jis >>> 24)
-        if (plane === 0) {
+        let jis = encodeJIS(cp)
+        if (jis != null) {
           let hb = (jis >>> 8) & 0xFF
           let lb = jis & 0xFF
           lb += (hb & 1) ? (lb < 0x60) ? 0x1F : 0x20 : 0x7E
           hb = (hb < 0x5F) ? ((hb + 0xE1) >>> 1) : ((hb + 0x161) >>> 1)
           out[pos++] = hb
           out[pos++] = lb
-        } else if (plane === 1 || plane === 2) {
-          out[pos++] = (jis >>> 8) & 0xFF
-          out[pos++] = jis & 0xFF
+        } else if ((jis = encodeJIS(0x01000000 | cp)) != null) {
+          if (jis > 0xFF) {
+            out[pos++] = (jis >>> 8) & 0xFF
+            out[pos++] = jis & 0xFF
+          } else {
+            out[pos++] = jis & 0xFF
+          }
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
         } else {

@@ -86,7 +86,7 @@ export class CsvReader {
       }
 
       while (pos < buf.length) {
-        if (buf.startsWith('"')) {
+        if (!quoted && buf.startsWith('"')) {
           if (pos === 0) {
             pos = 1
           }

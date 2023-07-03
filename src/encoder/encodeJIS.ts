@@ -19,6 +19,11 @@ function initMap() {
   const eucDecoder = new TextDecoder("euc-jp")
   const sjisDecoder = new TextDecoder("shift_jis")
 
+  setMap(0xA2, 0x2171)
+  setMap(0xA3, 0x2172)
+  setMap(0xAC, 0x224C)
+  setMap(0x2014, 0x213D)
+  setMap(0x2016, 0x2142)
   let buf = new Uint8Array(2)
   for (let hb = 0xA1; hb <= 0xF4; hb++) {
     buf[0] = hb
@@ -32,18 +37,17 @@ function initMap() {
     }
   }
 
-  // Additional Unicode mapping
-  setMap(0xA5, 0x0100005C)
-  setMap(0xAB, 0x010081E1)
-  setMap(0xAC, 0x010081CA)
-  setMap(0xAF, 0x01008150)
-  setMap(0xB5, 0x010083CA)
-  setMap(0xB7, 0x01008145)
-  setMap(0xB8, 0x01008143)
-  setMap(0xBB, 0x010081E2)
-  setMap(0x203E, 0x0100007E)
-
   // Shift-JIS additional mapping
+  setMap(0x010000A5, 0x5C)
+  setMap(0x0100203E, 0x7E)
+  setMap(0x010000AB, 0x81E1)
+  setMap(0x010000AF, 0x8150)
+  setMap(0x010000B5, 0x83CA)
+  setMap(0x010000B7, 0x8145)
+  setMap(0x010000B8, 0x8143)
+  setMap(0x010000BB, 0x81E2)
+  setMap(0x01002212, 0x817C)
+  setMap(0x01003094, 0x8394)
   buf = new Uint8Array(2)
   for (const hba of [[0xFA, 0xFC], [0xED, 0xEE]]) {
     for (let hb = hba[0]; hb <= hba[1]; hb++) {
@@ -54,10 +58,7 @@ function initMap() {
 
           const decoded = sjisDecoder.decode(buf)
           if (decoded !== "\uFFFD") {
-            const cp = decoded.charCodeAt(0)
-            if (cp) {
-              setMap(decoded.charCodeAt(0), 0x02000000 | hb << 8 | lb)
-            }
+            setMap(0x01000000 | decoded.charCodeAt(0), hb << 8 | lb)
           }
         }
       }
@@ -65,6 +66,21 @@ function initMap() {
   }
 
   // EUC-JP additional mapping
+  setMap(0x020000A5, 0x5C)
+  setMap(0x0200203E, 0x7E)
+  setMap(0x02002170, 0x8FF3F3)
+  setMap(0x02002171, 0x8FF3F4)
+  setMap(0x02002172, 0x8FF3F5)
+  setMap(0x02002173, 0x8FF3F6)
+  setMap(0x02002174, 0x8FF3F7)
+  setMap(0x02002175, 0x8FF3F8)
+  setMap(0x02002176, 0x8FF3F9)
+  setMap(0x02002177, 0x8FF3FA)
+  setMap(0x02002178, 0x8FF3FB)
+  setMap(0x02002179, 0x8FF3FC)
+  setMap(0x02002212, 0xA1DD)
+  setMap(0x02002225, 0xA1C2)
+  setMap(0x0200301C, 0xA1C1)
   buf = new Uint8Array(3)
   buf[0] = 0x8F
   for (const hba of [[0xA1, 0xAB], [0xB0, 0xED], [0xF3, 0xF4]]) {
@@ -75,7 +91,7 @@ function initMap() {
 
         const decoded = eucDecoder.decode(buf)
         if (decoded !== "\uFFFD") {
-          setMap(decoded.charCodeAt(0), 0x03000000 | 0x8F << 16 | hb << 8 | lb)
+          setMap(0x02000000 | decoded.charCodeAt(0), 0x8F << 16 | hb << 8 | lb)
         }
       }
     }
