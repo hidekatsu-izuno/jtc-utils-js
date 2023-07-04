@@ -31,8 +31,10 @@ export class Cp930Decoder implements Decoder {
   decode(input: Uint8Array): string {
     const array = new Array<number>()
     let shifted = false
-    let fail = false
+
     for (let i = 0; i < input.length; i++) {
+      let fail = false
+
       let n = input[i]
       if (n === 0x0E) {
         shifted = true
@@ -50,16 +52,14 @@ export class Cp930Decoder implements Decoder {
             fail = true
           }
         }
+      } else if (n === 0x00) {
+        array.push(0x00)
       } else {
-        if (n === 0x00) {
-          array.push(0x00)
+        const c = EbcdicMap[n]
+        if (c !== 0) {
+          array.push(c)
         } else {
-          const c = EbcdicMap[n]
-          if (c !== 0) {
-            array.push(c)
-          } else {
-            fail = true
-          }
+          fail = true
         }
       }
 
