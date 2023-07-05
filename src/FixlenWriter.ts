@@ -80,20 +80,19 @@ export class FixlenWriter {
             buf.set(encoded.subarray(0, len), start)
           }
         } else {
-          let pos = start
+          if ((len - encoded.length) % filler.length > 0) {
+            throw new RangeError(`filler length is mismatched: ${filler.length}`)
+          }
           if (isNumber) {
             for (let j = 0; j < len - encoded.length; j += filler.length) {
-              buf.set(filler, pos)
-              pos += filler.length
+              buf.set(filler, start + j)
             }
-            buf.set(encoded, pos)
+            buf.set(encoded, len - encoded.length)
           } else {
-            buf.set(encoded, pos)
-            pos += encoded.length
             for (let j = 0; j < len - encoded.length; j += filler.length) {
-              buf.set(filler, pos)
-              pos += filler.length
+              buf.set(filler, start + encoded.length + j)
             }
+            buf.set(encoded, start)
           }
         }
       } else if (!Number.isInteger(value)) {
