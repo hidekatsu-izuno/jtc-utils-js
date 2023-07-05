@@ -1,10 +1,10 @@
-import { EucJPEncoder } from "./EucJPEncoder.js"
+import { EucjpEncoder } from "./EucjpEncoder.js"
 import { Cp930Encoder } from "./Cp930Encoder.js"
 import { Cp939Encoder } from "./Cp939Encoder.js"
-import { ShiftJISEncoder } from "./ShiftJISEncoder.js"
-import { Utf16BeEncoder } from "./Utf16BeEncoder.js"
-import { Utf16LeEncoder } from "./Utf16LeEncoder.js"
-import { Utf8Encoder } from "./Utf8Encoder.js"
+import { Windows31jEncoder } from "./Windows31jEncoder.js"
+import { Utf16beEncoder } from "./Utf16beEncoder.js"
+import { Utf16leEncoder } from "./Utf16leEncoder.js"
+import { StandardEncoder } from "./StandardEncoder.js"
 
 export interface Encoder {
   canEncode(str: string, options?: EncoderEncodeOptions): boolean
@@ -49,12 +49,12 @@ export function createEncoder(encoding: string, options?: EncoderOptions) {
     case "utf-8":
     case "utf8":
     case "unicode-1-1-utf-8":
-      return new Utf8Encoder()
+      return new StandardEncoder("utf-8")
     case "utf-16":
     case "utf-16le":
-      return new Utf16LeEncoder()
+      return new Utf16leEncoder()
     case "utf-16be":
-      return new Utf16BeEncoder()
+      return new Utf16beEncoder()
     case "csshiftjis":
     case "ms_kanji":
     case "shift-jis":
@@ -62,11 +62,11 @@ export function createEncoder(encoding: string, options?: EncoderOptions) {
     case "sjis":
     case "windows-31j":
     case "x-sjis":
-      return new ShiftJISEncoder(options)
+      return new Windows31jEncoder(options)
     case "cseucpkdfmtjapanese":
     case "euc-jp":
     case "x-euc-jp":
-      return new EucJPEncoder(options)
+      return new EucjpEncoder(options)
     case "cp930":
       return new Cp930Encoder(options)
     case "cp939":

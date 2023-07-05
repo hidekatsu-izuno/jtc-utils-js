@@ -2,8 +2,8 @@ import { PackedMap } from "../PackedMap.js"
 import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
 
-const ShiftJISMap = new PackedMap((m) => {
-  const decoder = new TextDecoder("shift_jis")
+const Windows31jMap = new PackedMap((m) => {
+  const decoder = new TextDecoder("windows-31j")
 
   // Shift-JIS additional mapping
   m.set(0xA5, 0x5C)
@@ -34,14 +34,14 @@ const ShiftJISMap = new PackedMap((m) => {
   }
 })
 
-export class ShiftJISEncoder implements Encoder {
+export class Windows31jEncoder implements Encoder {
   private fatal
 
   constructor(options?: { fatal?: boolean }) {
     this.fatal = options?.fatal ?? true
 
     JISEncodeMap.initialize()
-    ShiftJISMap.initialize()
+    Windows31jMap.initialize()
   }
 
   canEncode(str: string, options?: EncoderEncodeOptions) {
@@ -57,7 +57,7 @@ export class ShiftJISEncoder implements Encoder {
         let enc = JISEncodeMap.get(cp)
         if (enc != null) {
           // no handle
-        } else if ((enc = ShiftJISMap.get(cp)) != null) {
+        } else if ((enc = Windows31jMap.get(cp)) != null) {
           // no handle
         } else {
           return false
@@ -107,7 +107,7 @@ export class ShiftJISEncoder implements Encoder {
           hb = (hb < 0x5F) ? ((hb + 0xE1) >>> 1) : ((hb + 0x161) >>> 1)
           out.push(hb)
           out.push(lb)
-        } else if ((enc = ShiftJISMap.get(cp)) != null) {
+        } else if ((enc = Windows31jMap.get(cp)) != null) {
           if (enc > 0xFF) {
             out.push((enc >>> 8) & 0xFF)
             out.push(enc & 0xFF)

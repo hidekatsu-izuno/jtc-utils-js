@@ -30,35 +30,6 @@ export class Cp939Decoder implements Decoder {
     IBMKanjiDecodeMap.initialize()
   }
 
-  canDecode(input: Uint8Array, options?: DecoderDecodeOptions) {
-    let shift = options?.shift ?? false
-
-    for (let i = 0; i < input.length; i++) {
-      const n = input[i]
-      if (n === 0x0E) {
-        shift = true
-      } else if (n === 0x0F) {
-        shift = false
-      } else if (shift) {
-        if (i + 1 < input.length) {
-          i++
-          const enc = IBMKanjiDecodeMap.get(n << 8 | input[i])
-          if (enc == null) {
-            return false
-          }
-        } else {
-          return false
-        }
-      } else {
-        const c = EbcdicMap[n]
-        if (c === 0xFFFD) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
   decode(input: Uint8Array, options?: DecoderDecodeOptions): string {
     const array = new Array<number>()
     let shift = options?.shift ?? false

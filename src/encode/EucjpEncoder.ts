@@ -2,7 +2,7 @@ import { PackedMap } from "../PackedMap.js"
 import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
 
-const EucJPMap = new PackedMap((m) => {
+const EucjpMap = new PackedMap((m) => {
   const decoder = new TextDecoder("euc-jp")
   // EUC-JP additional mapping
   m.set(0xA5, 0x5C)
@@ -37,7 +37,7 @@ const EucJPMap = new PackedMap((m) => {
   }
 })
 
-export class EucJPEncoder implements Encoder {
+export class EucjpEncoder implements Encoder {
   private fatal
 
   constructor(options?: { fatal?: boolean }) {
@@ -55,7 +55,7 @@ export class EucJPEncoder implements Encoder {
         let jis = JISEncodeMap.get(cp)
         if (jis != null) {
           // no handle
-        } else if ((jis = EucJPMap.get(cp)) != null) {
+        } else if ((jis = EucjpMap.get(cp)) != null) {
           // no handle
         } else {
           return false
@@ -79,7 +79,7 @@ export class EucJPEncoder implements Encoder {
         if (jis != null) {
           out.push(((jis >>> 8) + 0x80) & 0xFF)
           out.push((jis + 0x80) & 0xFF)
-        } else if ((jis = EucJPMap.get(cp)) != null) {
+        } else if ((jis = EucjpMap.get(cp)) != null) {
           if (jis > 0xFFFF) {
             out.push((jis >>> 16) & 0xFF)
             out.push((jis >>> 8) & 0xFF)
