@@ -28,7 +28,7 @@ export class Cp939Encoder implements Encoder {
     IBMKanjiEncodeMap.initialize()
   }
 
-  canEncode(str: string) {
+  canEncode(str: string, options?: EncoderEncodeOptions) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       let enc: number | undefined

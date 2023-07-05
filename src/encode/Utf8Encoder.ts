@@ -3,7 +3,7 @@ import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 export class Utf8Encoder implements Encoder {
   private encoder = new TextEncoder()
 
-  canEncode(str: string) {
+  canEncode(str: string, options?: EncoderEncodeOptions) {
     return true
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { EucJPEncoder } from "../../src/encoder/EucJPEncoder"
+import { EucJPEncoder } from "../../src/encode/EucJPEncoder"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
 

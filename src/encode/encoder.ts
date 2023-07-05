@@ -7,7 +7,7 @@ import { Utf16LeEncoder } from "./Utf16LeEncoder.js"
 import { Utf8Encoder } from "./Utf8Encoder.js"
 
 export interface Encoder {
-  canEncode(str: string): boolean
+  canEncode(str: string, options?: EncoderEncodeOptions): boolean
 
   encode(str: string, options?: EncoderEncodeOptions): Uint8Array
 }

@@ -1,7 +1,7 @@
 import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 
 export class Utf16BeEncoder implements Encoder {
-  canEncode(str: string) {
+  canEncode(str: string, options?: EncoderEncodeOptions) {
     return true
   }
 

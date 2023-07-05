@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { Cp930Decoder } from "../../src/decoder/Cp930Decoder.js"
+import { Cp930Decoder } from "../../src/decode/Cp930Decoder.js"
 import { CsvReader } from "../../src/node/CsvReader.js"
 import fs from "node:fs"
 

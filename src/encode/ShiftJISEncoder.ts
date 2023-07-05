@@ -44,7 +44,7 @@ export class ShiftJISEncoder implements Encoder {
     ShiftJISMap.initialize()
   }
 
-  canEncode(str: string) {
+  canEncode(str: string, options?: EncoderEncodeOptions) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII

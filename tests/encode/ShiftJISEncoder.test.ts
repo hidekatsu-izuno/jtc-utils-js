@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { ShiftJISEncoder } from "../../src/encoder/ShiftJISEncoder"
+import { ShiftJISEncoder } from "../../src/encode/ShiftJISEncoder"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
 

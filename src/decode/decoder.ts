@@ -1,4 +1,6 @@
 export interface Decoder {
+  canDecode(input: Uint8Array, options?: DecoderDecodeOptions): boolean
+
   decode(input: Uint8Array, options?: DecoderDecodeOptions): string
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
-import { Cp939Encoder } from "../../src/encoder/Cp939Encoder"
+import { Cp939Encoder } from "../../src/encode/Cp939Encoder"
 
 describe('Cp939Encoder', () => {
   test("compare cp939 encoder output", async () => {
