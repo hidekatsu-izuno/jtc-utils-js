@@ -2,9 +2,9 @@ import { describe, expect, test } from "vitest"
 
 import { MemoryWritableStream } from "../src/MemoryWritableStream.js"
 import { CsvWriter } from "../src/CsvWriter.js"
-import windows31j from "../src/charset/windows31j.js"
-import utf16le from "../src/charset/utf16le.js"
-import utf16be from "../src/charset/utf16le.js"
+import { windows31j } from "../src/charset/windows31j.js"
+import { utf16le } from "../src/charset/utf16le.js"
+import { utf16be } from "../src/charset/utf16be.js"
 
 describe('CsvWriter', () => {
   test("test write utf-8 csv with bom", async () => {

@@ -126,4 +126,4 @@ class EucjpEncoder implements CharsetEncoder {
   }
 }
 
-export default new EucjpCharset()
+export const eucjp = new EucjpCharset()

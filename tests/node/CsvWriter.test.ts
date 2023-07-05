@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
-
 import { MemoryWritable } from "../../src/node/MemoryWritable"
 import { CsvWriter } from "../../src/node/CsvWriter"
+import { windows31j } from "../../src/charset/windows31j.js"
 
 describe('node.CsvWriter', () => {
   test("test write utf-8 csv with bom", async () => {
@@ -38,7 +38,7 @@ describe('node.CsvWriter', () => {
     const buf = new MemoryWritable()
 
     const writer = new CsvWriter(buf, {
-      encoding: "Windows-31j",
+      charset: windows31j ,
     })
     try {
       writer.write(["aaa", "b\"b\nb", "ccc"])

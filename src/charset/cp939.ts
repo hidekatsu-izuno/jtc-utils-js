@@ -180,4 +180,4 @@ class Cp939Encoder implements CharsetEncoder {
   }
 }
 
-export default new Cp939Charset()
+export const cp939 = new Cp939Charset()

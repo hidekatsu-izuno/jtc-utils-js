@@ -22,4 +22,4 @@ class Utf8Charset implements Charset {
   }
 }
 
-export default new Utf8Charset()
+export const utf8 = new Utf8Charset()

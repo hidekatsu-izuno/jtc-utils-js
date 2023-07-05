@@ -38,4 +38,4 @@ class Utf16beEncoder implements CharsetEncoder {
   }
 }
 
-export default new Utf16beCharset()
+export const utf16be = new Utf16beCharset()

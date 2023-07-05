@@ -1,12 +1,13 @@
 import { Readable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
 import { FixlenReader as WebFixlenReader } from "../FixlenReader.js"
+import { Charset } from "../charset/charset.js"
 
 export class FixlenReader extends WebFixlenReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fatal?: boolean,
     }

@@ -1,5 +1,5 @@
 import { Charset, CharsetEncoder } from "./charset/charset.js"
-import utf8 from "./charset/utf8.js"
+import { utf8 } from "./charset/utf8.js"
 
 export class CsvWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>

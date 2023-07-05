@@ -1,6 +1,6 @@
-import { Windows31jEncoder } from "./encode/Windows31jEncoder.js"
+import { windows31j } from "./charset/windows31j.js"
 
-const encoder = new Windows31jEncoder()
+const encoder = windows31j.createEncoder()
 
 export function isWindows31J(value: string | null | undefined) {
   if (!value) {

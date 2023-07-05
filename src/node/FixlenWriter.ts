@@ -1,12 +1,13 @@
 import { Writable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
 import { FixlenWriter as WebFixlenWriter } from "../FixlenWriter.js"
+import { Charset } from "../charset/charset.js"
 
 export class FixlenWriter extends WebFixlenWriter {
   constructor(
     dest: WritableStream<Uint8Array> | FileHandle | Writable,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fieldSeparator?: string,
       skipEmptyLine?: boolean

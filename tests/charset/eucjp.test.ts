@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
-import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
-import eucjp from "../../src/charset/eucjp"
+import { CsvReader } from "../../src/node/CsvReader"
+import { eucjp } from "../../src/charset/eucjp"
 
 describe('eucjp', () => {
   test("compare euc-jp encoder output", async () => {

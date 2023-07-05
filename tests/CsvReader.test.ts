@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { CsvReader } from "../src/CsvReader"
 import fs from "node:fs"
 import { Readable } from "node:stream"
-import windows31j from "../src/charset/windows31j"
+import { windows31j } from "../src/charset/windows31j"
 
 describe('CsvReader', () => {
 

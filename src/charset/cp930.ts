@@ -1,7 +1,7 @@
 import { Charset, CharsetDecodeOptions, CharsetDecoder, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions } from "./charset.js"
 import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.js"
 import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.js"
-import { PackedMap } from "@/PackedMap.js"
+import { PackedMap } from "../PackedMap.js"
 
 class Cp930Charset implements Charset {
   get name() {
@@ -179,4 +179,4 @@ class Cp930Encoder implements CharsetEncoder {
   }
 }
 
-export default new Cp930Charset()
+export const cp930 = new Cp930Charset()

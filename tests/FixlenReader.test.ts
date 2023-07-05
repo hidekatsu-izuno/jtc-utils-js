@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { FixlenReader, FixlenReaderLayout } from "../src/FixlenReader"
-import windows31j from "../src/charset/windows31j"
+import { windows31j } from "../src/charset/windows31j"
 
 describe('FixlenReader', () => {
   test("test read string", async () => {

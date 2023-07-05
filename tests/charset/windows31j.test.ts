@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
-import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
-import windows31j from "../../src/charset/windows31j.js"
+import { CsvReader } from "../../src/node/CsvReader"
+import { windows31j } from "../../src/charset/windows31j.js"
 
 describe('windows31j', () => {
   test("compare windows-31j encoder output", async () => {

@@ -1,5 +1,5 @@
 import { Charset } from "./charset/charset.js"
-import utf8 from "./charset/utf8.js"
+import { utf8 } from "./charset/utf8.js"
 import { escapeRegExp } from "./escapeRegExp.js"
 
 export class CsvReader {

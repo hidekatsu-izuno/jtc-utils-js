@@ -1,12 +1,13 @@
 import { Readable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
 import { CsvReader as WebCsvReader } from "../CsvReader.js"
+import { Charset } from "../charset/charset.js"
 
 export class CsvReader extends WebCsvReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fieldSeparator?: string,
       skipEmptyLine?: boolean

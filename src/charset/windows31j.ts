@@ -148,4 +148,4 @@ class Windows31jEncoder implements CharsetEncoder {
   }
 }
 
-export default new Windows31jCharset()
+export const windows31j = new Windows31jCharset()
