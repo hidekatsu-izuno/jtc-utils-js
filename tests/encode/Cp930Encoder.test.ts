@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest"
-import { EucJPEncoder } from "../../src/encoder/EucJPEncoder"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
+import { Cp930Encoder } from "../../src/encoder/Cp930Encoder"
 
-describe('EucJPEncoder', () => {
-  test("compare euc-jp encoder output", async () => {
+describe('Cp930Encoder', () => {
+  test("compare cp930 encoder output", async () => {
     const map = new Map()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/euc-jp.encode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/cp930.encode.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
@@ -15,18 +15,21 @@ describe('EucJPEncoder', () => {
       await reader.close()
     }
 
-    const encoder = new EucJPEncoder()
+    const encoder = new Cp930Encoder()
     for (let i = 0; i < 65536; i++) {
       const c = String.fromCharCode(i)
       const expected = map.get(i)
 
       let actual: number | undefined = undefined
       try {
-        const oc = encoder.encode(String.fromCharCode(i))
-        actual = oc.length === 4 ? (oc[0] << 24 | oc[1] << 16 | oc[2] << 8 | oc[3])
-          : oc.length === 3 ? (oc[0] << 16 | oc[1] << 8 | oc[2])
-          : oc.length === 2 ? (oc[0] << 8 | oc[1])
-          : oc[0]
+        const enc = encoder.encode(c)
+        if (enc.length === 4 && enc[0] === 0x0E && enc[3] === 0x0F) {
+          actual = (enc[1] << 8 | enc[2])
+        } else if (enc.length === 1) {
+          actual = enc[0]
+        } else if (enc.length > 0) {
+          actual = enc.length === 2 ? (enc[0] << 8 | enc[1]) : enc[0]
+        }
       } catch (err) {
         // no handle
       }

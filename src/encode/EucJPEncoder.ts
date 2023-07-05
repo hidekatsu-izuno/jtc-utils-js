@@ -1,5 +1,5 @@
 import { PackedMap } from "../PackedMap.js"
-import { Encoder } from "./encoder.js"
+import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
 
 const EucJPMap = new PackedMap((m) => {
@@ -65,39 +65,38 @@ export class EucJPEncoder implements Encoder {
     return true
   }
 
-  encode(str: string): Uint8Array {
-    const out = new Uint8Array(str.length * 3)
-    let pos = 0
+  encode(str: string, options?: EncoderEncodeOptions): Uint8Array {
+    const out = []
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
-        out[pos++] = cp
+        out.push(cp)
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
-        out[pos++] = 0x8E
-        out[pos++] = cp - 0xFF61 + 0xA1
+        out.push(0x8E)
+        out.push(cp - 0xFF61 + 0xA1)
       } else {
         let jis = JISEncodeMap.get(cp)
         if (jis != null) {
-          out[pos++] = ((jis >>> 8) + 0x80) & 0xFF
-          out[pos++] = (jis + 0x80) & 0xFF
+          out.push(((jis >>> 8) + 0x80) & 0xFF)
+          out.push((jis + 0x80) & 0xFF)
         } else if ((jis = EucJPMap.get(cp)) != null) {
           if (jis > 0xFFFF) {
-            out[pos++] = (jis >>> 16) & 0xFF
-            out[pos++] = (jis >>> 8) & 0xFF
-            out[pos++] = jis & 0xFF
+            out.push((jis >>> 16) & 0xFF)
+            out.push((jis >>> 8) & 0xFF)
+            out.push(jis & 0xFF)
           } else if (jis > 0xFF) {
-            out[pos++] = (jis >>> 8) & 0xFF
-            out[pos++] = jis & 0xFF
+            out.push((jis >>> 8) & 0xFF)
+            out.push(jis & 0xFF)
           } else {
-            out[pos++] = jis & 0xFF
+            out.push(jis & 0xFF)
           }
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
         } else {
-          out[pos++] = 0x5F // ?
+          out.push(0x5F) // ?
         }
       }
     }
-    return out.subarray(0, pos)
+    return Uint8Array.from(out)
   }
 }

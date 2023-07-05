@@ -1,5 +1,5 @@
 import { PackedMap } from "../PackedMap.js"
-import { Encoder } from "./encoder.js"
+import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
 
 const ShiftJISMap = new PackedMap((m) => {
@@ -67,13 +67,12 @@ export class ShiftJISEncoder implements Encoder {
     return true
   }
 
-  encode(str: string): Uint8Array {
-    const out = new Uint8Array(str.length * 2)
-    let pos = 0
+  encode(str: string, options?: EncoderEncodeOptions): Uint8Array {
+    const out = []
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
-        out[pos++] = cp
+        out.push(cp)
       } else if (cp >= 0xE000 && cp <= 0xE757) { // ユーザー外字
         const sjis = (cp >= 0xE6DB) ? cp - 0xE6DB + 0xF980
           : (cp >= 0xE69C) ? cp - 0xE69C + 0xF940
@@ -95,10 +94,10 @@ export class ShiftJISEncoder implements Encoder {
           : (cp >= 0xE0BC) ? cp - 0xE0BC + 0xF140
           : (cp >= 0xE03F) ? cp - 0xE03F + 0xF080
           : cp - 0xE000 + 0xF040
-        out[pos++] = (sjis >>> 8) & 0xFF
-        out[pos++] = sjis & 0xFF
+        out.push((sjis >>> 8) & 0xFF)
+        out.push(sjis & 0xFF)
       } else if (cp >= 0xFF61 && cp <= 0xFF9F) { // 半角カナ
-        out[pos++] = cp - 0xFF61 + 0xA1
+        out.push(cp - 0xFF61 + 0xA1)
       } else {
         let enc = JISEncodeMap.get(cp)
         if (enc != null) {
@@ -106,22 +105,22 @@ export class ShiftJISEncoder implements Encoder {
           let lb = enc & 0xFF
           lb += (hb & 1) ? (lb < 0x60) ? 0x1F : 0x20 : 0x7E
           hb = (hb < 0x5F) ? ((hb + 0xE1) >>> 1) : ((hb + 0x161) >>> 1)
-          out[pos++] = hb
-          out[pos++] = lb
+          out.push(hb)
+          out.push(lb)
         } else if ((enc = ShiftJISMap.get(cp)) != null) {
           if (enc > 0xFF) {
-            out[pos++] = (enc >>> 8) & 0xFF
-            out[pos++] = enc & 0xFF
+            out.push((enc >>> 8) & 0xFF)
+            out.push(enc & 0xFF)
           } else {
-            out[pos++] = enc & 0xFF
+            out.push(enc & 0xFF)
           }
         } else if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
         } else {
-          out[pos++] = 0x5F // ?
+          out.push(0x5F) // ?
         }
       }
     }
-    return out.subarray(0, pos)
+    return Uint8Array.from(out)
   }
 }

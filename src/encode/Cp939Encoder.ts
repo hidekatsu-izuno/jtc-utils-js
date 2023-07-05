@@ -1,16 +1,18 @@
-import { Cp939Decoder } from "../decoder/Cp939Decoder.js"
+import { Cp939Decoder } from "../decode/Cp939Decoder.js"
 import { PackedMap } from "../PackedMap.js"
-import { Encoder } from "./encoder.js"
+import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.js"
 
 const EbcdicMap = new PackedMap((m) => {
-  const decoder = new Cp939Decoder()
+  const decoder = new Cp939Decoder({ fatal: false })
+
+  m.set(0x85, 0x15)
 
   const buf = new Uint8Array(1)
   for (let b = 0x00; b <= 0xFF; b++) {
     buf[0] = b
     const decoded = decoder.decode(buf)
-    if (decoded !== "\uFFFD") {
+    if (decoded && decoded !== "\uFFFD") {
       m.set(decoded.charCodeAt(0), b)
     }
   }
@@ -21,6 +23,9 @@ export class Cp939Encoder implements Encoder {
 
   constructor(options?: { fatal?: boolean }) {
     this.fatal = options?.fatal ?? true
+
+    EbcdicMap.initialize()
+    IBMKanjiEncodeMap.initialize()
   }
 
   canEncode(str: string) {
@@ -38,35 +43,30 @@ export class Cp939Encoder implements Encoder {
     return true
   }
 
-  encode(str: string): Uint8Array {
+  encode(str: string, options?: EncoderEncodeOptions): Uint8Array {
     const out = []
-    let shifted = false
+    let shift = options?.shift ?? false
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
-      let fail = false
 
       let enc: number | undefined
       if ((enc = EbcdicMap.get(cp)) != null) { // EBCDIC
-        if (shifted) {
+        if (shift) {
           out.push(0x0F)
-          shifted = false
+          shift = false
         }
         out.push(enc)
       } else if ((enc = IBMKanjiEncodeMap.get(cp)) != null) {
-        if (!shifted) {
+        if (!shift) {
           out.push(0x0E)
-          shifted = true
+          shift = true
         }
         out.push((enc >>> 8) & 0xFF)
         out.push(enc & 0xFF)
       } else {
-        fail = true
-      }
-
-      if (fail) {
         if (this.fatal) {
           throw TypeError(`The code point ${cp.toString(16)} could not be encoded`)
-        } else if (shifted) {
+        } else if (shift) {
           out.push(0x42) // ？
           out.push(0x6F)
         } else {
@@ -75,9 +75,9 @@ export class Cp939Encoder implements Encoder {
       }
     }
 
-    if (shifted) {
+    if (shift) {
       out.push(0x0F)
-      shifted = false
+      shift = false
     }
 
     return Uint8Array.from(out)

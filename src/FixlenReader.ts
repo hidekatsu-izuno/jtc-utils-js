@@ -1,4 +1,4 @@
-import { createEncoder } from "./encoder/encoder.js"
+import { createEncoder, isEbcdicEncoding } from "./encode/encoder.js"
 
 export declare type FixlenReaderLayout = {
   lineLength: number,
@@ -8,6 +8,7 @@ export declare type FixlenReaderLayout = {
 export declare type FixlenReaderColumn = {
   start: number,
   length?: number,
+  shift: boolean,
   trim?: "left" | "right" | "both",
   type?: "decimal" | "int-le" | "int-be" | "uint-le" | "uint-be" |"zoned" | "packed",
 }
@@ -19,6 +20,7 @@ export interface FixlenLineDecoder {
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>
   private decoder: TextDecoder
+  private ebcdic: boolean
   private fatal: boolean
 
   private index: number = 0
@@ -32,6 +34,7 @@ export class FixlenReader {
     }
   ) {
     const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+    this.ebcdic = isEbcdicEncoding(encoding)
     this.fatal = options?.fatal ?? true
 
     let stream
@@ -96,17 +99,22 @@ export class FixlenReader {
       buf = buf.subarray(layout.lineLength)
       const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.index + 1)
 
-      const items = new Array<string | number | BigInt | null>()
+      const items = new Array<string | number | BigInt>()
       if (cols && cols.length > 0) {
         for (let i = 0; i < cols.length; i++) {
           const start = cols[i].start
           const clen = cols[i].length
           const end = clen != null ? start + clen : ((i + 1 < cols.length) ? cols[i + 1].start : line.length)
           const type = cols[i].type
+          const shift = cols[i].shift
           if (!type || type === "decimal") {
             let text = ""
             if (start < end) {
-              text = this.decoder.decode(line.subarray(start, end))
+              if (this.ebcdic && shift) {
+
+              } else {
+                text = this.decoder.decode(line.subarray(start, end))
+              }
               switch (cols[i].trim) {
                 case "left":
                   text = text.trimStart()
@@ -120,12 +128,9 @@ export class FixlenReader {
               }
             }
             if (type === "decimal") {
-              let value = null
-              if (text) {
-                value = Number.parseFloat(text)
-                if (this.fatal && Number.isNaN(value)) {
-                  throw new RangeError("byte length must be 1, 2, 4 or 8.")
-                }
+              const value = Number.parseFloat(text)
+              if (this.fatal && Number.isNaN(value)) {
+                throw new RangeError(`tInvalid number: ${text}`)
               }
               items.push(value)
             } else {
@@ -162,34 +167,65 @@ export class FixlenReader {
               items.push(Number.NaN)
             }
           } else if (type === "zoned") {
-            let num = 0
-            for (let i = start; i < end; i++) {
-              if (i + 1 === end) {
-                num = num *10 + line[i] & 0xF
-                const sign = (line[i] >>> 4) & 0xF
-                if (sign === 0xB || sign === 0xD) {
-                  num = -1 * num
+            try {
+              let num = 0
+              for (let i = start; i < end; i++) {
+                if (i + 1 === end) {
+                  const h4 = (line[i] >>> 4) & 0xF
+                  if (h4 > 0x9) {
+                    throw new RangeError("high 4 bit at last must be A-F.")
+                  }
+                  if (h4 === 0xB || h4 === 0xD) {
+                    num = -1 * num
+                  }
                 }
+                const l4 = line[i] & 0xF
+                if (l4 > 0x9) {
+                  throw new RangeError("low 4 bit must be decimal.")
+                }
+                num = num *10 + l4
+              }
+              items.push(num)
+            } catch (err) {
+              if (this.fatal) {
+                throw err
               } else {
-                num = num * 10 + (line[i] & 0xF)
+                items.push(Number.NaN)
               }
             }
-            items.push(num)
           } else if (type === "packed") {
-            let num = 0
-            for (let i = start; i < end; i++) {
-              if (i + 1 === end) {
-                num = num * 10 + (line[i] & 0xF)
-                const sign = (line[i] >> 8) & 0xF
-                if (sign === 0xB || sign === 0xD) {
-                  num = -1 * num
+            try {
+              let num = 0
+              for (let i = start; i < end; i++) {
+                const h4 = (line[i] >> 8) & 0xF
+                if (h4 > 0x9) {
+                  throw new RangeError("high 4 bit must be decimal.")
                 }
+                num = num * 10 + h4
+
+                const l4 = line[i] & 0xF
+                if (i + 1 === end) {
+                  if (l4 > 0x9) {
+                    throw new RangeError("low 4 bit at last must be A-F.")
+                  }
+                  if (l4 === 0xB || l4 === 0xD) {
+                    num = -1 * num
+                  }
+                } else {
+                  if (l4 > 0x9) {
+                    throw new RangeError("low 4 bit must be decimal.")
+                  }
+                  num = num * 10 + l4
+                }
+              }
+              items.push(num)
+            } catch (err) {
+              if (this.fatal) {
+                throw err
               } else {
-                num = num * 10 + ((line[i] >> 8) & 0xF)
-                num = num * 10 + (line[i] & 0xF)
+                items.push(Number.NaN)
               }
             }
-            items.push(num)
           } else {
             throw new RangeError(`unknown column type: ${cols[i].type}`)
           }

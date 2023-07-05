@@ -1,4 +1,4 @@
-import { Encoder } from "./encoder.js"
+import { Encoder, EncoderEncodeOptions } from "./encoder.js"
 
 export class Utf8Encoder implements Encoder {
   private encoder = new TextEncoder()
@@ -7,7 +7,7 @@ export class Utf8Encoder implements Encoder {
     return true
   }
 
-  encode(str: string): Uint8Array {
+  encode(str: string, options?: EncoderEncodeOptions): Uint8Array {
     return this.encoder.encode(str)
   }
 }

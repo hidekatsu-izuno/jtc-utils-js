@@ -1,4 +1,4 @@
-import { Encoder, createEncoder, isUnicodeEncoding } from "./encoder/encoder.js"
+import { Encoder, createEncoder, isUnicodeEncoding } from "./encode/encoder.js"
 
 export class CsvWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>

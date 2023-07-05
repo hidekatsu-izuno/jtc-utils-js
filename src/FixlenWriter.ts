@@ -1,4 +1,4 @@
-import { Encoder, createEncoder, isEbcdicEncoding, isUnicodeEncoding } from "./encoder/encoder.js"
+import { Encoder, createEncoder, isEbcdicEncoding, isUnicodeEncoding } from "./encode/encoder.js"
 
 export declare type FixlenWriterLayout = {
   lineLength: number,

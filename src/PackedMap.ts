@@ -35,7 +35,7 @@ export class PackedMap {
     })
 
     for (const [key, value] of map.entries()) {
-      let max = 1
+      let max = 2
       const filtered = value.filter((item?: number) => {
         if (item != null) {
           if ((item & 0xFFFF0000) !== 0) {

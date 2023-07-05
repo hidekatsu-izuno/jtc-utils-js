@@ -9,11 +9,15 @@ import { Utf8Encoder } from "./Utf8Encoder.js"
 export interface Encoder {
   canEncode(str: string): boolean
 
-  encode(str: string): Uint8Array
+  encode(str: string, options?: EncoderEncodeOptions): Uint8Array
 }
 
 export declare type EncoderOptions = {
   fatal?: boolean
+}
+
+export declare type EncoderEncodeOptions = {
+  shift: boolean
 }
 
 export function isUnicodeEncoding(encoding: string) {
@@ -31,7 +35,13 @@ export function isUnicodeEncoding(encoding: string) {
 }
 
 export function isEbcdicEncoding(encoding: string) {
-  return false
+  switch (encoding) {
+    case "cp930":
+    case "cp939":
+      return true
+    default:
+      return false
+  }
 }
 
 export function createEncoder(encoding: string, options?: EncoderOptions) {

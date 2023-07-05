@@ -56,7 +56,9 @@ describe('CsvReader', () => {
         controller.enqueue(Buffer.from("お\"\r"))
         controller.enqueue(Buffer.from("\nかきく,"))
         controller.enqueue(Buffer.from("\"け\n"))
-        controller.enqueue(Buffer.from("こ\"\n\""))
+        controller.enqueue(Buffer.from("こ\"\n"))
+        controller.enqueue(Buffer.from("\"\",\"\"\"\",\",\",\"さ,し\",\"す\"\"せ\"\"そ\"\n"))
+        controller.enqueue(Buffer.from("\""))
         controller.enqueue(Buffer.from("\""))
         controller.close()
       }
@@ -66,7 +68,12 @@ describe('CsvReader', () => {
       for await (const item of reader.read()) {
         list.push(item)
       }
-      expect(list).toStrictEqual([["あいう", "え\nお"],["かきく", "け\nこ"],[""]])
+      expect(list).toStrictEqual([
+        ["あいう", "え\nお"],
+        ["かきく", "け\nこ"],
+        ["", "\"", ",", "さ,し", "す\"せ\"そ"],
+        [""],
+      ])
     } finally {
       await reader.close()
     }
