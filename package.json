@@ -21,6 +21,94 @@
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
   "exports": {
+    "./charset": {
+      "import": {
+        "types": "./module/charset/index.d.ts",
+        "default": "./module/charset/index.js"
+      },
+      "require": {
+        "types": "./lib/charset/index.d.ts",
+        "default": "./lib/charset/index.js"
+      },
+      "default": "./lib/charset/index.js"
+    },
+    "./charset/cp930": {
+      "import": {
+        "types": "./module/charset/cp930.d.ts",
+        "default": "./module/charset/cp930.js"
+      },
+      "require": {
+        "types": "./lib/charset/cp930.d.ts",
+        "default": "./lib/charset/cp930.js"
+      },
+      "default": "./lib/charset/cp930.js"
+    },
+    "./charset/cp939": {
+      "import": {
+        "types": "./module/charset/cp939.d.ts",
+        "default": "./module/charset/cp939.js"
+      },
+      "require": {
+        "types": "./lib/charset/cp939.d.ts",
+        "default": "./lib/charset/cp939.js"
+      },
+      "default": "./lib/charset/cp939.js"
+    },
+    "./charset/eucjp": {
+      "import": {
+        "types": "./module/charset/eucjp.d.ts",
+        "default": "./module/charset/eucjp.js"
+      },
+      "require": {
+        "types": "./lib/charset/eucjp.d.ts",
+        "default": "./lib/charset/eucjp.js"
+      },
+      "default": "./lib/charset/eucjp.js"
+    },
+    "./charset/utf8": {
+      "import": {
+        "types": "./module/charset/utf8.d.ts",
+        "default": "./module/charset/utf8.js"
+      },
+      "require": {
+        "types": "./lib/charset/utf8.d.ts",
+        "default": "./lib/charset/utf8.js"
+      },
+      "default": "./lib/charset/utf8.js"
+    },
+    "./charset/utf16be": {
+      "import": {
+        "types": "./module/charset/utf16be.d.ts",
+        "default": "./module/charset/utf16be.js"
+      },
+      "require": {
+        "types": "./lib/charset/utf16be.d.ts",
+        "default": "./lib/charset/utf16be.js"
+      },
+      "default": "./lib/charset/utf16be.js"
+    },
+    "./charset/utf16le": {
+      "import": {
+        "types": "./module/charset/utf16le.d.ts",
+        "default": "./module/charset/utf16le.js"
+      },
+      "require": {
+        "types": "./lib/charset/utf16le.d.ts",
+        "default": "./lib/charset/utf16le.js"
+      },
+      "default": "./lib/charset/utf16le.js"
+    },
+    "./charset/windows31j": {
+      "import": {
+        "types": "./module/charset/windows31j.d.ts",
+        "default": "./module/charset/windows31j.js"
+      },
+      "require": {
+        "types": "./lib/charset/windows31j.d.ts",
+        "default": "./lib/charset/windows31j.js"
+      },
+      "default": "./lib/charset/windows31j.js"
+    },
     "./node": {
       "import": {
         "types": "./module/node/index.d.ts",
