@@ -1,4 +1,5 @@
-import { Encoder, createEncoder, isEbcdicEncoding, isUnicodeEncoding } from "./encode/encoder.js"
+import { Charset, CharsetEncoder } from "./charset/charset.js"
+import utf8 from "./charset/utf8.js"
 
 export declare type FixlenWriterLayout = {
   lineLength: number,
@@ -13,7 +14,7 @@ export declare type FixlenWriterColumn = {
 
 export class FixlenWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>
-  private encoder: Encoder
+  private encoder: CharsetEncoder
   private ebcdic: boolean
 
   private bom: boolean
@@ -25,16 +26,16 @@ export class FixlenWriter {
   constructor(
     dest: WritableStream<Uint8Array>,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       lineSeparator?: string,
       fatal?: boolean,
     },
   ) {
-    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
-    this.encoder = createEncoder(encoding)
-    this.ebcdic = isEbcdicEncoding(encoding)
-    this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? false : false
+    const charset = options?.charset ?? utf8
+    this.encoder = charset.createEncoder()
+    this.ebcdic = charset.isEbcdic()
+    this.bom = charset.isUnicode() ? options?.bom ?? false : false
     this.lineSeparator = options?.lineSeparator ? this.encoder.encode(options.lineSeparator) : undefined
     this.fatal = options?.fatal ?? true
 

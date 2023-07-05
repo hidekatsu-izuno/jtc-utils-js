@@ -1,8 +1,9 @@
-import { Encoder, createEncoder, isUnicodeEncoding } from "./encode/encoder.js"
+import { Charset, CharsetEncoder } from "./charset/charset.js"
+import utf8 from "./charset/utf8.js"
 
 export class CsvWriter {
   private writer: WritableStreamDefaultWriter<Uint8Array>
-  private encoder: Encoder
+  private encoder: CharsetEncoder
 
   private bom: boolean
   private fieldSeparator: string
@@ -14,7 +15,7 @@ export class CsvWriter {
   constructor(
     dest: WritableStream<Uint8Array>,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fieldSeparator?: string,
       lineSeparator?: string,
@@ -22,10 +23,9 @@ export class CsvWriter {
       fatal?: boolean,
     },
   ) {
-    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
-
-    this.bom = isUnicodeEncoding(encoding) ? options?.bom ?? true : false
-    this.encoder = createEncoder(encoding, {
+    const charset = options?.charset ?? utf8
+    this.bom = charset.isUnicode() ? options?.bom ?? true : false
+    this.encoder = charset.createEncoder({
       fatal: options?.fatal ?? true
     })
 

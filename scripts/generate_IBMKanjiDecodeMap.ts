@@ -7,7 +7,7 @@ const reader = new CsvReader(input.createReadStream(), {
   skipEmptyLine: true,
 })
 try {
-  const output = await fs.open("./src/decoder/IBMKanjiDecodeMap.ts", "w")
+  const output = await fs.open("./src/charset/IBMKanjiDecodeMap.ts", "w")
   try {
     await output.write(`
 import { PackedMap } from "../PackedMap.js"

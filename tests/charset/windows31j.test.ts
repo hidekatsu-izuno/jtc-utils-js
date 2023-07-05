@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest"
-import { ShiftJISEncoder } from "../../src/encode/ShiftJISEncoder"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
+import windows31j from "../../src/charset/windows31j.js"
 
-describe('ShiftJISEncoder', () => {
-  test("compare shift_jis encoder output", async () => {
+describe('windows31j', () => {
+  test("compare windows-31j encoder output", async () => {
     const map = new Map()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/windows-31j.encode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/windows-31j.encode.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
@@ -15,7 +15,7 @@ describe('ShiftJISEncoder', () => {
       await reader.close()
     }
 
-    const encoder = new ShiftJISEncoder()
+    const encoder = windows31j.createEncoder()
     for (let i = 0; i < 65536; i++) {
       const c = String.fromCharCode(i)
       const expected = map.get(i)

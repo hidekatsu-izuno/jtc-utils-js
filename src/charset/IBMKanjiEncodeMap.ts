@@ -1,8 +1,8 @@
-import { Cp939Decoder } from "../decode/Cp939Decoder.js"
+import cp930 from "./cp930.js"
 import { PackedMap } from "../PackedMap.js"
 
 export const IBMKanjiEncodeMap = new PackedMap((m) => {
-  const decoder = new Cp939Decoder({ fatal: false })
+  const decoder = cp930.createDecoder({ fatal: false })
 
   m.set(0xA6, 0x426A)
   m.set(0xA7, 0x446A)

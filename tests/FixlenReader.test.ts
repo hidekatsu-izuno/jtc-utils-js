@@ -1,13 +1,12 @@
 import { describe, expect, test } from "vitest"
 import { FixlenReader, FixlenReaderLayout } from "../src/FixlenReader"
-import fs from "node:fs"
-import { Readable } from "node:stream"
+import windows31j from "../src/charset/windows31j"
 
 describe('FixlenReader', () => {
   test("test read string", async () => {
     const reader = new FixlenReader("01234567890123456789")
 
-    const layout = { lineLength: 10, columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7 }] }
+    const layout = { lineLength: 10, columns: [{ start: 0 }, { start: 3, length: 3 }, { start: 7 }] }
     try {
       const list = new Array<any>()
       for await (const item of reader.read(layout)) {
@@ -25,7 +24,7 @@ describe('FixlenReader', () => {
   test("test read string with linebreak", async () => {
     const reader = new FixlenReader("0123456789\r\n0123456789\r\n")
 
-    const layout = { lineLength: 12, columns: [{ start: 0 }, { start: 3, end: 6 }, { start: 7, end: 10 }] }
+    const layout = { lineLength: 12, columns: [{ start: 0 }, { start: 3, length: 3 }, { start: 7, length: 3 }] }
     try {
       const list = new Array<any>()
       for await (const item of reader.read(layout)) {
@@ -42,10 +41,10 @@ describe('FixlenReader', () => {
 
   test("test read shift_jis string with linebreak", async () => {
     const reader = new FixlenReader("0123４５６789\r\n0123４５６789\r\n", {
-      encoding: "shift_jis",
+      charset: windows31j,
     })
 
-    const layout = { lineLength: 15, columns: [{ start: 0 }, { start: 3, end: 8 }, { start: 10, end: 13 }] }
+    const layout = { lineLength: 15, columns: [{ start: 0 }, { start: 3, length: 5 }, { start: 10, length: 3 }] }
     try {
       const list = new Array<any>()
       for await (const item of reader.read(layout)) {
@@ -72,7 +71,7 @@ describe('FixlenReader', () => {
     }
 
     const reader = new FixlenReader("1あいうえお     \r\n0ABCDEabcde01234\r\n", {
-      encoding: "shift_jis"
+      charset: windows31j
     })
     try {
       const list = new Array<any>()

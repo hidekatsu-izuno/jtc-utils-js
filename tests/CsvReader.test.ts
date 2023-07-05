@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest"
 import { CsvReader } from "../src/CsvReader"
 import fs from "node:fs"
 import { Readable } from "node:stream"
+import windows31j from "../src/charset/windows31j"
 
 describe('CsvReader', () => {
 
@@ -116,7 +117,7 @@ describe('CsvReader', () => {
   test("test read windows-31j csv", async () => {
     const stream = fs.createReadStream(__dirname + "/data/sample.windows-31j.csv")
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
-      encoding: "windows-31j"
+      charset: windows31j
     })
     try {
       const list = new Array<any>()

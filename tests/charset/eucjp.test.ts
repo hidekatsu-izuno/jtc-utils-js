@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest"
-import { EucJPEncoder } from "../../src/encode/EucJPEncoder"
 import { CsvReader } from "../../src/node/CsvReader"
 import fs from "node:fs"
+import eucjp from "../../src/charset/eucjp"
 
-describe('EucJPEncoder', () => {
+describe('eucjp', () => {
   test("compare euc-jp encoder output", async () => {
     const map = new Map()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/euc-jp.encode.csv"))
@@ -15,7 +15,7 @@ describe('EucJPEncoder', () => {
       await reader.close()
     }
 
-    const encoder = new EucJPEncoder()
+    const encoder = eucjp.createEncoder()
     for (let i = 0; i < 65536; i++) {
       const c = String.fromCharCode(i)
       const expected = map.get(i)

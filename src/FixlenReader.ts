@@ -1,4 +1,5 @@
-import { createEncoder, isEbcdicEncoding } from "./encode/encoder.js"
+import { Charset, CharsetDecoder } from "./charset/charset.js"
+import utf8 from "./charset/utf8.js"
 
 export declare type FixlenReaderLayout = {
   lineLength: number,
@@ -8,7 +9,7 @@ export declare type FixlenReaderLayout = {
 export declare type FixlenReaderColumn = {
   start: number,
   length?: number,
-  shift: boolean,
+  shift?: boolean,
   trim?: "left" | "right" | "both",
   type?: "decimal" | "int-le" | "int-be" | "uint-le" | "uint-be" |"zoned" | "packed",
 }
@@ -19,7 +20,7 @@ export interface FixlenLineDecoder {
 
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>
-  private decoder: TextDecoder
+  private decoder: CharsetDecoder
   private ebcdic: boolean
   private fatal: boolean
 
@@ -28,20 +29,20 @@ export class FixlenReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fatal?: boolean,
     }
   ) {
-    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
-    this.ebcdic = isEbcdicEncoding(encoding)
+    const charset = options?.charset ?? utf8
+    this.ebcdic = charset.isEbcdic()
     this.fatal = options?.fatal ?? true
 
     let stream
     if (typeof src === "string") {
       stream = new ReadableStream<Uint8Array>({
         start(controller) {
-          const encoder = createEncoder(encoding)
+          const encoder = charset.createEncoder()
           controller.enqueue(encoder.encode(src))
           controller.close()
         }
@@ -59,7 +60,7 @@ export class FixlenReader {
       stream = src
     }
 
-    this.decoder = new TextDecoder(encoding, {
+    this.decoder = charset.createDecoder({
       fatal: this.fatal,
       ignoreBOM: options?.bom != null ? !options.bom : false,
     })

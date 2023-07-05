@@ -1,3 +1,5 @@
+import { Charset } from "./charset/charset.js"
+import utf8 from "./charset/utf8.js"
 import { escapeRegExp } from "./escapeRegExp.js"
 
 export class CsvReader {
@@ -11,14 +13,14 @@ export class CsvReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
     options?: {
-      encoding?: string,
+      charset?: Charset,
       bom?: boolean,
       fieldSeparator?: string,
       skipEmptyLine?: boolean,
       fatal?: boolean,
     }
   ) {
-    const encoding = options?.encoding ? options.encoding.toLowerCase() : "utf-8"
+    const charset = options?.charset ?? utf8
 
     if (typeof src === "string") {
       this.reader = new ReadableStream<string>({
@@ -42,7 +44,7 @@ export class CsvReader {
         stream = src
       }
 
-      const decoder = new TextDecoderStream(encoding, {
+      const decoder = new TextDecoderStream(charset.name, {
         fatal: options?.fatal ?? true,
         ignoreBOM: options?.bom != null ? !options.bom : false,
       })
