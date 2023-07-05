@@ -6,7 +6,10 @@ describe('FixlenReader', () => {
   test("test read string", async () => {
     const reader = new FixlenReader("01234567890123456789")
 
-    const layout = { lineLength: 10, columns: [{ start: 0 }, { start: 3, length: 3 }, { start: 7 }] }
+    const layout = {
+      lineLength: 10,
+      columns: [{ start: 0 }, { start: 3, length: 3 }, { start: 7 }]
+    }
     try {
       const list = new Array<any>()
       for await (const item of reader.read(layout)) {

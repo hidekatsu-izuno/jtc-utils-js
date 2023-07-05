@@ -18,6 +18,7 @@ export class FixlenWriter {
   private ebcdic: boolean
 
   private bom: boolean
+  private filler: Uint8Array
   private lineSeparator?: Uint8Array
   private fatal: boolean
 
@@ -28,6 +29,7 @@ export class FixlenWriter {
     options?: {
       charset?: Charset,
       bom?: boolean,
+      filler?: string,
       lineSeparator?: string,
       fatal?: boolean,
     },
@@ -35,7 +37,8 @@ export class FixlenWriter {
     const charset = options?.charset ?? utf8
     this.encoder = charset.createEncoder()
     this.ebcdic = charset.isEbcdic()
-    this.bom = charset.isUnicode() ? options?.bom ?? false : false
+    this.bom = charset.isUnicode() ? (options?.bom ?? false) : false
+    this.filler = this.encoder.encode(options?.filler || " ")
     this.lineSeparator = options?.lineSeparator ? this.encoder.encode(options.lineSeparator) : undefined
     this.fatal = options?.fatal ?? true
 
@@ -57,7 +60,7 @@ export class FixlenWriter {
     for (let i = 0; i < cols.length; i++) {
       const col = cols[i]
       const len = col.length
-      const filler = col.filler ?? " "
+      const filler = col.filler ? this.encoder.encode(col.filler) : this.filler
       const value = values[i]
       const isNumber = typeof value === "number" && Number.isFinite(value)
       const type = isNumber ? col.type : undefined
@@ -65,27 +68,40 @@ export class FixlenWriter {
       if (len === 0) {
         // no handle
       } else if (!type) {
-        let text = value ? value.toString() : ""
-        if (text.length < len) {
-          if (isNumber) {
-            text = filler.repeat(len - text.length) + text
-          } else {
-            text = text + filler.repeat(len - text.length)
-          }
-        }
-
-        const encoded = this.encoder.encode(text)
+        const encoded = this.encoder.encode(value ? value.toString() : "")
         if (encoded.length === len) {
           buf.set(encoded, start)
+        } else if (encoded.length > len) {
+          if (this.fatal) {
+            throw new RangeError("overflow error")
+          } else if (isNumber) {
+            buf.set(encoded.subarray(len - encoded.length), start)
+          } else {
+            buf.set(encoded.subarray(0, len), start)
+          }
         } else {
-          buf.set(encoded.subarray(0, len), start)
+          let pos = start
+          if (isNumber) {
+            for (let j = 0; j < len - encoded.length; j += filler.length) {
+              buf.set(filler, pos)
+              pos += filler.length
+            }
+            buf.set(encoded, pos)
+          } else {
+            buf.set(encoded, pos)
+            pos += encoded.length
+            for (let j = 0; j < len - encoded.length; j += filler.length) {
+              buf.set(filler, pos)
+              pos += filler.length
+            }
+          }
         }
       } else if (!Number.isInteger(value)) {
         if (this.fatal) {
           throw new RangeError(`value must be integer: ${value}`)
         } else {
-          for (let i = 0; i < len; i++) {
-            buf[start + i] = 0
+          for (let j = 0; j < len; j++) {
+            buf[start + j] = 0
           }
         }
       } else if (type === "zerofill") {
@@ -113,8 +129,8 @@ export class FixlenWriter {
         } else if (this.fatal) {
           throw new RangeError(`overflow error: ${value}`)
         } else {
-          for (let i = 0; i < len; i++) {
-            buf[start + i] = 0
+          for (let j = 0; j < len; j++) {
+            buf[start + j] = 0
           }
         }
       } else if (type.startsWith("int-")) {
@@ -156,14 +172,14 @@ export class FixlenWriter {
           const encoded = new Uint8Array(len)
           let pos = 0
 
-          for (let i = 0; i < len - text.length; i++) {
+          for (let j = 0; j < len - text.length; j++) {
             if (pos + 1 === encoded.length) {
               encoded[pos++] = (sign ? 0b11010000 : 0b1100000)
             } else {
               encoded[pos++] = (this.ebcdic ? 0b11110000 : 0b0011000)
             }
           }
-          for (let i = 0; i < text.length; i++) {
+          for (let j = 0; j < text.length; j++) {
             const n = (text.charCodeAt(i) - 0x50) & 0b1111
             if (pos + 1 === encoded.length) {
               encoded[pos++] = (sign ? 0b11010000 : 0b1100000) | n
@@ -175,8 +191,8 @@ export class FixlenWriter {
         } else if (this.fatal) {
           throw new RangeError(`length is too short: ${len}`)
         } else {
-          for (let i = 0; i < len; i++) {
-            buf[start + i] = 0
+          for (let j = 0; j < len; j++) {
+            buf[start + j] = 0
           }
         }
       } else if (type === "packed") {
@@ -190,21 +206,21 @@ export class FixlenWriter {
           const blen = Math.ceil(text.length / 2)
           let pos = len - blen
 
-          for (let i = 0; i < blen; i++) {
-            const n1 = (text.charCodeAt(i * 2) - 0x50) & 0xF
+          for (let j = 0; j < blen; j++) {
+            const n1 = (text.charCodeAt(j * 2) - 0x50) & 0xF
             let n2
-            if (i + 1 === blen) {
+            if (j + 1 === blen) {
               n2 = sign ? 0x1101 : 0x1100
             } else {
-              n2 = (text.charCodeAt(i * 2 + 1) - 0x50) & 0xF
+              n2 = (text.charCodeAt(j * 2 + 1) - 0x50) & 0xF
             }
             encoded[pos++] = (n1 << 4) | n2
           }
         } else if (this.fatal) {
           throw new RangeError(`length is too short: ${len}`)
         } else {
-          for (let i = 0; i < len; i++) {
-            buf[start + i] = 0
+          for (let j = 0; j < len; j++) {
+            buf[start + j] = 0
           }
         }
       } else {
@@ -213,7 +229,14 @@ export class FixlenWriter {
       start += len
     }
     if (this.lineSeparator) {
-      buf.set(this.lineSeparator, start)
+      for (; start < buf.length - this.lineSeparator.length; start += this.filler.length) {
+        buf.set(this.filler, start)
+      }
+      buf.set(this.lineSeparator, buf.length - this.lineSeparator.length)
+    } else {
+      for (; start < buf.length; start += this.filler.length) {
+        buf.set(this.filler, start)
+      }
     }
 
     await this.writer.write(buf)
