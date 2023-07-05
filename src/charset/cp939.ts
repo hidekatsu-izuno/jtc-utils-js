@@ -47,6 +47,7 @@ const EbcdicDecodeMap = Uint16Array.of(
 
 class Cp939Decoder implements CharsetDecoder {
   private fatal
+  private state?: { shift: boolean, buf: number }
 
   constructor(options?: CharsetDecoderOptions) {
     this.fatal = options?.fatal ?? true
@@ -55,8 +56,14 @@ class Cp939Decoder implements CharsetDecoder {
   }
 
   decode(input: Uint8Array, options?: CharsetDecodeOptions): string {
-    const array = new Array<number>()
     let shift = options?.shift ?? false
+    const array = new Array<number>()
+
+    if (options?.stream && this.state) {
+      shift = this.state.shift
+      array.push(this.state.buf)
+      this.state = undefined
+    }
 
     for (let i = 0; i < input.length; i++) {
       let fail = false
@@ -75,6 +82,9 @@ class Cp939Decoder implements CharsetDecoder {
           } else {
             fail = true
           }
+        } else if (options?.stream) {
+          this.state = { shift, buf: n }
+          break
         } else {
           fail = true
         }

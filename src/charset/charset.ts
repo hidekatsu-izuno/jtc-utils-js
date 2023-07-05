@@ -16,7 +16,8 @@ export declare type CharsetDecoderOptions = {
 }
 
 export declare type CharsetDecodeOptions = {
-  shift: boolean
+  stream?: boolean,
+  shift?: boolean,
 }
 
 export interface CharsetEncoder {
@@ -44,7 +45,7 @@ export class StandardDecoder implements CharsetDecoder {
   }
 
   decode(input: Uint8Array, options?: CharsetDecodeOptions) {
-    return this.decoder.decode(input)
+    return this.decoder.decode(input, options)
   }
 }
 

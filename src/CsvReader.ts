@@ -44,13 +44,20 @@ export class CsvReader {
         stream = src
       }
 
-      const decoder = new TextDecoderStream(charset.name, {
+      const decoder = charset.createDecoder({
         fatal: options?.fatal ?? true,
         ignoreBOM: options?.bom != null ? !options.bom : false,
       })
 
       this.reader = stream
-        .pipeThrough(decoder)
+        .pipeThrough(new TransformStream({
+          transform(chunk, controller) {
+            controller.enqueue(decoder.decode(chunk, { stream: true }))
+          },
+          flush() {
+            decoder.decode(new Uint8Array())
+          }
+        }))
         .getReader()
     }
 
