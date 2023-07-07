@@ -4,8 +4,7 @@ import {
   format as _format,
 } from "date-fns"
 import { utcToZonedTime, formatInTimeZone } from "date-fns-tz"
-
-const current = Intl.DateTimeFormat().resolvedOptions().timeZone
+import { getTimeZone } from "../util/getTimeZone.js"
 
 export function formatDate(date: Date | number | string | null | undefined, format: string, timeZone?: string) {
   if (!date) {
@@ -13,18 +12,18 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   if (date instanceof Date) {
-    if (timeZone && timeZone !== current) {
+    if (timeZone && timeZone !== getTimeZone()) {
       date = utcToZonedTime(date, timeZone)
     }
   } else if (typeof date === "number") {
-    if (timeZone && timeZone !== current) {
+    if (timeZone && timeZone !== getTimeZone()) {
       date = utcToZonedTime(new Date(date), timeZone)
     }
   } else if (typeof date === "string") {
     try {
       const tmp = parseISO(date)
       if (isValid(tmp)) {
-        if (timeZone && timeZone !== current && !/[+-]/.test(date)) {
+        if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(date)) {
           date = utcToZonedTime(tmp, timeZone)
         } else {
           date = tmp
@@ -38,7 +37,7 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   try {
-    if (timeZone && timeZone !== current) {
+    if (timeZone && timeZone !== getTimeZone()) {
       return formatInTimeZone(date, timeZone, format)
     } else {
       return _format(date, format)

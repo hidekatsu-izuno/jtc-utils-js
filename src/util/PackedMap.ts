@@ -3,7 +3,7 @@ export interface PackedMapSetter {
 }
 
 export class PackedMap {
-  private map = new Map<number, Uint8Array | Uint16Array | Uint32Array>()
+  private map = new Map<number, Uint16Array | Uint32Array>()
   private init?: (setter: PackedMapSetter) => void
 
   constructor(init: (setter: PackedMapSetter) => void) {
@@ -40,16 +40,12 @@ export class PackedMap {
         if (item != null) {
           if ((item & 0xFFFF0000) !== 0) {
             max = Math.max(max, 4)
-          } else if ((item & 0xFFFFFF00) !== 0) {
-            max = Math.max(max, 2)
           }
           return true
         }
         return false
       })
-      this.map.set(key,
-        max === 1 ? new Uint8Array(filtered)
-        : max === 2 ? new Uint16Array(filtered)
+      this.map.set(key, max === 2 ? new Uint16Array(filtered)
         : new Uint32Array(filtered)
       )
     }
