@@ -1,6 +1,6 @@
 import { Charset, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions, StandardDecoder } from "./charset.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
-import { PackedMap } from "../PackedMap.js"
+import { PackedMap } from "../util/PackedMap.js"
 
 class Windows31jCharset implements Charset {
   get name() {
@@ -67,7 +67,7 @@ class Windows31jEncoder implements CharsetEncoder {
     Windows31jEncodeMap.initialize()
   }
 
-  canEncode(str: string, options?: CharsetEncodeOptions) {
+  canEncode(str: string) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
@@ -92,7 +92,10 @@ class Windows31jEncoder implements CharsetEncoder {
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
     const out = []
+    const limit = options?.limit ?? Number.POSITIVE_INFINITY
+    let prev = 0
     for (let i = 0; i < str.length; i++) {
+      prev = out.length
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII
         out.push(cp)
@@ -143,7 +146,13 @@ class Windows31jEncoder implements CharsetEncoder {
           out.push(0x5F) // ?
         }
       }
+
+      if (out.length > limit) {
+        out.length = prev
+        break
+      }
     }
+
     return Uint8Array.from(out)
   }
 }

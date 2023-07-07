@@ -20,6 +20,7 @@
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
+  "sideEffects": false,
   "exports": {
     "./charset": {
       "import": {
@@ -32,104 +33,49 @@
       },
       "default": "./lib/charset/index.js"
     },
-    "./charset/cp930": {
+    "./io": {
       "import": {
-        "types": "./module/charset/cp930.d.ts",
-        "default": "./module/charset/cp930.js"
+        "types": "./module/io/index.d.ts",
+        "default": "./module/io/index.js"
       },
       "require": {
-        "types": "./lib/charset/cp930.d.ts",
-        "default": "./lib/charset/cp930.js"
+        "types": "./lib/io/index.d.ts",
+        "default": "./lib/io/index.js"
       },
-      "default": "./lib/charset/cp930.js"
+      "default": "./lib/io/index.js"
     },
-    "./charset/cp939": {
+    "./io/node": {
       "import": {
-        "types": "./module/charset/cp939.d.ts",
-        "default": "./module/charset/cp939.js"
+        "types": "./module/io/node/index.d.ts",
+        "default": "./module/io/node/index.js"
       },
       "require": {
-        "types": "./lib/charset/cp939.d.ts",
-        "default": "./lib/charset/cp939.js"
+        "types": "./lib/io/node/index.d.ts",
+        "default": "./lib/io/node/index.js"
       },
-      "default": "./lib/charset/cp939.js"
+      "default": "./lib/io/node/index.js"
     },
-    "./charset/eucjp": {
+    "./lang": {
       "import": {
-        "types": "./module/charset/eucjp.d.ts",
-        "default": "./module/charset/eucjp.js"
+        "types": "./module/lang/index.d.ts",
+        "default": "./module/lang/index.js"
       },
       "require": {
-        "types": "./lib/charset/eucjp.d.ts",
-        "default": "./lib/charset/eucjp.js"
+        "types": "./lib/lang/index.d.ts",
+        "default": "./lib/lang/index.js"
       },
-      "default": "./lib/charset/eucjp.js"
+      "default": "./lib/lang/index.js"
     },
-    "./charset/utf8": {
+    "./text": {
       "import": {
-        "types": "./module/charset/utf8.d.ts",
-        "default": "./module/charset/utf8.js"
+        "types": "./module/text/index.d.ts",
+        "default": "./module/text/index.js"
       },
       "require": {
-        "types": "./lib/charset/utf8.d.ts",
-        "default": "./lib/charset/utf8.js"
+        "types": "./lib/text/index.d.ts",
+        "default": "./lib/text/index.js"
       },
-      "default": "./lib/charset/utf8.js"
-    },
-    "./charset/utf16be": {
-      "import": {
-        "types": "./module/charset/utf16be.d.ts",
-        "default": "./module/charset/utf16be.js"
-      },
-      "require": {
-        "types": "./lib/charset/utf16be.d.ts",
-        "default": "./lib/charset/utf16be.js"
-      },
-      "default": "./lib/charset/utf16be.js"
-    },
-    "./charset/utf16le": {
-      "import": {
-        "types": "./module/charset/utf16le.d.ts",
-        "default": "./module/charset/utf16le.js"
-      },
-      "require": {
-        "types": "./lib/charset/utf16le.d.ts",
-        "default": "./lib/charset/utf16le.js"
-      },
-      "default": "./lib/charset/utf16le.js"
-    },
-    "./charset/windows31j": {
-      "import": {
-        "types": "./module/charset/windows31j.d.ts",
-        "default": "./module/charset/windows31j.js"
-      },
-      "require": {
-        "types": "./lib/charset/windows31j.d.ts",
-        "default": "./lib/charset/windows31j.js"
-      },
-      "default": "./lib/charset/windows31j.js"
-    },
-    "./node": {
-      "import": {
-        "types": "./module/node/index.d.ts",
-        "default": "./module/node/index.js"
-      },
-      "require": {
-        "types": "./lib/node/index.d.ts",
-        "default": "./lib/node/index.js"
-      },
-      "default": "./lib/node/index.js"
-    },
-    ".": {
-      "import": {
-        "types": "./module/index.d.ts",
-        "default": "./module/index.js"
-      },
-      "require": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
-      },
-      "default": "./lib/index.js"
+      "default": "./lib/text/index.js"
     },
     "./package.json": "./package.json"
   },

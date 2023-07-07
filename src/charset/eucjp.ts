@@ -1,6 +1,6 @@
 import { Charset, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions, StandardDecoder } from "./charset.js"
 import { JISEncodeMap } from "./JISEncodeMap.js"
-import { PackedMap } from "../PackedMap.js"
+import { PackedMap } from "../util/PackedMap.js"
 
 class EucjpCharset implements Charset {
   get name() {

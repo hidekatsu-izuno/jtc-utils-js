@@ -1,7 +1,7 @@
 import { Charset, CharsetDecodeOptions, CharsetDecoder, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions } from "./charset.js"
 import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.js"
 import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.js"
-import { PackedMap } from "../PackedMap.js"
+import { PackedMap } from "../util/PackedMap.js"
 
 class Cp930Charset implements Charset {
   get name() {
@@ -134,7 +134,7 @@ class Cp930Encoder implements CharsetEncoder {
     IBMKanjiEncodeMap.initialize()
   }
 
-  canEncode(str: string, options?: CharsetEncodeOptions) {
+  canEncode(str: string) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       let enc: number | undefined
@@ -151,9 +151,13 @@ class Cp930Encoder implements CharsetEncoder {
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
     const out = []
+    const limit = options?.limit ?? Number.POSITIVE_INFINITY
     let shift = options?.shift ?? false
+    let prev = 0
     for (let i = 0; i < str.length; i++) {
+      prev = out.length
       const cp = str.charCodeAt(i)
+
       let enc: number | undefined
       if ((enc = EbcdicEncodeMap.get(cp)) != null) { // EBCDIC
         if (shift) {
@@ -178,11 +182,15 @@ class Cp930Encoder implements CharsetEncoder {
           out.push(0x6F) // ?
         }
       }
+
+      if (out.length > limit) {
+        out.length = prev
+        break
+      }
     }
 
-    if (shift) {
+    if (shift && options?.shift !== true && out.length < limit) {
       out.push(0x0F)
-      shift = false
     }
 
     return Uint8Array.from(out)

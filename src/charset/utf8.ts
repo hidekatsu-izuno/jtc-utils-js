@@ -1,4 +1,4 @@
-import { Charset, CharsetDecoderOptions, CharsetEncoderOptions, StandardDecoder, StandardEncoder } from "./charset.js"
+import { Charset, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions, StandardDecoder } from "./charset.js"
 
 class Utf8Charset implements Charset {
   get name() {
@@ -10,7 +10,7 @@ class Utf8Charset implements Charset {
   }
 
   createEncoder(options?: CharsetEncoderOptions) {
-    return new StandardEncoder("utf-8", options)
+    return new Utf8Encoder()
   }
 
   isUnicode() {
@@ -19,6 +19,38 @@ class Utf8Charset implements Charset {
 
   isEbcdic() {
     return false
+  }
+}
+
+class Utf8Encoder implements CharsetEncoder {
+  private encoder = new TextEncoder()
+
+  constructor() {
+  }
+
+  canEncode(str: string) {
+    return true
+  }
+
+  encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
+    const limit = options?.limit ?? Number.POSITIVE_INFINITY
+    const encoded = this.encoder.encode(str)
+    if (encoded.length > limit) {
+      let len = limit
+      if (encoded[limit-1] >= 0xC2) {
+        len = len - 1
+      } else if (encoded[limit-1] >= 0x80) {
+        if (encoded[limit-2] >= 0xE0) {
+          len = len - 2
+        } else if (encoded[limit-2] >= 0x80) {
+          if (encoded[limit-3] >= 0xF0) {
+            len = len - 3
+          }
+        }
+      }
+      return encoded.subarray(len)
+    }
+    return encoded
   }
 }
 

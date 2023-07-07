@@ -1,4 +1,4 @@
-import { PackedMap } from "../PackedMap.js"
+import { PackedMap } from "../util/PackedMap.js"
 
 export const IBMKanjiDecodeMap = new PackedMap((m) => {
   m.set(0x4040, 0x3000)
