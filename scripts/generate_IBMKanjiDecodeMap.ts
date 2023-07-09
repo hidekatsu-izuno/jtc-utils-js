@@ -1,5 +1,5 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/node/CsvReader.js"
+import { CsvReader } from "../src/io/node/CsvReader.js"
 
 const input = await fs.open("./data/cp939.decode.csv")
 
@@ -10,7 +10,7 @@ try {
   const output = await fs.open("./src/charset/IBMKanjiDecodeMap.ts", "w")
   try {
     await output.write(`
-import { PackedMap } from "../PackedMap.js"
+import { PackedMap } from "../util/PackedMap.js"
 
 export const IBMKanjiDecodeMap = new PackedMap((m) => {
 `.trimStart())
