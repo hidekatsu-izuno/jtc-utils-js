@@ -232,10 +232,10 @@ export class FixlenReader {
           }
         }
       }
+      this.index++
       if (items.length > 0) {
         yield items
       }
-      this.index++
     } while (!done)
   }
 

@@ -126,11 +126,11 @@ export class CsvReader {
           if (item || items.length > 0 || quoted) {
             items.push(item)
           }
+          this.index++
           if (items.length > 0 || !this.skipEmptyLine) {
             yield items
           }
           items = []
-          this.index++
         } else {
           items.push(item)
         }
@@ -144,8 +144,8 @@ export class CsvReader {
           items.push(buf)
         }
         if (items.length > 0) {
-          yield items
           this.index++
+          yield items
         }
       }
     } while (!done)
