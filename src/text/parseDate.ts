@@ -3,19 +3,32 @@ import {
   parseISO,
   isValid,
 } from "date-fns"
-import { utcToZonedTime } from "date-fns-tz"
+import { OptionsWithTZ, utcToZonedTime } from "date-fns-tz"
+import ja from "date-fns/locale/ja"
 import { getTimeZone } from "../getTimeZone.js"
 
-export function parseDate(str: string, format?: string, timeZone?: string): Date;
-export function parseDate(str: null | undefined, format?: string, timeZone?: string): undefined;
-export function parseDate(str: string | null | undefined, format?: string, timeZone?: string) {
+declare type ParseDateOptions = {
+  locale?: string,
+  timeZone?: string,
+}
+
+export function parseDate(str: string, format?: string, options?: ParseDateOptions): Date;
+export function parseDate(str: null | undefined, format?: string, options?: ParseDateOptions): undefined;
+export function parseDate(str: string | null | undefined, format?: string, options?: ParseDateOptions) {
   if (str == null) {
     return undefined
   }
 
+  const timeZone = options?.timeZone
+
+  const dfOptions: OptionsWithTZ = {}
+  if (options?.locale === "ja") {
+    dfOptions.locale = ja
+  }
+
   try {
     if (format) {
-      let tmp = parse(str, format, new Date())
+      let tmp = parse(str, format, new Date(), dfOptions)
       if (isValid(tmp)) {
         if (timeZone && timeZone !== getTimeZone() && !/[Xx]/.test(format)) {
           tmp = utcToZonedTime(tmp, timeZone)

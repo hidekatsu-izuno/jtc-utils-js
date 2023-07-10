@@ -36,8 +36,7 @@ npm install jtc-utils
 ```javascript
 import { getLocale } from "jtc-utils"
 
-const locale = getLocale()
-console.log(locale) // -> ja
+getLocale() // -> "ja"
 ```
 
 #### getTimeZone - 現在のタイムゾーンを取得する
@@ -45,8 +44,7 @@ console.log(locale) // -> ja
 ```javascript
 import { getTimeZone } from "jtc-utils"
 
-const locale = getTimeZone()
-console.log(locale) // -> Asia/Tokyo
+getTimeZone() // -> "Asia/Tokyo"
 ```
 
 #### DayOfWeek - 曜日を表す定数クラス
@@ -54,7 +52,11 @@ console.log(locale) // -> Asia/Tokyo
 ```javascript
 import { DayOfWeek } from "jtc-utils"
 
-console.log(DayOfWeek.SUNDAY.toLocaleString("ja")) // -> 日曜日
+DayOfWeek.SUNDAY.toString() // -> "SUNDAY"
+DayOfWeek.SUNDAY.toLocaleString("ja") // -> "日曜日"
+DayOfWeek.SUNDAY.toLocaleString("en") // -> "Sunday"
+DayOfWeek.SUNDAY.toLocaleShortString("ja") // -> "日"
+DayOfWeek.SUNDAY.toLocaleShortString("en") // -> "Sun"
 ```
 
 #### JapaneseEra - 元号を表す定数クラス
@@ -62,33 +64,62 @@ console.log(DayOfWeek.SUNDAY.toLocaleString("ja")) // -> 日曜日
 ```javascript
 import { JapaneseEra } from "jtc-utils"
 
-console.log(JapaneseEra.REIWA.toLocaleString("ja")) // -> 令和
-console.log(JapaneseEra.from(new Date(2023, 1, 1))) // -> JapaneseEra.REIWA
+JapaneseEra.REIWA.toLocaleString("ja") // -> "令和"
+JapaneseEra.from(new Date(2023, 1, 1)) // -> JapaneseEra.REIWA
+JapaneseEra.from("昭和") // -> JapaneseEra.SHOWA
 ```
+
+※明治以降しか対応していません
 
 ### jtc-utils/text
 
+#### formatDate - Date を書式を使って文字列に変換する
+
 ```javascript
-import { ... } from "jtc-utils/text"
+import { formatDate } from "jtc-utils/text"
+
+console.log(formatDate(new Date(2023, 1, 1), "uuuu/MM/dd")) // -> "2023/01/01"
+```
+
+### jtc-utils/io
+
+#### CsvReader - CSV ファイルを読み込む
+
+```javascript
+import { CsvReader } from "jtc-utils/io"
+```
+
+### jtc-utils/io/node
+
+#### CsvReader - CSV ファイルを読み込む
+
+```javascript
+import { CsvReader } from "jtc-utils/io/node"
 ```
 
 ### jtc-utils/charset
 
 ```javascript
-import { ... } from "jtc-utils/charset"
+import { utf8, utf16be, utf16le, windows31j, eucjp, cp930, cp939 } from "jtc-utils/charset"
+
+const decoder = windows31j.createDecoder()
+decoder.encode(Uint8Array.of(0x88, 0x9F)) // -> "亜"
+
+const encoder = windows31j.createEncoder()
+encoder.encode("亜") // -> Uint8Array.of(0x88, 0x9F)
 ```
 
-### jtc-utils/io
+サポートする文字コードは次の通りです。
 
-```javascript
-import { ... } from "jtc-utils/io"
-```
-
-### jtc-utils/io/node
-
-```javascript
-import { ... } from "jtc-utils/io/node"
-```
+|モジュール  |説明                               |
+|===========|===================================|
+|utf8       |UTF-8                              |
+|utf16be    |UTF-16BE                           |
+|utf16le    |UTF-16LE                           |
+|windows31j |Windows-31J (Windows 版 SHIFT_JIS) |
+|eucjp      |EUC-JP                             |
+|cp930      |IBM CP930 (EBCDIC + IBM漢字)       |
+|cp939      |IBM CP939 (EBCDIC + IBM漢字)       |
 
 
 ## License
