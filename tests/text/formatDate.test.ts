@@ -12,4 +12,10 @@ describe('formatDate', () => {
     expect(formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", { timeZone: current })).toBe("2000/1/1 0:0:0")
     expect(formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", { timeZone: "UTC" })).toBe("1999/12/31 15:0:0")
   })
+
+  test("test format japanese calendar", () => {
+    expect(formatDate("2000-01-01", "Gy/M/d", { locale: "ja", calendar: "japanese" })).toBe("平12/1/1")
+    expect(formatDate("2000-01-01", "GGGGyyy/M/d", { locale: "ja-jp-u-ca-japanese" })).toBe("平成012/1/1")
+    expect(formatDate("2000-01-01", "GGGGGyyy/M/d", { locale: "ja", calendar: "japanese" })).toBe("H012/1/1")
+  })
 })

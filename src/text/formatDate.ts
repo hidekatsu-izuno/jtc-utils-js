@@ -6,6 +6,8 @@ import {
 import ja from "date-fns/locale/ja"
 import { utcToZonedTime, formatInTimeZone, OptionsWithTZ } from "date-fns-tz"
 import { getTimeZone } from "../getTimeZone.js"
+import { JapaneseEra } from "./JapaneseEra.js"
+import { DateFormat } from "./DateFormat.js"
 
 declare type FormatDateOptions = {
   locale?: string,
@@ -46,34 +48,44 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   const dfOptions: OptionsWithTZ = {}
-  if (options?.locale && /^ja(-|$)/.test(options.locale)) {
+  let calendar = options?.calendar
+  if (options?.locale && /^ja(-|$)/i.test(options.locale)) {
     dfOptions.locale = ja
+    if (/^ja-jp-u-ca-japanese$/i.test(options.locale)) {
+      calendar = "japanese"
+    }
   }
 
-  if (options?.calendar === "japanese") {
-    const era = getJapaneseEra(date)
+  if (calendar === "japanese") {
+    const target = date
+    const era = JapaneseEra.of(target)
     if (era) {
-      format = format.replace(/(?:'(?:''|[^'])*')|(G+)|(y+o?)/g, (m, g1, g2) => {
-        if (g1) {
-          if (g1.length <= 3) {
-            return `'${era.short}'`
-          } else if (g1.length === 4) {
-            return `'${era.long}'`
-          } else {
-            return `'${era.narrow}'`
+      const dFormat = DateFormat.get(format)
+      const parts = [...dFormat.parts]
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i]
+        if (part.type === "pattern") {
+          if (part.text.startsWith("G")) {
+            if (part.text.length <= 3) {
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "short" })}'` }
+            } else if (part.text.length === 4) {
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "long" })}'` }
+            } else {
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "narrow" })}'` }
+            }
+          } else if (part.text.startsWith("y")) {
+            const gYear = target.getFullYear() - era.start.getFullYear() + 1
+            if (part.text.length === 1) {
+              parts[i] = { type: "quoted", text:  `'${gYear}'` }
+            } else if (part.text.endsWith("o")) {
+              parts[i] = { type: "quoted", text:  `'${gYear}年'` }
+            } else {
+              parts[i] = { type: "quoted", text:  `'${"0".repeat(part.text.length - gYear.toString().length)}${gYear}'` }
+            }
           }
-        } else if (g2) {
-          if (g2.length === 1) {
-            return `'${era.year}'`
-          } else if (g2.endsWih("o")) {
-            return `'${era.year}年'`
-          } else {
-            return `'${"0".repeat(g2.length - era.year.toString().length)}${era.year}'`
-          }
-        } else {
-          return m
         }
-      })
+      }
+      format = new DateFormat(parts).toString()
     }
   }
 
@@ -88,41 +100,6 @@ export function formatDate(date: Date | number | string | null | undefined, form
       return date.toString()
     } else {
       throw err
-    }
-  }
-}
-
-const REIWA_START = parseISO("2019-04-30T15:00:00Z")
-const HEISEI_START = parseISO("1989-01-07T15:00:00Z")
-const SHOWA_START = parseISO("1926-12-25T15:00:00Z")
-const TAISHO_START = parseISO("1912-07-29T15:00:00Z")
-const MEIJI_START = parseISO("1868-10-22T15:00:00Z")
-
-function getJapaneseEra(date: Date) {
-  if (date >= REIWA_START) {
-    return {
-      long: "令和", short: "令", narrow: "R",
-      year: date.getFullYear() - REIWA_START.getFullYear() + 1
-    }
-  } else if (date >= HEISEI_START) {
-    return {
-      long: "平成", short: "平", narrow: "H",
-      year: date.getFullYear() - HEISEI_START.getFullYear() + 1
-    }
-  } else if (date >= SHOWA_START) {
-    return {
-      long: "昭和", short: "昭", narrow: "S",
-      year: date.getFullYear() - SHOWA_START.getFullYear() + 1
-    }
-  } else if (date >= TAISHO_START) {
-    return {
-      long: "大正", short: "大", narrow: "T",
-      year: date.getFullYear() - TAISHO_START.getFullYear() + 1
-    }
-  } else if (date >= MEIJI_START) {
-    return {
-      long: "明治", short: "明", narrow: "M",
-      year: date.getFullYear() - MEIJI_START.getFullYear() + 1
     }
   }
 }
