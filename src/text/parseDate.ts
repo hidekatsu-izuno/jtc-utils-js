@@ -3,7 +3,7 @@ import {
   parseISO,
   isValid,
 } from "date-fns"
-import { OptionsWithTZ, utcToZonedTime } from "date-fns-tz"
+import { utcToZonedTime } from "date-fns-tz"
 import ja from "date-fns/locale/ja"
 import { getTimeZone } from "../getTimeZone.js"
 
@@ -21,33 +21,20 @@ export function parseDate(str: string | null | undefined, format?: string, optio
 
   const timeZone = options?.timeZone
 
-  const dfOptions: OptionsWithTZ = {}
-  if (options?.locale === "ja") {
+  const dfOptions: Record<string, any> = {}
+  if (options?.locale && /^ja(-|$)/i.test(options.locale)) {
     dfOptions.locale = ja
   }
 
   try {
-    if (format) {
-      let tmp = parse(str, format, new Date(), dfOptions)
-      if (isValid(tmp)) {
-        if (timeZone && timeZone !== getTimeZone() && !/[Xx]/.test(format)) {
-          tmp = utcToZonedTime(tmp, timeZone)
-        }
-        return tmp
-      } else {
-        return null
+    let tmp = format ? parse(str, format, new Date(), dfOptions) : parseISO(str)
+    if (isValid(tmp)) {
+      if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(str)) {
+        tmp = utcToZonedTime(tmp, timeZone)
       }
-    } else {
-      let tmp = parseISO(str)
-      if (isValid(tmp)) {
-        if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(str)) {
-          tmp = utcToZonedTime(tmp, timeZone)
-        }
-        return tmp
-      } else {
-        return null
-      }
+      return tmp
     }
+    return null
   } catch (err) {
     if (err instanceof RangeError) {
       return null
