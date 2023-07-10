@@ -12,7 +12,6 @@
     "lint": "eslint",
     "generate": "npm-run-all 'generate:*'",
     "generate:IBMKanjiDecodeMap": "node --loader ts-node/esm ./scripts/generate_IBMKanjiDecodeMap.ts",
-    "generate:FullwidthHalfwidthMap": "node --loader ts-node/esm ./scripts/generate_FullwidthHalfwidthMap.ts",
     "generate:toHalfwidth": "node --loader ts-node/esm ./scripts/generate_toHalfwidth.ts",
     "generate:toFullwidth": "node --loader ts-node/esm ./scripts/generate_toFullwidth.ts",
     "generate:toHiragana": "node --loader ts-node/esm ./scripts/generate_toHiragana.ts",
@@ -23,6 +22,17 @@
   "license": "MIT",
   "sideEffects": false,
   "exports": {
+    "./node": {
+      "import": {
+        "types": "./module/node/index.d.ts",
+        "default": "./module/node/index.js"
+      },
+      "require": {
+        "types": "./lib/node/index.d.ts",
+        "default": "./lib/node/index.js"
+      },
+      "default": "./lib/node/index.js"
+    },
     "./charset": {
       "import": {
         "types": "./module/charset/index.d.ts",
@@ -34,49 +44,16 @@
       },
       "default": "./lib/charset/index.js"
     },
-    "./io": {
+    ".": {
       "import": {
-        "types": "./module/io/index.d.ts",
-        "default": "./module/io/index.js"
+        "types": "./module/index.d.ts",
+        "default": "./module/index.js"
       },
       "require": {
-        "types": "./lib/io/index.d.ts",
-        "default": "./lib/io/index.js"
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
       },
-      "default": "./lib/io/index.js"
-    },
-    "./io/node": {
-      "import": {
-        "types": "./module/io/node/index.d.ts",
-        "default": "./module/io/node/index.js"
-      },
-      "require": {
-        "types": "./lib/io/node/index.d.ts",
-        "default": "./lib/io/node/index.js"
-      },
-      "default": "./lib/io/node/index.js"
-    },
-    "./lang": {
-      "import": {
-        "types": "./module/lang/index.d.ts",
-        "default": "./module/lang/index.js"
-      },
-      "require": {
-        "types": "./lib/lang/index.d.ts",
-        "default": "./lib/lang/index.js"
-      },
-      "default": "./lib/lang/index.js"
-    },
-    "./text": {
-      "import": {
-        "types": "./module/text/index.d.ts",
-        "default": "./module/text/index.js"
-      },
-      "require": {
-        "types": "./lib/text/index.d.ts",
-        "default": "./lib/text/index.js"
-      },
-      "default": "./lib/text/index.js"
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
