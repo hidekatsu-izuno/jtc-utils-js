@@ -1,61 +1,23 @@
 import { promises as fs }  from "node:fs"
-
-const CONVERT_MAP = new Array<{
-  from: string,
-  to: string,
-}>()
-
-function step(line: string, index: number) {
-  const m = line.split(/,/g)
-  if (index === 0 || m.length < 2) {
-    return
-  }
-
-  CONVERT_MAP.push({
-    from: m[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
-    to: m[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1"),
-  })
-}
+import { CsvReader } from "../src/io/node/CsvReader.js"
 
 const input = await fs.open("./data/hiragana-katakana.csv")
+const reader = new CsvReader(input, {
+  skipEmptyLine: true,
+})
 try {
-  let index = 0
-  let buf = ""
-  for await (const chunk of input.createReadStream({
-    encoding: "utf-8"
-  })) {
-    buf = buf ? buf + chunk : chunk
-    let start = 0
-    let pos = 0
-    while ((pos = buf.indexOf("\n", start)) != -1) {
-      if (buf.charAt(pos - 1) === "\r") {
-        step(buf.substring(start, pos - 1), index++)
-      } else {
-        step(buf.substring(start, pos), index++)
+  const output = await fs.open("./src/text/toKatakana.ts", "w")
+  try {
+    await output.write(`const M = new Map<string, string>([\n`)
+    for await (const line of reader.read()) {
+      if (reader.lineNumber === 1) {
+        continue
       }
-      start = pos + 1
+      const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
+      const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
+      await output.write(`\t["${from}", "${to}"],\n`)
     }
-    if (start < buf.length) {
-      buf = buf.substring(start)
-    } else {
-      buf = ""
-    }
-  }
-  if (buf) {
-    step(buf, index++)
-  }
-} finally {
-  await input.close()
-}
-
-const output = await fs.open("./src/toKatakana.ts", "w")
-try {
-await output.write(`
-const M = new Map<string, string>([\n`)
-for (const pair of CONVERT_MAP) {
-  await output.write(`\t["${pair.from}", "${pair.to}"],\n`)
-}
-await output.write(`])
+    await output.write(`])
 
 function toKatakanaChar(c: string) {
   return M.get(c) ?? c
@@ -85,7 +47,9 @@ export function toKatakana(value: string | null | undefined) {
   return result
 }
 `)
+  } finally {
+    await output.close()
+  }
 } finally {
-  await output.close()
+await reader.close()
 }
-

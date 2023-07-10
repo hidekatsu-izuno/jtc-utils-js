@@ -4,7 +4,7 @@ import {
   format as _format,
 } from "date-fns"
 import { utcToZonedTime, formatInTimeZone } from "date-fns-tz"
-import { getTimeZone } from "../util/getTimeZone.js"
+import { getTimeZone } from "../getTimeZone.js"
 
 export function formatDate(date: Date | number | string | null | undefined, format: string, timeZone?: string) {
   if (!date) {

@@ -17,7 +17,7 @@ export class PackedMap {
 
   initialize() {
     if (!this.init) {
-      return this.map
+      return
     }
 
     const map = new Map<number, number[]>()
@@ -76,7 +76,6 @@ export class PackedMap {
     }
 
     this.init = undefined
-    return this.map
   }
 
   get(key: number): number | undefined {

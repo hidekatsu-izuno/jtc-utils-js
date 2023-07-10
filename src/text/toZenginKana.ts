@@ -1,4 +1,3 @@
-
 const M = new Map<string, string>([
 	["\u002C", "\u002E"],
 	["\u005B", "\u0028"],

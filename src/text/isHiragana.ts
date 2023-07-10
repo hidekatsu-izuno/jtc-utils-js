@@ -1,4 +1,4 @@
-export function isFullwidthHiragana(value: string | null | undefined) {
+export function isHiragana(value: string | null | undefined) {
   if (!value) {
     return false
   }

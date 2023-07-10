@@ -1,6 +1,6 @@
 import { Charset } from "../charset/charset.js"
 import { utf8 } from "../charset/utf8.js"
-import { escapeRegExp } from "../lang/escapeRegExp.js"
+import { escapeRegExp } from "../util/escapeRegExp.js"
 
 export class CsvReader {
   private reader: ReadableStreamDefaultReader<string>

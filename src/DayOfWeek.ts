@@ -1,5 +1,5 @@
-import { getLocale } from "../util/getLocale.js"
-import { escapeRegExp } from "./escapeRegExp.js"
+import { getLocale } from "./getLocale.js"
+import { escapeRegExp } from "./util/escapeRegExp.js"
 
 export class Week {
   static SUNDAY = new Week("SUNDAY", { en: ["Sunday", "Sun"], ja: ["日曜日", "日"] })

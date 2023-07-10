@@ -1,4 +1,4 @@
-export function isFullwidthKatakana(value: string | null | undefined) {
+export function isKatakana(value: string | null | undefined) {
   if (!value) {
     return false
   }

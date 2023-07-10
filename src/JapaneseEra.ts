@@ -1,6 +1,6 @@
-import { parseDate } from "../text/parseDate.js"
-import { getLocale } from "../util/getLocale.js"
-import { escapeRegExp } from "./escapeRegExp.js"
+import { parseDate } from "./text/parseDate.js"
+import { getLocale } from "./getLocale.js"
+import { escapeRegExp } from "./util/escapeRegExp.js"
 
 export class JapaneseEra {
   static MEIJI = new JapaneseEra(

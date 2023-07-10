@@ -4,7 +4,7 @@ import {
   isValid,
 } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
-import { getTimeZone } from "../util/getTimeZone.js"
+import { getTimeZone } from "../getTimeZone.js"
 
 export function parseDate(str: string, format?: string, timeZone?: string): Date;
 export function parseDate(str: null | undefined, format?: string, timeZone?: string): undefined;
