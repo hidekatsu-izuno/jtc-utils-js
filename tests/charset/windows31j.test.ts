@@ -6,7 +6,7 @@ import { windows31j } from "../../src/charset/windows31j.js"
 describe('windows31j', () => {
   test("compare windows-31j encoder output", async () => {
     const map = new Map()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/windows-31j.encode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/windows-31j.encode.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))

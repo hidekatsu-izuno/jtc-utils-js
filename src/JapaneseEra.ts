@@ -1,5 +1,5 @@
 import { parseISO } from "date-fns"
-import { getLocale } from "./getLocale.js"
+import { getLocale } from "./util/getLocale.js"
 import { escapeRegExp } from "./util/escapeRegExp.js"
 
 export class JapaneseEra {

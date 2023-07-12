@@ -5,14 +5,13 @@ import {
 } from "date-fns"
 import ja from "date-fns/locale/ja"
 import { utcToZonedTime, formatInTimeZone, OptionsWithTZ } from "date-fns-tz"
-import { getTimeZone } from "./getTimeZone.js"
+import { getTimeZone } from "./util/getTimeZone.js"
 import { JapaneseEra } from "./JapaneseEra.js"
 import { DateFormat } from "./util/DateFormat.js"
 
 declare type FormatDateOptions = {
   locale?: string,
   timeZone?: string,
-  calendar?: string,
 }
 
 export function formatDate(date: Date | number | string | null | undefined, format: string, options?: FormatDateOptions) {
@@ -48,7 +47,7 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   const dfOptions: OptionsWithTZ = {}
-  let calendar = options?.calendar
+  let calendar
   if (options?.locale && /^ja(-|$)/i.test(options.locale)) {
     dfOptions.locale = ja
     if (/^ja-jp-u-ca-japanese$/i.test(options.locale)) {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { parseDate } from "../src/parseDate.js"
-import { getTimeZone } from "../src/getTimeZone.js"
+import { getTimeZone } from "../src/util/getTimeZone.js"
 
 describe('formatDate', () => {
   test("test parse from string", () => {

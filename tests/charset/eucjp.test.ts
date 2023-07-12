@@ -6,7 +6,7 @@ import { eucjp } from "../../src/charset/eucjp"
 describe('eucjp', () => {
   test("compare euc-jp encoder output", async () => {
     const map = new Map()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/euc-jp.encode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/euc-jp.encode.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))

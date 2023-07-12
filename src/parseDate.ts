@@ -5,7 +5,7 @@ import {
 } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
 import ja from "date-fns/locale/ja"
-import { getTimeZone } from "./getTimeZone.js"
+import { getTimeZone } from "./util/getTimeZone.js"
 
 declare type ParseDateOptions = {
   locale?: string,
