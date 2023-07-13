@@ -56,8 +56,8 @@ export class NumberFormat {
 
         const groupingPos = iFormat.lastIndexOf(",")
         if (groupingPos !== -1) {
+          groupingDigits = iFormat.length - groupingPos - 1
           iFormat = iFormat.replaceAll(",", "")
-          groupingDigits = iFormat.length - groupingPos
         }
 
         const zeroPos = iFormat.indexOf("0")
@@ -96,12 +96,12 @@ export class NumberFormat {
         n--
       }
 
-      const parts = new Intl.NumberFormat(locale).formatToParts(12345.6)
-      const decimalSeparator = parts.find(d => d.type === "decimal")?.value
+      const parts = new Intl.NumberFormat(locale, { useGrouping: true }).formatToParts(12345.6)
+      const decimalSeparator = parts.find(d => d.type === "decimal")?.value ?? "."
       if (decimalSeparator && decimalSeparator !== ".") {
         map.set(decimalSeparator, ".")
       }
-      const groupingSeparator = parts.find(d => d.type === "group")?.value
+      const groupingSeparator = parts.find(d => d.type === "group")?.value ?? ""
       if (groupingSeparator) {
         map.set(groupingSeparator, "")
       }
@@ -113,7 +113,7 @@ export class NumberFormat {
         }
       }
 
-      const dformat = new NumberFormat(positive, negative, zero, map)
+      const dformat = new NumberFormat(positive, negative, zero, decimalSeparator, groupingSeparator, map)
       NumberFormatCache.set(locale + " " + format, dformat)
       return dformat
   }
@@ -122,6 +122,8 @@ export class NumberFormat {
     public positive: NumberFormatPattern,
     public negative: NumberFormatPattern,
     public zero: NumberFormatPattern,
+    public decimalSeparator: string,
+    public groupingSeparator: string,
     public map: Map<string, string>,
   ) {
   }
@@ -133,11 +135,14 @@ export class NumberFormat {
 
     const format = value === 0 ? this.zero : (value < 0) ? this.negative: this.positive
     let formatted = Number.isFinite(value) ? format.formatter.format(Math.abs(value)) : Math.abs(value).toString()
-    if (format.groupingDigits > 0) {
+    if (format.groupingDigits > 0 && this.groupingSeparator) {
       const re = new RegExp("\\B(?=(\\d{" + format.groupingDigits + "})+(?!\\d))", "g")
-      const sep = formatted.indexOf(".")
-      const groupingSeparator = this.map.get(",") ?? ","
-      formatted = formatted.substring(0, sep).replace(re, groupingSeparator) + ((sep !== -1) ? formatted.substring(sep) : "")
+      let sep = formatted.indexOf(this.decimalSeparator)
+      if (sep !== -1) {
+        formatted = formatted.substring(0, sep).replace(re, this.groupingSeparator) + ((sep !== -1) ? formatted.substring(sep) : "")
+      } else {
+        formatted = formatted.replace(re, this.groupingSeparator)
+      }
     }
     return format.prefix + formatted + format.suffix
   }

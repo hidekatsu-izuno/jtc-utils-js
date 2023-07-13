@@ -9,12 +9,13 @@ JTC-utils は、伝統的な日本企業では必要とされるにも関わら�
 - ひらがな、カタカナ、半角カナ、全銀カナ、MS漢字の文字チェックや変換処理
 - CSV や 固定長ファイルの入出力
 
-このような機能はエンタープライズで主流となっている Java での実装は良く見かけますが、JavaScript/Node.js 向けで機能が揃っているものがなかったため、新たに作成しました。
+このような機能は、エンタープライズで主流となっている Java での実装は良く見かけますが、JavaScript/Node.js 向けで機能が揃っているものがなかったため、新たに作成しました。
 
 なお、このライブラリでは次の方針に基づき開発しています。
 
 - 国際化は目標とせず、日本語/英語環境のみをターゲットにする。
 - [lodash](https://lodash.com/) に存在する機能は実装しない。
+- Tree shaking 可能にする。
 
 ## インストール
 
@@ -63,7 +64,7 @@ parseDate(
 ): Date?
 ```
 
-#### 例
+##### 例
 
 ```javascript
 import { parseDate } from "jtc-utils"
@@ -75,7 +76,7 @@ parseDate("2000/01/01", "uuuu/MM/dd") // -> new Date(2000, 0, 1)
 
 指定した日付を書式に従い文字列に変換します。
 
-日付として解釈できない値が指定された場合は "" を返します。
+日付として解釈できない値が指定された場合には空文字列を返します。
 
 ```typescript
 formatDate(
@@ -101,7 +102,7 @@ formatDate(
 ): string
 ```
 
-#### 例
+##### 例
 
 ```javascript
 import { formatDate } from "jtc-utils"
@@ -113,14 +114,20 @@ formatDate(new Date(2023, 1, 1), "uuuu/MM/dd") // -> "2023/01/01"
 
 #### formatNumber - 数値を書式に従い文字列に変換する
 
-### isHiragana - 文字列がひらがなだけから構成されているか判定する
+#### isHiragana - 文字列がひらがなだけから構成されているか判定する
 
-### isKatakana - 文字列がカタカナだけから構成されているか判定する
-### isHalfwidthKatakana - 文字列が半角カナだけから構成されているか判定する
-### isZenginkana - 文字列が全銀カナだけから構成されているか判定する
+#### isKatakana - 文字列がカタカナだけから構成されているか判定する
+#### isHalfwidthKatakana - 文字列が半角カナだけから構成されているか判定する
+#### isZenginkana - 文字列が全銀カナだけから構成されているか判定する
 
-### isWindows31j - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
-### isWebSafeString - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
+#### isURL - 妥当な HTTP/HTTPS の URLか判定する
+
+#### isSimpleEmail - 妥当なEメールアドレスか判定する
+
+#### isWindows31j - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
+#### isWebSafeString - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
+
+
 
 #### CsvReader - CSV ファイルを読み込む
 
@@ -134,9 +141,9 @@ import { CsvReader } from "jtc-utils/io"
 
 #### FixlenWriter - 固定長ファイルを出力する
 
-### jtc-utils/node
+#### MemoryReadableStream - Uint8Array から読み込む ReadableStream
 
-Node.js 特有のオブジェクトから CsvReader/Writer、FixlenReader/Writer を
+#### MemoryWritableStream - Uint8Array に出力する WritableStream
 
 ### jtc-utils/locale
 
