@@ -1,8 +1,10 @@
 import { NumberFormat } from "./util/NumberFormat.js"
 import { parseNumber } from "./parseNumber.js"
+import { ja, enUS, Locale } from "./locale/index.js"
+import { getLocale } from "./util/getLocale.js"
 
 declare type FormatNumberOptions = {
-  locale?: string,
+  locale?: Locale,
 }
 
 export function formatNumber(num: string | number | null | undefined, format?: string, options?: FormatNumberOptions) {
@@ -21,7 +23,8 @@ export function formatNumber(num: string | number | null | undefined, format?: s
     return toPlainString(num)
   }
 
-  return NumberFormat.get(format, options?.locale).format(num)
+  const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
+  return NumberFormat.get(format, locale.code).format(num)
 }
 
 function toPlainString(num: number | string) {

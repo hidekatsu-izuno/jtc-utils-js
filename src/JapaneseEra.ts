@@ -75,10 +75,8 @@ export class JapaneseEra {
       }
       const localNames = value.localeNames[locale] ?? value.localeNames["en"]
       for (const key in localNames) {
-        for (const name of localNames[key]) {
-          if (keyRE.test(name)) {
-            return value
-          }
+        if (keyRE.test(localNames[key])) {
+          return value
         }
       }
     }

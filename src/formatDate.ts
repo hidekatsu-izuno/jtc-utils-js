@@ -3,14 +3,15 @@ import {
   isValid,
   format as _format,
 } from "date-fns"
-import ja from "date-fns/locale/ja"
 import { utcToZonedTime, formatInTimeZone, OptionsWithTZ } from "date-fns-tz"
 import { getTimeZone } from "./util/getTimeZone.js"
 import { JapaneseEra } from "./JapaneseEra.js"
 import { DateFormat } from "./util/DateFormat.js"
+import { Locale, ja, enUS } from "./locale/index.js"
+import { getLocale } from "./util/getLocale.js"
 
 declare type FormatDateOptions = {
-  locale?: string,
+  locale?: Locale,
   timeZone?: string,
 }
 
@@ -46,16 +47,8 @@ export function formatDate(date: Date | number | string | null | undefined, form
     }
   }
 
-  const dfOptions: OptionsWithTZ = {}
-  let calendar
-  if (options?.locale && /^ja(-|$)/i.test(options.locale)) {
-    dfOptions.locale = ja
-    if (/^ja-jp-u-ca-japanese$/i.test(options.locale)) {
-      calendar = "japanese"
-    }
-  }
-
-  if (calendar === "japanese") {
+  const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
+  if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
     const target = date
     const era = JapaneseEra.of(target)
     if (era) {
@@ -66,11 +59,11 @@ export function formatDate(date: Date | number | string | null | undefined, form
         if (part.type === "pattern") {
           if (part.text.startsWith("G")) {
             if (part.text.length <= 3) {
-              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "short" })}'` }
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(locale.code, { style: "short" })}'` }
             } else if (part.text.length === 4) {
-              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "long" })}'` }
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(locale.code, { style: "long" })}'` }
             } else {
-              parts[i] = { type: "quoted", text: `'${era.toLocaleString(options?.locale, { style: "narrow" })}'` }
+              parts[i] = { type: "quoted", text: `'${era.toLocaleString(locale.code, { style: "narrow" })}'` }
             }
           } else if (part.text.startsWith("y")) {
             const gYear = target.getFullYear() - era.start.getFullYear() + 1
@@ -89,10 +82,11 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   try {
+    const formatOptions = { locale: locale as any }
     if (timeZone && timeZone !== getTimeZone()) {
-      return formatInTimeZone(date, timeZone, format, dfOptions)
+      return formatInTimeZone(date, timeZone, format, { locale })
     } else {
-      return _format(date, format, dfOptions)
+      return _format(date, format, { locale })
     }
   } catch (err) {
     if (err instanceof RangeError) {

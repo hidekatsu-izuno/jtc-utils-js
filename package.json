@@ -22,38 +22,47 @@
   "license": "MIT",
   "sideEffects": false,
   "exports": {
-    "./node": {
+    "./locale": {
       "import": {
-        "types": "./module/node/index.d.ts",
-        "default": "./module/node/index.js"
+        "types": "./esm/locale/index.d.ts",
+        "default": "./esm/locale/index.js"
       },
-      "require": {
-        "types": "./lib/node/index.d.ts",
-        "default": "./lib/node/index.js"
-      },
-      "default": "./lib/node/index.js"
+      "default": {
+        "types": "./commonjs/locale/index.d.ts",
+        "default": "./commonjs/locale/index.js"
+      }
     },
     "./charset": {
       "import": {
-        "types": "./module/charset/index.d.ts",
-        "default": "./module/charset/index.js"
+        "types": "./esm/charset/index.d.ts",
+        "default": "./esm/charset/index.js"
       },
-      "require": {
-        "types": "./lib/charset/index.d.ts",
-        "default": "./lib/charset/index.js"
-      },
-      "default": "./lib/charset/index.js"
+      "default": {
+        "types": "./commonjs/charset/index.d.ts",
+        "default": "./commonjs/charset/index.js"
+      }
     },
     ".": {
-      "import": {
-        "types": "./module/index.d.ts",
-        "default": "./module/index.js"
+      "browser": {
+        "import": {
+          "types": "./esm/index.d.ts",
+          "default": "./esm/index.js"
+        },
+        "default": {
+          "types": "./commonjs/index.d.ts",
+          "default": "./commonjs/index.js"
+        }
       },
-      "require": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
-      },
-      "default": "./lib/index.js"
+      "default": {
+        "import": {
+          "types": "./esm/node/index.d.ts",
+          "default": "./esm/node/index.js"
+        },
+        "default": {
+          "types": "./commonjs/node/index.d.ts",
+          "default": "./commonjs/node/index.js"
+        }
+      }
     },
     "./package.json": "./package.json"
   },

@@ -1,5 +1,5 @@
 import { Readable } from "node:stream"
-import { FileHandle } from "node:fs/promises"
+import type { FileHandle } from "node:fs/promises"
 import { CsvReader as WebCsvReader } from "../CsvReader.js"
 import { Charset } from "../charset/charset.js"
 

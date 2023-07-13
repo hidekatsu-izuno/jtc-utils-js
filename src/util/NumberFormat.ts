@@ -11,7 +11,7 @@ declare type NumberFormatPattern = {
 const NumberFormatCache = new Map<string, NumberFormat>()
 
 export class NumberFormat {
-  static get(format: string, locale: string = "en") {
+  static get(format: string, locale: string = "en-US") {
       const cached = NumberFormatCache.get(locale + " " + format)
       if (cached) {
         return cached
@@ -136,7 +136,8 @@ export class NumberFormat {
     if (format.groupingDigits > 0) {
       const re = new RegExp("\\B(?=(\\d{" + format.groupingDigits + "})+(?!\\d))", "g")
       const sep = formatted.indexOf(".")
-      formatted = formatted.substring(0, sep).replace(re, ",") + ((sep !== -1) ? formatted.substring(sep) : "")
+      const groupingSeparator = this.map.get(",") ?? ","
+      formatted = formatted.substring(0, sep).replace(re, groupingSeparator) + ((sep !== -1) ? formatted.substring(sep) : "")
     }
     return format.prefix + formatted + format.suffix
   }

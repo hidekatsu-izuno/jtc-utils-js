@@ -4,11 +4,13 @@ import {
   isValid,
 } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
-import ja from "date-fns/locale/ja"
+import { Locale, ja, enUS } from "./locale/index.js"
+import { getLocale } from "./util/getLocale.js"
 import { getTimeZone } from "./util/getTimeZone.js"
+import { JapaneseEra } from "./JapaneseEra.js"
 
 declare type ParseDateOptions = {
-  locale?: string,
+  locale?: Locale,
   timeZone?: string,
 }
 
@@ -19,15 +21,41 @@ export function parseDate(str: string | null | undefined, format?: string, optio
     return undefined
   }
 
+  const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
   const timeZone = options?.timeZone
 
-  const dfOptions: Record<string, any> = {}
-  if (options?.locale && /^ja(-|$)/i.test(options.locale)) {
-    dfOptions.locale = ja
-  }
-
   try {
-    let tmp = format ? parse(str, format, new Date(), dfOptions) : parseISO(str)
+    let tmp
+    if (!format) {
+      tmp = parseISO(str)
+    } else {
+      const parseOptions = { locale: locale as any }
+      let era: JapaneseEra | undefined
+      if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
+        parseOptions.locale = {
+          ...locale,
+          match: {
+            ...locale.match,
+            era(dateString: string, options: Record<any, any>) {
+              let m
+              if (m = /^([MTSHR]|明治?|大正?|昭和?|平成?|令和?)/.exec(dateString)) {
+                era = JapaneseEra.from(m[0], { locale: "ja" })
+                return {
+                  value: 1,
+                  rest: dateString.substring(m[0].length),
+                }
+              } else {
+                return locale.match?.era(dateString, options)
+              }
+            }
+          }
+        }
+      }
+      tmp = parse(str, format, new Date(), parseOptions)
+      if (era) {
+        tmp.setFullYear(tmp.getFullYear() + era.start.getFullYear() - 1)
+      }
+    }
     if (isValid(tmp)) {
       if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(str)) {
         tmp = utcToZonedTime(tmp, timeZone)

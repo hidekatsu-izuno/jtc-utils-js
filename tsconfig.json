@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "NodeNext",
     "newLine": "LF",
-    "outDir": "./module/",
+    "outDir": "./esm/",
     "target": "ES2021",
     "sourceMap": true,
     "declaration": true,
