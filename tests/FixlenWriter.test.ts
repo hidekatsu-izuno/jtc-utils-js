@@ -1,21 +1,19 @@
 import { describe, expect, test } from "vitest"
 
 import { MemoryWritableStream } from "../src/MemoryWritableStream"
-import { FixlenWriter, FixlenWriterLayout } from "../src/FixlenWriter"
+import { FixlenWriter } from "../src/FixlenWriter"
 import { windows31j } from "../src/charset/windows31j"
 import { cp939 } from "../src/charset/cp939"
 
 describe('FixlenWriter', () => {
   test("test write utf-8 fixlen without bom", async () => {
     const buf = new MemoryWritableStream()
-
-    const writer = new FixlenWriter(buf)
+    const writer = new FixlenWriter(buf, {
+      columns: [{ length: 3 }, { length: 3 }, { length: 3 }, { length: 1 }]
+    })
     try {
-      const layout = {
-        columns: [{ length: 3 }, { length: 3 }, { length: 3 }, { length: 1 }]
-      }
-      await writer.write(["aaa", "bbb", "ccc"], layout)
-      await writer.write(["ddd", "ee", "f"], layout)
+      await writer.write(["aaa", "bbb", "ccc"])
+      await writer.write(["ddd", "ee", "f"])
     } finally {
       await writer.close()
     }
@@ -27,15 +25,13 @@ describe('FixlenWriter', () => {
     const buf = new MemoryWritableStream()
 
     const writer = new FixlenWriter(buf, {
+      columns: [{ length: 3 }, { length: 3 }, { length: 3 }],
       bom: true,
       lineSeparator: "\n"
     })
     try {
-      const layout = {
-        columns: [{ length: 3 }, { length: 3 }, { length: 3 }]
-      }
-      await writer.write(["aaa", "bbb", "ccc"], layout)
-      await writer.write(["ddd", "eee", "fff"], layout)
+      await writer.write(["aaa", "bbb", "ccc"])
+      await writer.write(["ddd", "eee", "fff"])
     } finally {
       await writer.close()
     }
@@ -47,15 +43,13 @@ describe('FixlenWriter', () => {
     const buf = new MemoryWritableStream()
 
     const writer = new FixlenWriter(buf, {
+      columns: [{ length: 3 }, { length: 4, filler: "　" }, { length: 6 }],
       charset: windows31j,
       lineSeparator: "\r\n"
     })
     try {
-      const layout = {
-        columns: [{ length: 3 }, { length: 4, filler: "　" }, { length: 6 }]
-      }
-      await writer.write(["aaa", "あい", "ｶｶﾞﾊﾟ"], layout)
-      await writer.write(["dd", "あ", "ｱｲｳ"], layout)
+      await writer.write(["aaa", "あい", "ｶｶﾞﾊﾟ"])
+      await writer.write(["dd", "あ", "ｱｲｳ"])
     } finally {
       await writer.close()
     }
@@ -67,15 +61,13 @@ describe('FixlenWriter', () => {
     const buf = new MemoryWritableStream()
 
     const writer = new FixlenWriter(buf, {
+      columns: [{ length: 3 }, { length: 4, filler: "　", shift: true }, { length: 6 }],
       charset: cp939,
       lineSeparator: "\r\n"
     })
     try {
-      const layout = {
-        columns: [{ length: 3 }, { length: 4, filler: "　", shift: true }, { length: 6 }]
-      }
-      await writer.write(["aaa", "あい", "ｶｶﾞﾊﾟｬ"], layout)
-      await writer.write(["dd", "あ", "ｱｲｳ"], layout)
+      await writer.write(["aaa", "あい", "ｶｶﾞﾊﾟｬ"])
+      await writer.write(["dd", "あ", "ｱｲｳ"])
     } finally {
       await writer.close()
     }
@@ -90,25 +82,23 @@ describe('FixlenWriter', () => {
     const buf = new MemoryWritableStream()
 
     const writer = new FixlenWriter(buf, {
+      columns: [
+        { length: 4 },
+        { length: 4, type: "zerofill" },
+        { length: 4, type: "int-le" },
+        { length: 4, type: "int-be" },
+        { length: 4, type: "uint-le" },
+        { length: 4, type: "uint-be" },
+        { length: 4, type: "zoned" },
+        { length: 4, type: "packed" },
+      ],
       charset: cp939,
       lineSeparator: "\n"
     })
     try {
-      const layout: FixlenWriterLayout = {
-        columns: [
-          { length: 4 },
-          { length: 4, type: "zerofill" },
-          { length: 4, type: "int-le" },
-          { length: 4, type: "int-be" },
-          { length: 4, type: "uint-le" },
-          { length: 4, type: "uint-be" },
-          { length: 4, type: "zoned" },
-          { length: 4, type: "packed" },
-        ]
-      }
-      await writer.write([0, 0, 0, 0, 0, 0, 0, 0], layout)
-      await writer.write([341, 341, 341, 341, 341, 341, 341, 341], layout)
-      await writer.write([-341, -341, -341, -341, -341, -341, -341, -341], layout)
+      await writer.write([0, 0, 0, 0, 0, 0, 0, 0])
+      await writer.write([341, 341, 341, 341, 341, 341, 341, 341])
+      await writer.write([-341, -341, -341, -341, -341, -341, -341, -341])
     } finally {
       await writer.close()
     }
