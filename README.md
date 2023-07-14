@@ -11,9 +11,9 @@ JTC-utils は、伝統的な日本企業では必要とされるにも関わら�
 
 このような機能は、エンタープライズで主流となっている Java での実装は良く見かけますが、JavaScript/Node.js 向けで機能が揃っているものがなかったため、新たに作成しました。
 
-なお、このライブラリでは次の方針に基づき開発しています。
+なお、このライブラリは次の方針に基づき開発しています。
 
-- 国際化は必ずしも目標とせず、日英環境のみをターゲットにする。
+- 国際化は必ずしも目標とせず、日/英環境のみをターゲットにする。
 - [lodash](https://lodash.com/) に存在する機能は実装しない。
 - Tree Shaking に対応する。
 
@@ -206,14 +206,14 @@ isHiragana("やまだ　たろう") // -> true
 isHiragana("山田　太郎") // -> false
 ```
 
-#### isKatakana - 文字列がカタカナだけから構成されているか判定する
+#### isFullwidthKatakana - 文字列が全角カタカナだけから構成されているか判定する
 
 文字列が全角カタカナ、全角空白（U+3000）、中黒（U+30FB）、長音記号（U+30FC）からのみ構成される場合、 true を返します。（繰り返し記号、括弧、句読点は含まれません）
 
 主に読み仮名、振り仮名のチェックに使うことを想定しています。
 
 ```typescript
-function isKatakana(
+function isFullwidthKatakana(
   // 検査する文字列です。
   value: string | null | undefined,
 ): boolean
@@ -222,10 +222,10 @@ function isKatakana(
 ##### 例
 
 ```typescript
-import { isKatakana } from "jtc-utils"
+import { isFullwidthKatakana } from "jtc-utils"
 
-isKatakana("ヤマダ・タロー") // -> true
-isKatakana("山田　太郎") // -> false
+isFullwidthKatakana("ヤマダ・タロー") // -> true
+isFullwidthKatakana("山田　太郎") // -> false
 ```
 
 #### isHalfwidthKatakana - 文字列が半角カナだけから構成されているか判定する
@@ -298,14 +298,14 @@ isHttpURL("mailto:test@example.com") // -> false
 isHttpURL("ftp://test@example.com/test") // -> false
 ```
 
-#### isSimpleEmail - 妥当なEメールアドレスか判定する
+#### isEmail - 妥当なEメールアドレスか判定する
 
 文字列が妥当な [HTML Web Standard で定義される妥当なメールアドレス](https://html.spec.whatwg.org/multipage/input.html#email-state-%28type=email%29)に合致するか判定します。
 
 メールアドレスの定義としては [RFC 5321](https://www.rfc-editor.org/rfc/rfc5321.html)、[RFC 5322](https://www.rfc-editor.org/rfc/rfc5322.html) などがありますが、複雑すぎること、定義が複数あること、最終的に送信してみないと有効か判断できないことから、上記の定義でチェックするのが現状最善であると判断しています。
 
 ```typescript
-function isSimpleEmail(
+function isEmail(
   // 検査する文字列です。
   value: string | null | undefined,
 ): boolean
@@ -314,10 +314,37 @@ function isSimpleEmail(
 ##### 例
 
 ```typescript
-import { isSimpleEmail } from "jtc-utils"
+import { isEmail } from "jtc-utils"
 
-isSimpleEmail("test@example.com") // -> true
-isSimpleEmail("あいう@example_com") // -> false
+isEmail("test@example.com") // -> true
+isEmail("あいう@example_com") // -> false
+```
+
+#### isTelephoneNo - 妥当な電話番号か判定する
+
+文字列が妥当な電話番号と見なせるか判定します。
+
+ITU-T E.164 に従い、国番号（"+" + 数字1～3桁）とハイフン区切りの数字からなり、合計15桁以内の場合に true を返します。日本で良く使われる市外局番を丸括弧でくくるケースもサポートしています。
+
+世界には、1桁の電話番号も存在しているため、厳密なチェックはで難しいことに注意してください。
+
+```typescript
+function isTelephoneNo(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isTelephoneNo } from "jtc-utils"
+
+isTelephoneNo("0312345678") // -> true
+isTelephoneNo("03-1234-5678") // -> true
+isTelephoneNo("+81 090-1234-5678") // -> true
+isTelephoneNo("+81 (090) 1234-5678") // -> true
+isTelephoneNo("-81 (090) 1234-ABCD") // -> false
 ```
 
 #### isWindows31j - 文字列が Windows-31J として利用可能な文字だけから構成されているか判定する
@@ -977,6 +1004,8 @@ stream.toString("euc-jp")
 
 `date-fns` のロケールに加え、和歴表示のため jaJPUCaJapanese (ja-JP-u-ca-japanese) が利用できます。
 
+##### 例
+
 ```typescript
 import { enUS, ja, jaJPUCaJapanese } from "jtc-utils/locale"
 
@@ -1000,6 +1029,8 @@ formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // ->
 |eucjp      |EUC-JP                             |
 |cp930      |IBM CP930 (EBCDIC + IBM漢字)       |
 |cp939      |IBM CP939 (EBCDIC + IBM漢字)       |
+
+##### 例
 
 ```typescript
 import { utf8, utf16be, utf16le, windows31j, eucjp, cp930, cp939 } from "jtc-utils/charset"

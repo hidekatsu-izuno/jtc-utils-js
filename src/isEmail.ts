@@ -1,4 +1,4 @@
-export function isSimpleEmail(value: string | null | undefined) {
+export function isEmail(value: string | null | undefined) {
   if (value == null) {
     return false
   }
