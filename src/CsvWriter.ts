@@ -8,7 +8,7 @@ export class CsvWriter {
   private bom: boolean
   private fieldSeparator: string
   private lineSeparator: string
-  private quoteAlways: boolean
+  private quoteAll: boolean
 
   private index: number = 0
 
@@ -19,7 +19,7 @@ export class CsvWriter {
       bom?: boolean,
       fieldSeparator?: string,
       lineSeparator?: string,
-      quoteAlways?: boolean
+      quoteAll?: boolean
       fatal?: boolean,
     },
   ) {
@@ -32,10 +32,14 @@ export class CsvWriter {
     this.writer = dest.getWriter()
     this.fieldSeparator = options?.fieldSeparator ?? ","
     this.lineSeparator = options?.lineSeparator ?? "\r\n"
-    this.quoteAlways = options?.quoteAlways ?? false
+    this.quoteAll = options?.quoteAll ?? false
   }
 
-  async write(record: any[]) {
+  async write(record: any[], options?: {
+    quoteAll?: boolean,
+  }) {
+    const quoteAll = options?.quoteAll ?? this.quoteAll
+
     let str = ""
     if (this.bom) {
       str = "\uFEFF"
@@ -47,7 +51,7 @@ export class CsvWriter {
       if (i > 0) {
         str += this.fieldSeparator
       }
-      if (this.quoteAlways || item.includes(this.fieldSeparator) || /[\r\n]/.test(item)) {
+      if (quoteAll || item.includes(this.fieldSeparator) || /[\r\n]/.test(item)) {
         str += '"' + item.replaceAll('"', '""') + '"'
       } else {
         str += item

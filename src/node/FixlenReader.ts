@@ -1,14 +1,17 @@
 import { Readable } from "node:stream"
 import { FileHandle } from "node:fs/promises"
-import { FixlenReader as WebFixlenReader } from "../FixlenReader.js"
+import { FixlenLineDecoder, FixlenReaderColumn, FixlenReader as WebFixlenReader } from "../FixlenReader.js"
 import { Charset } from "../charset/charset.js"
 
 export class FixlenReader extends WebFixlenReader {
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
-    options?: {
+    config: {
+      lineLength: number,
+      columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
       charset?: Charset,
       bom?: boolean,
+      shift?: boolean,
       fatal?: boolean,
     }
   ) {
@@ -20,6 +23,6 @@ export class FixlenReader extends WebFixlenReader {
     } else {
       newSrc = Readable.toWeb(src.createReadStream()) as ReadableStream<Uint8Array>
     }
-    super(newSrc, options)
+    super(newSrc, config)
   }
 }

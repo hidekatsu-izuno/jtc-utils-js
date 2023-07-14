@@ -545,12 +545,14 @@ const reader = new CsvReader(
   }
 )
 
-// データを１行ずつ読み込むジェネレーターを取得します。
-reader.read(): AsyncGenerator<string[]>
+// reader はレコードを１行ずつ読み込むジェネレーターを実装しています。
+reader: AsyncGenerator<string[]>
 
-// レコード番号を取得します。
-// データ取得前 0 となり、データを取得する度に増加してきます。
-reader.index: number
+// 明示的に1行読み込むことも可能です。
+reader.read(): Promise<string[]>
+
+// 現在までに読み込んだレコード件数を取得します。
+reader.count: number
 
 // ストリームをクローズします。
 reader.close(): Promise<void>
@@ -564,11 +566,32 @@ import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
 const reader = new CsvReader(fs.createReadStream("sample.csv"), {
-  charset: windows31j
+  charset: windows31j,
 })
 try {
   const result = []
   for await (const line of reader.read(layout)) {
+    result.push(line)
+  }
+} finally {
+  await reader.close()
+}
+```
+
+read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
+
+```typescript
+import { CsvReader } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
+
+const reader = new CsvReader(fs.createReadStream("sample.csv"), {
+  charset: windows31j,
+})
+try {
+  const result = []
+  let line = reader.read() // 1行スキップ
+  while (line = reader.read()) {
     result.push(line)
   }
 } finally {
@@ -604,9 +627,9 @@ const writer = new FixlenReader(
     // デフォルトは "\r\n" です。
     lineSeparator?: string,
 
-    // 常にクォートする場合 true
+    // 全項目をクォートする場合 true
     // デフォルトは false（＝必要な時のみクォート）です。
-    quoteAlways?: boolean
+    quoteAll?: boolean
 
     // 変換できないなど無効なデータが見つかった時に Error にしたい場合 true
     // デフォルトは true です。
@@ -614,12 +637,21 @@ const writer = new FixlenReader(
   }
 )
 
-// データを１行出力します。
-writer.write(record: any[]): Promise<void>
+// レコードを１行出力します。
+writer.write(
+  // 出力するデータです。
+  record: any[],
 
-// レコード番号を取得します。
-// データ書き込み前 0 となり、データを書き込む度に増加してきます。
-writer.index: number
+  // オプションです。
+  options?: {
+    // 全項目をクォートする場合 true
+    // デフォルトはコンストラクタのオプションに従います。
+    quoteAll?: boolean
+  }
+): Promise<void>
+
+// 現在までに出力したレコード件数を取得します。
+writer.count: number
 
 // ストリームをクローズします。
 writer.close(): Promise<void>
@@ -633,7 +665,7 @@ import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
 const writer = new CsvWriter(fs.createWriteStream("sample.csv"), {
-  charset: windows31j
+  charset: windows31j,
 })
 try {
   await writer.write(["012", "abc", "あいう"])
@@ -652,36 +684,73 @@ const reader = new FixlenReader(
   // 読み込みするデータソースです。
   src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
 
-  // オプションです。
-  options?: {
+  // 設定です。
+  config: {
+    // 1行として切り出すバイト数です。
+    lineLength: number,
+
+    // レコードのレイアウト定義です。
+    // レコードの値によってレイアウトを動的に変更する関数も指定できます。
+    columns: FixlenReaderColumn[] |
+      ((line: { decode(column: FixlenReaderColumn) }) => FixlenReaderColumn[]),
+
     // 文字セットです。
     // jtc-utils/charset から import した文字セットオブジェクトを指定します。
     // デフォルトは utf8 です。
     charset?: Charset,
 
-    // 先頭に BOM にある場合に読み飛ばす場合 true
-    // デフォルトは true です。
+    // 先頭に BOM を出力する場合 true
+    // デフォルトは charset に Unicode を指定した場合は true です。
     bom?: boolean,
 
-    // 変換できないなど無効なデータを読み込んだ時に Error にしたい場合 true
+    // 文字セットをシフト状態にする場合 true
+    // 主に漢字コードがシフト状態に割り当てられている文字セットで利用します。
+    // デフォルトは false です。
+    shift?: boolean,
+
+    // 変換できないなど無効なデータが見つかった時に Error にしたい場合 true
     // デフォルトは true です。
     fatal?: boolean,
   }
 )
 
-// データを１行ずつ読み込むジェネレーターを取得します。
-// データはレイアウトに従い解析されます。
-reader.read(layout: {
-  // 行として読み込むバイト数です。
-  lineLength: number,
+// reader はレコードを１行ずつ読み込むジェネレーターを実装しています。
+reader: AsyncGenerator<(string | number)[]>
 
-  // 解析するレイアウトです。
-  columns: FixlenReaderColumn[]
-    | ((line: { decode(layout: FixlenReaderColumn) }, index: number) => FixlenReaderColumn[]),
-}): AsyncGenerator<string[]>
+// 明示的に1行読み込むことも可能です。
+// オプションを指定することで、動的に切り出すサイズやレイアウトを変更できます。
+reader.read(
+  // オプションです。
+  options?: {
+    // 1行として切り出すバイト数です。
+    lineLength: number,
+
+    // レコードのレイアウト定義です。
+    // レコードの値によってレイアウトを動的に変更する関数も指定できます。
+    columns: FixlenReaderColumn[] |
+      ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
+
+    // 文字セットをシフト状態にする場合 true
+    // 主に漢字コードがシフト状態に割り当てられている文字セットで利用します。
+    // デフォルトはコンストラクタのオプションに従います。
+    shift?: boolean,
+  }
+): Promise<(string | number)[]>
+
+// 現在までに読み込んだレコード件数を取得します。
+reader.count: number
+
+// ストリームをクローズします。
+reader.close(): Promise<void>
+
+// 解析前に行の一部を切り出すためのインターフェイスです。
+interface FixlenLineDecoder {
+  // 行の一部を切り出します。
+  decode(column: FixlenReaderColumn): string | number
+}
 
 // 各フィールドの定義です。
-type FixlenReaderColumn = {
+declare type FixlenReaderColumn = {
   // フィールドの開始位置（バイト数）です。
   start: number,
 
@@ -708,13 +777,6 @@ type FixlenReaderColumn = {
     | "zoned" // ゾーン10進数
     | "packed", // パック10進数
 }
-
-// データの行番号を取得します。
-// データ取得前 0 となり、データを取得する度に増加してきます。
-reader.index: number
-
-// ストリームをクローズします。
-reader.close(): Promise<void>
 ```
 
 ##### 例
@@ -725,15 +787,39 @@ import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
 const reader = new FixlenReader(fs.createReadStream("sample.dat"), {
+  lineLength: 14,
+  columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }],
   charset: windows31j,
-  lineSeparator: "\r\n"
 })
 try {
-  const layout = {
-    columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }]
-  }
   const result = []
-  for await (const line of reader.read(layout)) {
+  for await (const line of reader) {
+    result.push(line)
+  }
+} finally {
+  await reader.close()
+}
+```
+
+read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
+
+```typescript
+import { CsvReader } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
+
+const reader = new FixlenReader(fs.createReadStream("sample.csv"), {
+  lineLength: 14,
+  columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }],
+  charset: windows31j,
+})
+try {
+  const result = []
+  let line = reader.read({  // 最初の10バイトをスキップ
+    lineLength: 10,
+    columns: [],
+  })
+  while (line = reader.read()) {
     result.push(line)
   }
 } finally {
@@ -746,13 +832,94 @@ try {
 配列を固定長ファイルとして出力先に書き込みます。
 
 ```typescript
+const writer = new FixlenWriter(
+  // 出力先です。
+  dest: WritableStream<Uint8Array> | FileHandle | Writable,
 
+  // 設定です。
+  config: {
+    // レコードのレイアウト定義です。
+    columns: FixlenWriterColumn[],
+
+    // 文字セットです。
+    // jtc-utils/charset から import した文字セットオブジェクトを指定します。
+    // デフォルトは utf8 です。
+    charset?: Charset,
+
+    // 先頭に BOM を出力する場合 true
+    // デフォルトは charset に Unicode を指定した場合は true です。
+    bom?: boolean,
+
+    // 文字セットをシフト状態にする場合 true
+    // 主に漢字コードがシフト状態に割り当てられている文字セットで利用します。
+    // デフォルトは false です。
+    shift?: boolean,
+
+    // 余った領域を埋める文字を指定します。
+    // デフォルトは " "（半角空白）です。
+    filler?: string,
+
+    // 行末に付与する文字を指定します。
+    // デフォルトは未設定（＝改行なし）です。
+    lineSeparator?: string,
+
+    // 変換できないなど無効なデータが見つかった時に Error にしたい場合 true
+    // デフォルトは true です。
+    fatal?: boolean,
+  },
+)
+
+// レコードを１行出力します。
+writer.write(
+  // 出力するデータです。
+  record: any[],
+
+  // オプションです。
+  options?: {
+    // レコードのレイアウト定義です。
+    columns: FixlenWriterColumn[],
+
+    // 文字セットをシフト状態にする場合 true
+    // 主に漢字コードがシフト状態に割り当てられている文字セットで利用します。
+    // デフォルトはコンストラクタの設定に従います。
+    shift?: boolean
+
+    // 余った領域を埋める文字を指定します。
+    // デフォルトはコンストラクタの設定に従います。
+    filler?: string,
+
+    // 行末に付与する文字を指定します。
+    // デフォルトはコンストラクタの設定に従います。
+    lineSeparator?: string,
+  }
+): Promise<void>
+
+// 現在までに出力したレコード件数を取得します。
+writer.count: number
+
+// ストリームをクローズします。
+writer.close(): Promise<void>
 ```
 
 ##### 例
 
 ```typescript
+import { FixlenWriter } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
 
+const writer = new FixlenWriter(fs.createWriteStream("sample.dat"), {
+  columns: [{ length: 3 }, { length: 3 }, { length: 3 }],
+  charset: windows31j,
+  bom: true,
+  lineSeparator: "\r\n",
+})
+try {
+  await writer.write(["aaa", "bbb", "あいう"])
+  await writer.write(["ddd", "eee", "かきく"])
+} finally {
+  await writer.close()
+}
 ```
 
 #### MemoryReadableStream - Uint8Array から ReadableStream を構築する

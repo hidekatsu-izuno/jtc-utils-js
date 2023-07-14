@@ -73,7 +73,7 @@ export class FixlenWriter {
     this.writer = dest.getWriter()
   }
 
-  async write(values: any[], options?: {
+  async write(record: any[], options?: {
     columns: FixlenWriterColumn[],
     shift?: boolean
     filler?: string,
@@ -133,7 +133,7 @@ export class FixlenWriter {
 
     for (let pos = 0; pos < columns.length; pos++) {
       const col = columns[pos]
-      const value = values[pos]
+      const value = record[pos]
 
       const isNumber = typeof value === "number" && Number.isFinite(value)
       const type = isNumber ? col.type : undefined

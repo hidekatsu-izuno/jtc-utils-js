@@ -63,7 +63,7 @@ export class FixlenReader {
     }
 
     this.lineLength = config.lineLength
-    this.columns = Array.isArray(config.columns) ? this.normalizeColumns(this.lineLength, config.columns) :
+    this.columns = Array.isArray(config.columns) ? this.normalizeColumns(this.lineLength, config.columns, this.shift) :
       config.columns
 
     this.decoder = charset.createDecoder({
@@ -76,10 +76,12 @@ export class FixlenReader {
   async read(options?: {
     lineLength: number,
     columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
+    shift?: boolean,
   }): Promise<(string | number)[] | undefined>  {
     const items = new Array<string | number>()
 
     const lineLength = options?.lineLength ?? this.lineLength
+    const shift = options?.shift ?? this.shift
 
     let done = false
     let buf = this.buf
@@ -107,7 +109,7 @@ export class FixlenReader {
     }
 
     let columns = !(options?.columns) ? this.columns :
-      Array.isArray(options.columns) ? this.normalizeColumns(lineLength, options.columns) :
+      Array.isArray(options.columns) ? this.normalizeColumns(lineLength, options.columns, shift) :
       options.columns
     if (!Array.isArray(columns)) {
       columns = this.normalizeColumns(lineLength, columns({
@@ -118,7 +120,7 @@ export class FixlenReader {
           }
           return this.decode(col, line)
         }
-      }))
+      }), shift)
     }
 
     for (let i = 0; i < columns.length; i++) {
@@ -144,7 +146,11 @@ export class FixlenReader {
     await this.reader.cancel()
   }
 
-  private normalizeColumns(lineLength: number, columns: FixlenReaderColumn[]): (FixlenReaderColumn & { end: number })[] {
+  private normalizeColumns(
+    lineLength: number,
+    columns: FixlenReaderColumn[],
+    shift: boolean
+  ): (FixlenReaderColumn & { end: number })[] {
     return columns.map((col, index, array) => {
       if (col.start < 0) {
         throw new RangeError(`columns[${index}].start must be positive.`)
@@ -172,7 +178,7 @@ export class FixlenReader {
         start: col.start,
         end,
         length: col.length,
-        shift: col.shift ?? this.shift,
+        shift: col.shift ?? shift,
         trim: col.trim,
         type: col.type,
       }
