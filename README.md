@@ -66,7 +66,7 @@ function parseDate(
 
 ##### 例
 
-```javascript
+```typescript
 import { parseDate } from "jtc-utils"
 
 parseDate("2000/01/01", "uuuu/MM/dd") // -> new Date(2000, 0, 1)
@@ -104,7 +104,7 @@ function formatDate(
 
 ##### 例
 
-```javascript
+```typescript
 import { formatDate } from "jtc-utils"
 
 formatDate(new Date(2023, 1, 1), "uuuu/MM/dd") // -> "2023/01/01"
@@ -138,7 +138,7 @@ function parseNumber(
 
 ##### 例
 
-```javascript
+```typescript
 import { parseNumber } from "jtc-utils"
 import { de } from "jtc-utils/locale"
 
@@ -531,7 +531,7 @@ const reader = new CsvReader(
     // デフォルトは true です。
     bom?: boolean,
 
-    // 行内の区切り文字です。
+    // フィールドの区切り文字です。
     // デフォルトは "," です。
     fieldSeparator?: string,
 
@@ -539,7 +539,7 @@ const reader = new CsvReader(
     // デフォルトは false です。
     skipEmptyLine?: boolean,
 
-    // 変換できないなど無効なデータを読み込んだ時に Error にしたい場合 true
+    // 変換できないなど無効なデータが見つかった時に Error にしたい場合 true
     // デフォルトは true です。
     fatal?: boolean,
   }
@@ -548,7 +548,7 @@ const reader = new CsvReader(
 // データを１行ずつ読み込むジェネレーターを取得します。
 reader.read(): AsyncGenerator<string[]>
 
-// データの行番号を取得します。
+// レコード番号を取得します。
 // データ取得前 0 となり、データを取得する度に増加してきます。
 reader.index: number
 
@@ -558,26 +558,18 @@ reader.close(): Promise<void>
 
 ##### 例
 
-```javascript
+```typescript
 import { CsvReader } from "jtc-utils"
 import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
-// sample.csv:
-// 012,abc,あいう\r\n
-// 345,def,かきく\r\n
-const input = fs.createReadStream("sample.csv")
-
-const reader = new CsvReader(input, {
+const reader = new CsvReader(fs.createReadStream("sample.csv"), {
   charset: windows31j
 })
 try {
-  for await (const line of reader.read()) {
-    if (reader.index === 1) {
-      line // -> ["012", "abc", "あいう"]
-    } else if (reader.index === 2) {
-      line // -> ["345", "def", "かきく"]
-    }
+  const result = []
+  for await (const line of reader.read(layout)) {
+    result.push(line)
   }
 } finally {
   await reader.close()
@@ -585,6 +577,71 @@ try {
 ```
 
 #### CsvWriter - CSV ファイルを出力する
+
+配列を CSV として出力先に書き込みます。
+
+```typescript
+const writer = new FixlenReader(
+  // 出力先です。
+  dest: WritableStream<Uint8Array> | FileHandle | Writable,
+
+  // オプションです。
+  options?: {
+    // 文字セットです。
+    // jtc-utils/charset から import した文字セットオブジェクトを指定します。
+    // デフォルトは utf8 です。
+    charset?: Charset,
+
+    // 先頭に BOM を出力する場合 true
+    // デフォルトは charset に Unicode を指定した場合は true です。
+    bom?: boolean,
+
+    // フィールドの区切り文字です。
+    // デフォルトは "," です。
+    fieldSeparator?: string,
+
+    // 行の区切り文字です。
+    // デフォルトは "\r\n" です。
+    lineSeparator?: string,
+
+    // 常にクォートする場合 true
+    // デフォルトは false（＝必要な時のみクォート）です。
+    quoteAlways?: boolean
+
+    // 変換できないなど無効なデータが見つかった時に Error にしたい場合 true
+    // デフォルトは true です。
+    fatal?: boolean,
+  }
+)
+
+// データを１行出力します。
+writer.write(record: any[]): Promise<void>
+
+// レコード番号を取得します。
+// データ書き込み前 0 となり、データを書き込む度に増加してきます。
+writer.index: number
+
+// ストリームをクローズします。
+writer.close(): Promise<void>
+```
+
+##### 例
+
+```typescript
+import { CsvWriter } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
+
+const writer = new CsvWriter(fs.createWriteStream("sample.csv"), {
+  charset: windows31j
+})
+try {
+  await writer.write(["012", "abc", "あいう"])
+  await writer.write(["345", "def", "かきく"])
+} finally {
+  await writer.close()
+}
+```
 
 #### FixlenReader - 固定長ファイルを読み込む
 
@@ -618,9 +675,39 @@ reader.read(layout: {
   // 行として読み込むバイト数です。
   lineLength: number,
 
-  //
-  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, index: number) => FixlenReaderColumn[]),
+  // 解析するレイアウトです。
+  columns: FixlenReaderColumn[]
+    | ((line: { decode(layout: FixlenReaderColumn) }, index: number) => FixlenReaderColumn[]),
 }): AsyncGenerator<string[]>
+
+// 各フィールドの定義です。
+type FixlenReaderColumn = {
+  // フィールドの開始位置（バイト数）です。
+  start: number,
+
+  // フィールドの長さ（バイト数）です。
+  length?: number,
+
+  // 文字セットをシフト状態にする場合 true
+  // 主に漢字コードがシフト状態に割り当てられている文字セットで利用します。
+  shift?: boolean,
+
+  // 読み込んだデータをトリムする場合の位置を指定します。
+  // デフォルトはトリムなしです。
+  trim?: "left" // 左トリム
+    | "right" // 右トリム
+    | "both", // 両側トリム
+
+  // データの解釈を指定します。
+  // 主に数値型として読み込む場合に利用します。
+  type?: "decimal" // 数値
+    | "int-le" // 符号あり整数（リトルエンディアン）
+    | "int-be" // 符号あり整数（ビッグエンディアン）
+    | "uint-le" // 符号なし整数（リトルエンディアン）
+    | "uint-be" // 符号なし整数（ビッグエンディアン）
+    | "zoned" // ゾーン10進数
+    | "packed", // パック10進数
+}
 
 // データの行番号を取得します。
 // データ取得前 0 となり、データを取得する度に増加してきます。
@@ -632,17 +719,12 @@ reader.close(): Promise<void>
 
 ##### 例
 
-```javascript
+```typescript
 import { FixlenReader } from "jtc-utils"
 import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
-// sample.dat:
-// 012abcあいう\r\n
-// 345defかきく\r\n
-const input = fs.createReadStream("sample.dat")
-
-const reader = new FixlenReader(input, {
+const reader = new FixlenReader(fs.createReadStream("sample.dat"), {
   charset: windows31j,
   lineSeparator: "\r\n"
 })
@@ -650,15 +732,9 @@ try {
   const layout = {
     columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }]
   }
+  const result = []
   for await (const line of reader.read(layout)) {
-    switch (reader.lineNumber) {
-      case 1:
-        line // -> ["012", "abc", "あいう"]
-        break
-      case 2:
-        line // -> ["345", "def", "かきく"]
-        break
-    }
+    result.push(line)
   }
 } finally {
   await reader.close()
@@ -667,15 +743,74 @@ try {
 
 #### FixlenWriter - 固定長ファイルを出力する
 
-#### MemoryReadableStream - Uint8Array から読み込む ReadableStream
+配列を固定長ファイルとして出力先に書き込みます。
 
-#### MemoryWritableStream - Uint8Array に出力する WritableStream
+```typescript
+
+```
+
+##### 例
+
+```typescript
+
+```
+
+#### MemoryReadableStream - Uint8Array から ReadableStream を構築する
+
+Uint8Array から ReadableStream を構築します。
+
+主にユニットテストに利用します。
+
+```typescript
+const stream = new MemoryReadableStream(
+  // 読み込むデータです。
+  input: Uint8Array | Uint8Array[]
+)
+```
+
+##### 例
+
+```typescript
+import { MemoryReadableStream } from "jtc-utils"
+import { CsvReader } from "jtc-utils"
+
+const stream = new MemoryReadableStream(Uint8Array.of(0x61, 0x62, 0x63))
+const reader = new CsvReader(stream)
+```
+
+#### MemoryWritableStream - Uint8Array に出力する WritableStream を構築する
+
+Uint8Array に出力する WritableStream を構築します。
+
+主にユニットテストに利用します。
+
+```typescript
+const stream = new MemoryWritableStream()
+
+// 書き込まれたデータを Uint8Array として取得します。
+stream.toUint8Array()
+
+// 書き込まれたデータを指定した文字コードを使って文字列に変換します。
+stream.toString(encoding: string)
+```
+
+##### 例
+
+```typescript
+import { MemoryWritableStream } from "jtc-utils"
+import { CsvWriter } from "jtc-utils"
+
+const stream = new MemoryWritableStream()
+const reader = new CsvWriter(stream)
+...
+stream.toString("euc-jp")
+```
 
 ### jtc-utils/locale
 
 `date-fns` のロケールに加え、和歴表示のため jaJPUCaJapanese (ja-JP-u-ca-japanese) が利用できます。
 
-```javascript
+```typescript
 import { enUS, ja, jaJPUCaJapanese } from "jtc-utils/locale"
 
 formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }) // -> "Anno Domini2000/1/1"
@@ -699,7 +834,7 @@ formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // ->
 |cp930      |IBM CP930 (EBCDIC + IBM漢字)       |
 |cp939      |IBM CP939 (EBCDIC + IBM漢字)       |
 
-```javascript
+```typescript
 import { utf8, utf16be, utf16le, windows31j, eucjp, cp930, cp939 } from "jtc-utils/charset"
 
 new CsvReader("a,b,c", { charset: windows31j })

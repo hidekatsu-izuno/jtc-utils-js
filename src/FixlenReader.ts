@@ -11,7 +11,7 @@ export declare type FixlenReaderColumn = {
   length?: number,
   shift?: boolean,
   trim?: "left" | "right" | "both",
-  type?: "decimal" | "int-le" | "int-be" | "uint-le" | "uint-be" |"zoned" | "packed",
+  type?: "decimal" | "int-le" | "int-be" | "uint-le" | "uint-be" | "zoned" | "packed",
 }
 
 export interface FixlenLineDecoder {

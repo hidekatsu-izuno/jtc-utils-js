@@ -35,15 +35,15 @@ export class CsvWriter {
     this.quoteAlways = options?.quoteAlways ?? false
   }
 
-  async write(items: any[]) {
+  async write(record: any[]) {
     let str = ""
     if (this.bom) {
       str = "\uFEFF"
       this.bom = false
     }
 
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i] ? items[i].toString() : ""
+    for (let i = 0; i < record.length; i++) {
+      const item = record[i] ? record[i].toString() : ""
       if (i > 0) {
         str += this.fieldSeparator
       }
