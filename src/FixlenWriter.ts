@@ -14,6 +14,7 @@ export class FixlenWriter {
   private encoder: CharsetEncoder
   private ebcdic: boolean
 
+  private shift: boolean
   private filler: Uint8Array
   private lineSeparator?: Uint8Array
   private columns: (FixlenWriterColumn & { fillerBytes: Uint8Array })[]
@@ -42,9 +43,10 @@ export class FixlenWriter {
     this.bom = charset.isUnicode() ? (config.bom ?? false) : false
     this.fatal = config.fatal ?? true
 
-    this.filler = this.encoder.encode(config.filler || " ", { shift: config.shift ?? false })
+    this.shift = config.shift ?? false
+    this.filler = this.encoder.encode(config.filler || " ", { shift: this.shift })
     if (config.lineSeparator) {
-      this.lineSeparator = this.encoder.encode(config.lineSeparator, { shift: config.shift ?? false })
+      this.lineSeparator = this.encoder.encode(config.lineSeparator, { shift: this.shift })
     }
 
     const columns = []
@@ -57,11 +59,12 @@ export class FixlenWriter {
       }
       lineLength += col.length
 
+      const colShift = col.shift ?? this.shift
       columns.push({
         length: col.length,
-        shift: col.shift ?? false,
+        shift: colShift,
         fill: col.fill,
-        fillerBytes: col.filler ? this.encoder.encode(col.filler, { shift: col.shift ?? false }) : this.filler,
+        fillerBytes: col.filler ? this.encoder.encode(col.filler, { shift: colShift }) : this.filler,
         type: col.type,
       })
     }
@@ -74,57 +77,68 @@ export class FixlenWriter {
     this.writer = dest.getWriter()
   }
 
-  changeLayout(layout: {
+  async write(values: any[], options?: {
     columns: FixlenWriterColumn[],
     shift?: boolean
     filler?: string,
     lineSeparator?: string,
   }) {
-    if (layout.filler) {
-      this.filler = this.encoder.encode(layout.filler, { shift: layout.shift ?? false })
-    }
-    if (layout.lineSeparator) {
-      this.lineSeparator = this.encoder.encode(layout.lineSeparator)
-    }
-
-    const columns = []
-    let lineLength = 0
-
-    for (let pos = 0; pos < layout.columns.length; pos++) {
-      const col = layout.columns[pos]
-      if (col.length <= 0) {
-        throw new RangeError(`column length must be positive: ${col.length}`)
-      }
-      lineLength += col.length
-
-      columns.push({
-        length: col.length,
-        shift: col.shift ?? false,
-        fill: col.fill,
-        fillerBytes: col.filler ? this.encoder.encode(col.filler, { shift: col.shift ?? false }) : this.filler,
-        type: col.type,
-      })
-    }
-    if (this.lineSeparator) {
-      lineLength += this.lineSeparator.length
-    }
-    this.columns = columns
-    this.lineLength = lineLength
-  }
-
-  async write(values: any[]) {
     this.current++
 
-    if (this.bom) {
-      await this.writer.write(this.encoder.encode("\uFEFF"))
-      this.bom = false
+    let shift = this.shift
+    let filler = this.filler
+    let lineSeparator = this.lineSeparator
+    let columns = this.columns
+    let lineLength = this.lineLength
+
+    if (options?.shift != null) {
+      shift = options.shift
+    }
+    if (options?.filler != null) {
+      filler = this.encoder.encode(options.filler, { shift })
+    }
+    if (options?.lineSeparator != null) {
+      lineSeparator = this.encoder.encode(options.lineSeparator)
+    }
+    if (options?.columns) {
+      columns = []
+      lineLength = 0
+
+      for (let pos = 0; pos < options.columns.length; pos++) {
+        const col = options.columns[pos]
+        if (col.length <= 0) {
+          throw new RangeError(`column length must be positive: ${col.length}`)
+        }
+        lineLength += col.length
+
+        const colShift = col.shift ?? this.shift
+        columns.push({
+          length: col.length,
+          shift: col.shift ?? false,
+          fill: col.fill,
+          fillerBytes: col.filler ? this.encoder.encode(col.filler, { shift: colShift }) : filler,
+          type: col.type,
+        })
+      }
+      if (lineSeparator) {
+        lineLength += lineSeparator.length
+      }
     }
 
-    const buf = new Uint8Array(this.lineLength)
-
+    let buf
     let start = 0
-    for (let pos = 0; pos < this.columns.length; pos++) {
-      const col = this.columns[pos]
+    if (this.bom) {
+      const bomBytes = this.encoder.encode("\uFEFF")
+      buf = new Uint8Array(bomBytes.length + lineLength)
+      buf.set(bomBytes, 0)
+      start += bomBytes.length
+      this.bom = false
+    } else {
+      buf = new Uint8Array(lineLength)
+    }
+
+    for (let pos = 0; pos < columns.length; pos++) {
+      const col = columns[pos]
       const value = values[pos]
 
       const isNumber = typeof value === "number" && Number.isFinite(value)
@@ -271,12 +285,11 @@ export class FixlenWriter {
       start += col.length
     }
 
-    if (this.lineSeparator) {
-      buf.set(this.lineSeparator, buf.length - this.lineSeparator.length)
+    if (lineSeparator) {
+      buf.set(lineSeparator, buf.length - lineSeparator.length)
     }
 
     await this.writer.write(buf)
-    this.current++
   }
 
   get index() {
