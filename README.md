@@ -27,11 +27,28 @@ npm install jtc-utils
 
 このライブラリは3つのサブモジュールから構成されています。
 
-|モジュール名       |概要                                                              |
-|------------------|------------------------------------------------------------------|
-|jtc-utils         |文字列処理や CSV や固定長ファイルの入出力機能などの機能を提供します。   |
-|jtc-utils/locale  |和歴を含む各種ロケール情報を提供します。                              |
-|jtc-utils/charset |日本語文字コード用のエンコード/デコード機能を提供します                |
+<table>
+<thead>
+<tr><th>モジュール名</th><th>概要</th></tr>
+</thead>
+<tbody>
+<tr><td>jtc-utils</td><td>文字列処理や CSV や固定長ファイルの入出力機能などの機能を提供します。<ul>
+<li>parseDate, formatDate</li>
+<li>parseNumber, formatNumber</li>
+<li>isHiragana, isFullwidthKatakana, isHalfwidthKatakana, isZenginkana</li>
+<li>isHttpURL, isEmail, isTelephoneNo</li>
+<li>isWindows31j, isUnicodeBMP, isWebSafeString</li>
+<li>toNormalizedString</li>
+<li>toFullwidth, toHalfwidth</li>
+<li>toHiragana, toFullwidthKatakana, toZenginKana</li>
+<li>CsvReader, CsvWriter</li>
+<li>FixlenReader, FixlenWriter</li>
+<li>MemoryReadableStream, MemoryWritableStream</li>
+</ul></td></tr>
+<tr><td>jtc-utils/locale</td><td>和歴を含む各種ロケール情報を提供します。</td></tr>
+<tr><td>jtc-utils/charset</td><td>日本語文字コード用のエンコード/デコード機能を提供します。</td></tr>
+</tbody>
+</table>
 
 ### jtc-utils (コア機能)
 
