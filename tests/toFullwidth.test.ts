@@ -16,5 +16,12 @@ describe('toFullwidth', () => {
     expect(toFullwidth("ガ")).toBe("ガ")
     expect(toFullwidth("ﾊﾟ")).toBe("パ")
     expect(toFullwidth("パ")).toBe("パ")
+    expect(toFullwidth("｢")).toBe("「")
+    expect(toFullwidth("ｰ")).toBe("ー")
+
+  })
+
+  test("test basic sequences", () => {
+    expect(toFullwidth("0Aｱｶﾞﾊﾟｰ")).toBe("０Ａアガパー")
   })
 })

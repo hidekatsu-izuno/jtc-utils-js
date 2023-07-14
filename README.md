@@ -4,18 +4,18 @@
 
 JTC-utils は、伝統的な日本企業では必要とされるにも関わらず、他国ではさほど必要されないため、あまり提供されない次のような日本環境特有の関数/クラス群を提供します。
 
-- 和歴をサポートする日付のパース/書式化
-- 数値書式に基づく数値のパース/書式化
+- 和歴を含むロケールとタイムゾーンをサポートする、書式ベースの日付のパース/文字列化
+- ロケールをサポートする書式ベースの数値のパース/文字列化
 - ひらがな、カタカナ、半角カナ、全銀カナ、MS漢字の文字チェックや変換処理
-- CSV や 固定長ファイルの入出力
+- レガシーな日本語向け文字セットによる CSV、固定長ファイルの入出力
 
 このような機能は、エンタープライズで主流となっている Java での実装は良く見かけますが、JavaScript/Node.js 向けで機能が揃っているものがなかったため、新たに作成しました。
 
 なお、このライブラリでは次の方針に基づき開発しています。
 
-- 国際化は目標とせず、日本語/英語環境のみをターゲットにする。
+- 国際化は必ずしも目標とせず、日英環境のみをターゲットにする。
 - [lodash](https://lodash.com/) に存在する機能は実装しない。
-- Tree shaking 可能にする。
+- Tree Shaking に対応する。
 
 ## インストール
 
@@ -42,7 +42,7 @@ npm install jtc-utils
 日付として解釈できない文字列が指定された場合は null を返します。
 
 ```typescript
-parseDate(
+function parseDate(
   // 日付として解釈する文字列です。
   str: string | null | undefined,
 
@@ -59,9 +59,9 @@ parseDate(
 
     // タイムゾーンです。
     // デフォルトはシステム環境の値を使います。
-    timeZone: string
+    timeZone: string,
   }
-): Date?
+): Date | undefined
 ```
 
 ##### 例
@@ -79,12 +79,12 @@ parseDate("2000/01/01", "uuuu/MM/dd") // -> new Date(2000, 0, 1)
 日付として解釈できない値が指定された場合には空文字列を返します。
 
 ```typescript
-formatDate(
+function formatDate(
   // 文字列化する日付です。
   // number はエポックミリ秒、string は ISO 日付として解釈されます。
   date: Date | number | string | null | undefined,
 
-  // 書式文字列です。
+  // 書式文字列です。例： uuuu/MM/dd HH:mm:ss.SSS
   // 詳細は [`date-fns` の format 関数の説明](https://date-fns.org/docs/format) を参照してください。
   format: string,
 
@@ -97,7 +97,7 @@ formatDate(
 
     // タイムゾーンです。
     // デフォルトはシステム環境の値を使います。
-    timeZone: string
+    timeZone: string,
   }
 ): string
 ```
@@ -112,32 +112,477 @@ formatDate(new Date(2023, 1, 1), "uuuu/MM/dd") // -> "2023/01/01"
 
 #### parseNumber - 文字列を書式に従い Number に変換する
 
+指定した文字列を書式に従い Number に変換します。
+
+変換に失敗した場合は undefined を返します。
+
+```typescript
+function parseNumber(
+  // 数値として解釈する文字列です。
+  str: string | null | undefined,
+
+  // 書式文字列です。例： ###,##0.#
+  // 0: 数字、#: 0のとき表示されない数字、,: 桁区切り、.: 小数点
+  // ;: サブパターン区切り（正値のパターン;負値のパターン;ゼロのパターン）
+  // '任意の文字列': 固定文字（' を含めるときは '' と記述します）
+  format?: string,
+
+  // オプションです。
+  options?: {
+    // ロケールです。
+    // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
+    locale?: Locale,
+  }
+): number | undefined
+```
+
+##### 例
+
+```javascript
+import { parseNumber } from "jtc-utils"
+import { de } from "jtc-utils/locale"
+
+parseNumber("100,000") // -> 100000
+parseNumber("(100,000)", "###,##0;(###,##0)") // -> 100000
+parseNumber("100.000", "###,##0", { locale: de }) // -> 100000
+```
+
 #### formatNumber - 数値を書式に従い文字列に変換する
+
+指定した数値を書式に従い文字列に変換します。
+
+数値として解釈できない値が指定された場合には空文字列を返します。
+
+```typescript
+function formatNumber(
+  // 数値あるいは数値として解釈できる文字列です。
+  num: string | number | null | undefined,
+
+  // 書式文字列です。例： ###,##0.#
+  // 0: 数字、#: 0のとき表示されない数字、,: 桁区切り、.: 小数点
+  // ;: サブパターン区切り（正値のパターン;負値のパターン;ゼロのパターン）
+  // '...': 固定文字（' を含めるときは '' と記述します）
+  format?: string,
+
+  // オプションです。
+  options?: {
+    // ロケールです。
+    // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
+    locale?: Locale,
+  }
+): string
+```
+
+##### 例
+
+```typescript
+import { formatNumber } from "jtc-utils"
+import { de } from "jtc-utils/locale"
+
+formatNumber(100000) // -> "100000"
+formatNumber(-100000, "###,##0;(###,##0)") // -> "(100,000)"
+formatNumber(100000, "###,##0", { locale: de }) // -> "100.000"
+```
 
 #### isHiragana - 文字列がひらがなだけから構成されているか判定する
 
+文字列がひらがな、全角空白（U+3000）からのみ構成される場合、 true を返します。（中黒、長音記号、繰り返し記号、括弧、句読点は含まれません）
+
+主に読み仮名、振り仮名のチェックに使うことを想定しています。
+
+```typescript
+function isHiragana(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isHiragana } from "jtc-utils"
+
+isHiragana("やまだ　たろう") // -> true
+isHiragana("山田　太郎") // -> false
+```
+
 #### isKatakana - 文字列がカタカナだけから構成されているか判定する
+
+文字列が全角カタカナ、全角空白（U+3000）、中黒（U+30FB）、長音記号（U+30FC）からのみ構成される場合、 true を返します。（繰り返し記号、括弧、句読点は含まれません）
+
+主に読み仮名、振り仮名のチェックに使うことを想定しています。
+
+```typescript
+function isKatakana(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isKatakana } from "jtc-utils"
+
+isKatakana("ヤマダ・タロー") // -> true
+isKatakana("山田　太郎") // -> false
+```
+
 #### isHalfwidthKatakana - 文字列が半角カナだけから構成されているか判定する
+
+文字列が半角カタカナ、半角空白（U+0020）、半角中黒（U+FF65）、半角長音記号（U+FF70）からのみ構成される場合、 true を返します。（括弧、句読点は含まれません）
+
+主に読み仮名、振り仮名のチェックに使うことを想定しています。
+
+```typescript
+function isHalfwidthKatakana(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isHalfwidthKatakana } from "jtc-utils"
+
+isHalfwidthKatakana("ﾔﾏﾀﾞ･ﾀﾛｰ") // -> true
+isHalfwidthKatakana("山田　太郎") // -> false
+```
+
 #### isZenginkana - 文字列が全銀カナだけから構成されているか判定する
 
-#### isURL - 妥当な HTTP/HTTPS の URLか判定する
+文字列が銀行口座名義として使える文字のみから構成されている場合、 true を返します。
+
+銀行口座名義として使える文字の仕様は以下の通りです。
+
+- 半角数字、半角英字（大文字のみ）
+- 半角カタカナ（濁点、半濁点は含むが、ｦ、小さい文字（ｧｨｩｪｫｯｬｭｮ）および長音記号は含まない）
+- 半角丸括弧（()）、半角カギ括弧（｢｣）、半角スラッシュ（/）、半角円記号/バックスラッシュ（\）、半角ハイフン（-）、半角ピリオド（.）、半角スペース（ ）
+
+```typescript
+function isZenginkana(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isZenginKana } from "jtc-utils"
+
+isZenginKana("ﾔﾏﾀﾞ･ﾀﾛｰ") // -> true
+isZenginKana("山田　太郎") // -> false
+```
+
+#### isHttpURL - 妥当な HTTP/HTTPS の URLか判定する
+
+文字列が妥当な HTTP/HTTPS の URL であるか判定します。
+
+```typescript
+function isHttpURL(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isHttpURL } from "jtc-utils"
+
+isHttpURL("http://localhost:8080/test?param=value") // -> true
+isHttpURL("https://www.google.co.jp/") // -> true
+isHttpURL("mailto:test@example.com") // -> false
+isHttpURL("ftp://test@example.com/test") // -> false
+```
 
 #### isSimpleEmail - 妥当なEメールアドレスか判定する
 
-#### isWindows31j - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
-#### isWebSafeString - 文字列が Windows-31J （ASCII+MS漢字コード）だけから構成されているか判定する
+文字列が妥当な [HTML Web Standard で定義される妥当なメールアドレス](https://html.spec.whatwg.org/multipage/input.html#email-state-%28type=email%29)に合致するか判定します。
 
+メールアドレスの定義としては [RFC 5321](https://www.rfc-editor.org/rfc/rfc5321.html)、[RFC 5322](https://www.rfc-editor.org/rfc/rfc5322.html) などがありますが、複雑すぎること、定義が複数あること、最終的に送信してみないと有効か判断できないことから、上記の定義でチェックするのが現状最善であると判断しています。
 
+```typescript
+function isSimpleEmail(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isSimpleEmail } from "jtc-utils"
+
+isSimpleEmail("test@example.com") // -> true
+isSimpleEmail("あいう@example_com") // -> false
+```
+
+#### isWindows31j - 文字列が Windows-31J として利用可能な文字だけから構成されているか判定する
+
+文字列が Windows-31J（Windows 環境用 SHIFT_JIS に対する IANA 登録名。ASCII、半角カナ、JIS非漢字、JIS第1/2水準漢字、NEC特殊文字、NEC選定IBM拡張文字、IBM拡張文字で構成される）で利用可能な文字だけから構成されていることを判定します。
+
+主に Windows-31J で外部に連携される項目の入力チェックに使うことを想定しています。
+
+```typescript
+function isWindows31j(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isWindows31j } from "jtc-utils"
+
+isWindows31j("Aあｱ亜") // -> true
+isWindows31j("€₩𠮟") // -> false
+```
+
+#### isUnicodeBMP - 文字列が Unicode の基本多言語面に含まれる文字だけから構成されているか判定する
+
+文字列にサロゲートペアが含まれていない場合、true を返します。
+
+主に追加多言語面をサポートしない文字セットで構成されたデータベースに格納できるかをチェックするために利用します。
+
+```typescript
+function isUnicodeBMP(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isUnicodeBMP } from "jtc-utils"
+
+isUnicodeBMP("Aあｱ亜€₩") // -> true
+isUnicodeBMP("𠮟") // -> false
+```
+
+#### isWebSafeString - 文字列が Web 上で安全に使用できる文字だけから構成されているか判定する
+
+文字列に次の文字が含まれない場合、true を返します。
+
+- タブ（U+0009）、改行（U+000A、U+000D）を除く制御文字
+- ユニコードカテゴリ Zl（区切/段落）、Zp（区切/制御）、Co（プライベート利用）、Cf（その他/書式）、Cn（その他/未定義）
+- BOM（U+FEFF）、特殊文字（U+FFF0-U+FFFF）
+
+```typescript
+function isWebSafeString(
+  // 検査する文字列です。
+  value: string | null | undefined,
+): boolean
+```
+
+##### 例
+
+```typescript
+import { isWebSafeString } from "jtc-utils"
+
+isWebSafeString("Aあｱ亜") // -> true
+isWebSafeString("\uFEFF\0") // -> false
+```
+
+#### toNormalizedString - 文字列を正規化します
+
+文字列を正規化します。null、undefined が入力された場合には空文字列を返します。
+
+正規化の仕様は以下の通りです。
+
+- 字体の異なるCJK互換漢字を除き、NFC にて Unicode 正規化を行います。
+- 改行コードを LF（U+000A）に統一します。
+
+```typescript
+function toNormalizedString(
+  // 正規化対象の文字列です。
+  value: string | null | undefined,
+): string
+```
+
+##### 例
+
+```typescript
+import { toNormalizedString } from "jtc-utils"
+
+toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n") // -> "Aあｱ亜欄\u304C\n"
+```
+
+#### toFullwidth - 半角文字を全角文字に変換する
+
+半角文字を全角文字に変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+```typescript
+function toFullwidth(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toFullwidth } from "jtc-utils"
+
+toFullwidth("0Aｱｶﾞﾊﾟｰ") // -> "０Ａアガパー"
+```
+
+#### toHalfwidth - 全角文字を半角文字に変換する
+
+全角文字を半角文字に変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+```typescript
+function toHalfwidth(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toFullwidth } from "jtc-utils"
+
+toHalfwidth("0Aｱｶﾞﾊﾟｰ") // -> "０Ａアガパー"
+```
+
+#### toHiragana - カタカナをひらがなに変換する
+
+全角/半角カタカナをひらがなに変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+半角カタカナの記号（｡｢｣､･ｰ）も例外的に全角文字に変換します。
+
+```typescript
+function toHiragana(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toHiragana } from "jtc-utils"
+
+toHiragana("アガサ・ｸﾘｽﾃｨｰ") // -> "あがさ・くりすてぃー"
+```
+
+#### toFullwidthKatakana - ひらがなと半角カタカナを全角カタカナに変換する
+
+ひらがなと半角カタカナを全角カタカナに変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+半角カタカナの記号（｡｢｣､･ｰ）も例外的に全角文字に変換します。
+
+```typescript
+function toFullwidthKatakana(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toFullwidthKatakana } from "jtc-utils"
+
+toFullwidthKatakana("あがさ・ｸﾘｽﾃｨｰ") // -> "アガサ・クリスティー"
+```
+
+#### toZenginKana - ひらがな、カタカナ、記号を全銀カナに変換する
+
+ひらがな、カタカナ、記号を可能な限り銀行口座名義で使える文字に変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+```typescript
+function toZenginKana(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toZenginKana } from "jtc-utils"
+
+toZenginKana("アガサ・クリスティー") // -> "ｱｶﾞｻ.ｸﾘｽﾃｲ-"
+```
 
 #### CsvReader - CSV ファイルを読み込む
 
+##### 例
+
 ```javascript
-import { CsvReader } from "jtc-utils/io"
+import { CsvReader } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
+
+const input = fs.createReadStream("sample.csv"/*
+012,abc,あいう\r\n
+345,def,かきく\r\n
+*/)
+
+const reader = new CsvReader(input, {
+  charset: windows31j
+})
+try {
+  for await (const line of reader.read()) {
+    switch (reader.lineNumber) {
+      case 1:
+        line // -> ["012", "abc", "あいう"]
+        break
+      case 2:
+        line // -> ["345", "def", "かきく"]
+        break
+    }
+  }
+} finally {
+  await reader.close()
+}
 ```
 
 #### CsvWriter - CSV ファイルを出力する
 
 #### FixlenReader - 固定長ファイルを読み込む
+
+
+##### 例
+
+```javascript
+import { FixlenReader } from "jtc-utils"
+import { windows31j } from "jtc-utils/charset"
+import fs from "node:fs"
+
+const input = fs.createReadStream("sample.dat"/*
+012abcあいう\r\n
+345defかきく\r\n
+*/)
+
+const reader = new FixlenReader(input, {
+  charset: windows31j,
+  lineSeparator: "\r\n"
+})
+try {
+  const layout = {
+    columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }]
+  }
+  for await (const line of reader.read(layout)) {
+    switch (reader.lineNumber) {
+      case 1:
+        line // -> ["012", "abc", "あいう"]
+        break
+      case 2:
+        line // -> ["345", "def", "かきく"]
+        break
+    }
+  }
+} finally {
+  await reader.close()
+}
+```
 
 #### FixlenWriter - 固定長ファイルを出力する
 

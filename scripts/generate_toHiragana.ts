@@ -1,12 +1,12 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/io/node/CsvReader.js"
+import { CsvReader } from "../src/node/CsvReader.js"
 
-const input = await fs.open("./data/katakana-hiragana.csv")
+const input = await fs.open("./data/map.hiragana.csv")
 const reader = new CsvReader(input, {
   skipEmptyLine: true,
 })
 try {
-  const output = await fs.open("./src/text/toHiragana.ts", "w")
+  const output = await fs.open("./src/toHiragana.ts", "w")
   try {
     await output.write(`const M = new Map<string, string>([\n`)
     for await (const line of reader.read()) {
@@ -19,10 +19,6 @@ try {
     }
     await output.write(`])
 
-function toHiraganaChar(c: string) {
-  return M.get(c) ?? c
-}
-
 export function toHiragana(str: string): string;
 export function toHiragana(str: null): null;
 export function toHiragana(str: undefined): undefined;
@@ -31,20 +27,39 @@ export function toHiragana(value: string | null | undefined) {
     return value
   }
 
-  let result = ""
+  const array = []
+  let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
+      const c2 = value.charAt(i + 1)
       if (c2 == "\\uFF9E" || c2 == "\\uFF9F") {
-        result += toHiraganaChar(c + c2)
-        i++
-        continue
+        const m = M.get(c + c2)
+        if (m != null) {
+          if (start < i) {
+            array.push(value.substring(start, i))
+          }
+          array.push(m)
+          i++
+          start = i + 1
+          continue
+        }
       }
     }
-    result += toHiraganaChar(c)
+
+    const m = M.get(c)
+    if (m != null) {
+      if (start < i) {
+        array.push(value.substring(start, i))
+      }
+      array.push(m)
+      start = i + 1
+    }
   }
-  return result
+  if (start < value.length) {
+    array.push(value.substring(start))
+  }
+  return array.join("")
 }
 `)
   } finally {

@@ -30,7 +30,7 @@ describe('isHiragana', () => {
     expect(isHiragana("　")).toBe(true)
     expect(isHiragana("゠")).toBe(false)
     expect(isHiragana("・")).toBe(false)
-    expect(isHiragana("ー")).toBe(true)
+    expect(isHiragana("ー")).toBe(false)
     expect(isHiragana("「")).toBe(false)
     expect(isHiragana("」")).toBe(false)
     expect(isHiragana("、")).toBe(false)

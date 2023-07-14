@@ -51,6 +51,11 @@ describe('isWindows31j', () => {
     expect(isWindows31j("ｳﾞ")).toBe(true)
   })
 
+  test("test halfwidth symbol", () => {
+    expect(isWindows31j("€")).toBe(false)
+    expect(isWindows31j("₩")).toBe(false)
+  })
+
   test("test fullwidth symbol", () => {
     expect(isWindows31j("　")).toBe(true)
     expect(isWindows31j("、")).toBe(true)

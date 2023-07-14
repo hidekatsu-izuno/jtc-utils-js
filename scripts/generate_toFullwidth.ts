@@ -1,27 +1,23 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/io/node/CsvReader.js"
+import { CsvReader } from "../src/node/CsvReader.js"
 
-const input = await fs.open("./data/fullwidth-halfwidth.csv")
+const input = await fs.open("./data/map.fullwidth.csv")
 const reader = new CsvReader(input, {
   skipEmptyLine: true,
 })
 try {
-const output = await fs.open("./src/text/toFullwidth.ts", "w")
+  const output = await fs.open("./src/toFullwidth.ts", "w")
   try {
   await output.write(`const M = new Map<string, string>([\n`)
   for await (const line of reader.read()) {
     if (reader.lineNumber === 1) {
       continue
     }
-    const from = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
-    const to = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
+    const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
+    const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
     await output.write(`\t["${from}", "${to}"],\n`)
   }
   await output.write(`])
-
-function toFullwidthChar(c: string) {
-  return M.get(c) ?? c
-}
 
 export function toFullwidth(str: string): string;
 export function toFullwidth(str: null): null;
@@ -31,20 +27,39 @@ export function toFullwidth(value: string | null | undefined) {
     return value
   }
 
-  let result = ""
+  const array = []
+  let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
-      if (c2 === "\\uFF9E" || c2 === "\\uFF9F") {
-        result += toFullwidthChar(c + c2)
-        i++
-        continue
+      const c2 = value.charAt(i + 1)
+      if (c2 == "\\uFF9E" || c2 == "\\uFF9F") {
+        const m = M.get(c + c2)
+        if (m != null) {
+          if (start < i) {
+            array.push(value.substring(start, i))
+          }
+          array.push(m)
+          i++
+          start = i + 1
+          continue
+        }
       }
     }
-    result += toFullwidthChar(c)
+
+    const m = M.get(c)
+    if (m != null) {
+      if (start < i) {
+        array.push(value.substring(start, i))
+      }
+      array.push(m)
+      start = i + 1
+    }
   }
-  return result
+  if (start < value.length) {
+    array.push(value.substring(start))
+  }
+  return array.join("")
 }
 `)
   } finally {

@@ -6,7 +6,7 @@ import { cp939 } from "../../src/charset/cp939.js"
 describe('cp939', () => {
   test("compare cp939 decoder output", async () => {
     const map = new Map<number, number>()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/cp939.decode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/decode.cp939.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
@@ -45,7 +45,7 @@ describe('cp939', () => {
 
   test("compare cp939 encoder output", async () => {
     const map = new Map()
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/cp939.encode.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/encode.cp939.csv"))
     try {
       for await (const line of reader.read()) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))

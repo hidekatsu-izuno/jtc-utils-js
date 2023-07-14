@@ -14,5 +14,7 @@ describe('isSimpleEmail', () => {
     expect(isSimpleEmail("test.sample@domain_domain.co.jp")).toBe(false)
     expect(isSimpleEmail("test.sample@domain-domain.co.jp")).toBe(true)
     expect(isSimpleEmail("test.@domain.ne.fr")).toBe(true)
+    expect(isSimpleEmail(".test@example")).toBe(true)
+    expect(isSimpleEmail("あいう@example")).toBe(false)
   })
 })

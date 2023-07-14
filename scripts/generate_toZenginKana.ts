@@ -1,12 +1,12 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/io/node/CsvReader.js"
+import { CsvReader } from "../src/node/CsvReader.js"
 
-const input = await fs.open("./data/zengin.csv")
+const input = await fs.open("./data/map.zengin.csv")
 const reader = new CsvReader(input, {
   skipEmptyLine: true,
 })
 try {
-  const output = await fs.open("./src/text/toZenginKana.ts", "w")
+  const output = await fs.open("./src/toZenginKana.ts", "w")
   try {
     await output.write(`const M = new Map<string, string>([\n`)
     for await (const line of reader.read()) {
@@ -27,12 +27,23 @@ export function toZenginKana(value: string | null | undefined) {
     return value
   }
 
-  let result = ""
+  const array = []
+  let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
-    result += M.get(c) ?? c
+    const m = M.get(c)
+    if (m != null) {
+      if (start < i) {
+        array.push(value.substring(start, i))
+      }
+      array.push(m)
+      start = i + 1
+    }
   }
-  return result
+  if (start < value.length) {
+    array.push(value.substring(start))
+  }
+  return array.join("")
 }
 `)
   } finally {

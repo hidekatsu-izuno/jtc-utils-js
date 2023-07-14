@@ -20,4 +20,8 @@ describe('toHiragana', () => {
     expect(toHiragana("パ")).toBe("ぱ")
     expect(toHiragana("ぱ")).toBe("ぱ")
   })
+
+  test("test basic sequences", () => {
+    expect(toHiragana("アガサ・ｸﾘｽﾃｨｰ")).toBe("あがさ・くりすてぃー")
+  })
 })

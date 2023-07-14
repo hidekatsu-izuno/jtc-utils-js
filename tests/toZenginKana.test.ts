@@ -43,4 +43,10 @@ describe('toZenginKana', () => {
     expect(toZenginKana("「")).toBe("｢")
     expect(toZenginKana("」")).toBe("｣")
   })
+
+  test("test sequences", () => {
+    expect(toZenginKana("タグチ　トモロヲ")).toBe("ﾀｸﾞﾁ ﾄﾓﾛｵ")
+    expect(toZenginKana("カ）ベローチェ")).toBe("ｶ)ﾍﾞﾛ-ﾁｴ")
+    expect(toZenginKana("アガサ・クリスティー")).toBe("ｱｶﾞｻ.ｸﾘｽﾃｲ-")
+  })
 })

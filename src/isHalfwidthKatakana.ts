@@ -3,5 +3,5 @@ export function isHalfwidthKatakana(value: string | null | undefined) {
     return false
   }
 
-  return /^[ \uFF66-\uFF9F]+$/.test(value)
+  return /^[ \uFF65-\uFF9F]+$/.test(value)
 }

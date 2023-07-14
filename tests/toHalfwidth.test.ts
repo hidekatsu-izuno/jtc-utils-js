@@ -19,4 +19,8 @@ describe('toHalfwidth', () => {
     expect(toHalfwidth("「")).toBe("｢")
     expect(toHalfwidth("」")).toBe("｣")
   })
+
+  test("test basic sequences", () => {
+    expect(toHalfwidth("０Ａアガパー")).toBe("0Aｱｶﾞﾊﾟｰ")
+  })
 })

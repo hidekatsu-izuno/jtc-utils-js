@@ -1,4 +1,4 @@
-export function isURL(value: string | null | undefined) {
+export function isHttpURL(value: string | null | undefined) {
   if (!value) {
     return false
   }

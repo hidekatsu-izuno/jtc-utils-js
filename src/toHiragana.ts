@@ -91,6 +91,11 @@ const M = new Map<string, string>([
 	["\u30fa", "\u3092\u3099"],
 	["\u30fd", "\u309d"],
 	["\u30fe", "\u309e"],
+	["\uff61", "\u3002"],
+	["\uff62", "\u300c"],
+	["\uff63", "\u300d"],
+	["\uff64", "\u3001"],
+	["\uff65", "\u30fb"],
 	["\uff66", "\u3092"],
 	["\uff67", "\u3041"],
 	["\uff68", "\u3043"],
@@ -101,6 +106,7 @@ const M = new Map<string, string>([
 	["\uff6d", "\u3085"],
 	["\uff6e", "\u3087"],
 	["\uff6f", "\u3063"],
+	["\uff70", "\u30fc"],
 	["\uff71", "\u3042"],
 	["\uff72", "\u3044"],
 	["\uff73", "\u3046"],
@@ -176,10 +182,6 @@ const M = new Map<string, string>([
 	["\uff9f", "\u309c"],
 ])
 
-function toHiraganaChar(c: string) {
-  return M.get(c) ?? c
-}
-
 export function toHiragana(str: string): string;
 export function toHiragana(str: null): null;
 export function toHiragana(str: undefined): undefined;
@@ -188,18 +190,37 @@ export function toHiragana(value: string | null | undefined) {
     return value
   }
 
-  let result = ""
+  const array = []
+  let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
     if (i + 1 < value.length) {
-      const c2 = value.charAt(i+1)
+      const c2 = value.charAt(i + 1)
       if (c2 == "\uFF9E" || c2 == "\uFF9F") {
-        result += toHiraganaChar(c + c2)
-        i++
-        continue
+        const m = M.get(c + c2)
+        if (m != null) {
+          if (start < i) {
+            array.push(value.substring(start, i))
+          }
+          array.push(m)
+          i++
+          start = i + 1
+          continue
+        }
       }
     }
-    result += toHiraganaChar(c)
+
+    const m = M.get(c)
+    if (m != null) {
+      if (start < i) {
+        array.push(value.substring(start, i))
+      }
+      array.push(m)
+      start = i + 1
+    }
   }
-  return result
+  if (start < value.length) {
+    array.push(value.substring(start))
+  }
+  return array.join("")
 }

@@ -9,7 +9,7 @@ describe('isHalfwidthKatakana', () => {
   })
 
   test("test basic sequcence", () => {
-    expect(isHalfwidthKatakana('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ')).toBe(true)
+    expect(isHalfwidthKatakana('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ･ｰ')).toBe(true)
     expect(isHalfwidthKatakana('あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ')).toBe(false)
     expect(isHalfwidthKatakana('ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ')).toBe(false)
   })
@@ -76,7 +76,7 @@ describe('isHalfwidthKatakana', () => {
     expect(isHalfwidthKatakana("｢")).toBe(false)
     expect(isHalfwidthKatakana("｣")).toBe(false)
     expect(isHalfwidthKatakana("､")).toBe(false)
-    expect(isHalfwidthKatakana("･")).toBe(false)
+    expect(isHalfwidthKatakana("･")).toBe(true)
     expect(isHalfwidthKatakana("ｰ")).toBe(true)
     expect(isHalfwidthKatakana("ﾞ")).toBe(true)
     expect(isHalfwidthKatakana("ﾟ")).toBe(true)

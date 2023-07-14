@@ -29,6 +29,8 @@ describe('toNormalizedString', () => {
     expect(toNormalizedString("ｱ")).toBe("ｱ")
     expect(toNormalizedString("ｧ")).toBe("ｧ")
     expect(toNormalizedString("亜")).toBe("亜")
+    expect(toNormalizedString("欄")).toBe("欄")
+    expect(toNormalizedString("﨏")).toBe("﨏")
     expect(toNormalizedString("\uD800")).toBe("\uD800")
     expect(toNormalizedString("\uDC00")).toBe("\uDC00")
     expect(toNormalizedString("\uD800\uDC00")).toBe("\uD800\uDC00")
@@ -43,5 +45,9 @@ describe('toNormalizedString', () => {
     expect(toNormalizedString("\u{1FFFF}")).toBe("\u{1FFFF}")
     expect(toNormalizedString("\u{10FFFE}")).toBe("\u{10FFFE}")
     expect(toNormalizedString("\u{10FFFF}")).toBe("\u{10FFFF}")
+  })
+
+  test("test basic sequences", () => {
+    expect(toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n")).toBe("Aあｱ亜欄\u304C\n")
   })
 })

@@ -1,12 +1,12 @@
 import { promises as fs }  from "node:fs"
 import { CsvReader } from "../src/node/CsvReader.js"
 
-const input = await fs.open("./data/map.halfwidth.csv")
+const input = await fs.open("./data/map.fullwidth-katakana.csv")
 const reader = new CsvReader(input, {
   skipEmptyLine: true,
 })
 try {
-  const output = await fs.open("./src/toHalfwidth.ts", "w")
+  const output = await fs.open("./src/toFullwidthKatakana.ts", "w")
   try {
     await output.write(`const M = new Map<string, string>([\n`)
     for await (const line of reader.read()) {
@@ -19,10 +19,10 @@ try {
     }
     await output.write(`])
 
-export function toHalfwidth(str: string): string;
-export function toHalfwidth(str: null): null;
-export function toHalfwidth(str: undefined): undefined;
-export function toHalfwidth(value: string | null | undefined) {
+export function toFullwidthKatakana(str: string): string;
+export function toFullwidthKatakana(str: null): null;
+export function toFullwidthKatakana(str: undefined): undefined;
+export function toFullwidthKatakana(value: string | null | undefined) {
   if (!value) {
     return value
   }
@@ -31,6 +31,22 @@ export function toHalfwidth(value: string | null | undefined) {
   let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
+    if (i + 1 < value.length) {
+      const c2 = value.charAt(i + 1)
+      if (c2 == "\\u3099" || c2 == "\\u309A" || c2 == "\\uFF9E" || c2 == "\\uFF9F") {
+        const m = M.get(c + c2)
+        if (m != null) {
+          if (start < i) {
+            array.push(value.substring(start, i))
+          }
+          array.push(m)
+          i++
+          start = i + 1
+          continue
+        }
+      }
+    }
+
     const m = M.get(c)
     if (m != null) {
       if (start < i) {
@@ -50,6 +66,5 @@ export function toHalfwidth(value: string | null | undefined) {
     await output.close()
   }
 } finally {
-  await reader.close()
+await reader.close()
 }
-
