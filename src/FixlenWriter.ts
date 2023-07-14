@@ -29,11 +29,11 @@ export class FixlenWriter {
     dest: WritableStream<Uint8Array>,
     config: {
       columns: FixlenWriterColumn[],
+      charset?: Charset,
+      bom?: boolean,
       shift?: boolean,
       filler?: string,
       lineSeparator?: string,
-      charset?: Charset,
-      bom?: boolean,
       fatal?: boolean,
     },
   ) {
@@ -41,26 +41,24 @@ export class FixlenWriter {
     this.encoder = charset.createEncoder()
     this.ebcdic = charset.isEbcdic()
     this.bom = charset.isUnicode() ? (config.bom ?? false) : false
-    this.fatal = config.fatal ?? true
-
     this.shift = config.shift ?? false
     this.filler = this.encoder.encode(config.filler || " ", { shift: this.shift })
     if (config.lineSeparator) {
       this.lineSeparator = this.encoder.encode(config.lineSeparator, { shift: this.shift })
     }
+    this.fatal = config.fatal ?? true
 
-    const columns = []
-    let lineLength = 0
-
+    this.lineLength = 0
+    this.columns = []
     for (let pos = 0; pos < config.columns.length; pos++) {
       const col = config.columns[pos]
       if (col.length <= 0) {
         throw new RangeError(`column length must be positive: ${col.length}`)
       }
-      lineLength += col.length
+      this.lineLength += col.length
 
       const colShift = col.shift ?? this.shift
-      columns.push({
+      this.columns.push({
         length: col.length,
         shift: colShift,
         fill: col.fill,
@@ -69,10 +67,8 @@ export class FixlenWriter {
       })
     }
     if (this.lineSeparator) {
-      lineLength += this.lineSeparator.length
+      this.lineLength += this.lineSeparator.length
     }
-    this.columns = columns
-    this.lineLength = lineLength
 
     this.writer = dest.getWriter()
   }

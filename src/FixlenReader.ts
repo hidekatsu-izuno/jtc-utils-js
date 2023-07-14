@@ -1,11 +1,6 @@
 import { Charset, CharsetDecoder } from "./charset/charset.js"
 import { utf8 } from "./charset/utf8.js"
 
-export declare type FixlenReaderLayout = {
-  lineLength: number,
-  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, index: number) => FixlenReaderColumn[]),
-}
-
 export declare type FixlenReaderColumn = {
   start: number,
   length?: number,
@@ -15,28 +10,35 @@ export declare type FixlenReaderColumn = {
 }
 
 export interface FixlenLineDecoder {
-  decode(layout: FixlenReaderColumn): string
+  decode(column: FixlenReaderColumn): string | number
 }
 
 export class FixlenReader {
   private reader: ReadableStreamDefaultReader<Uint8Array>
   private decoder: CharsetDecoder
-  private ebcdic: boolean
+  private lineLength: number
+  private columns: (FixlenReaderColumn & { end: number })[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[])
+  private shift: boolean
   private fatal: boolean
+
+  private buf = new Uint8Array()
 
   private index: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
-    options?: {
+    config: {
+      lineLength: number,
+      columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
       charset?: Charset,
       bom?: boolean,
+      shift?: boolean,
       fatal?: boolean,
     }
   ) {
-    const charset = options?.charset ?? utf8
-    this.ebcdic = charset.isEbcdic()
-    this.fatal = options?.fatal ?? true
+    const charset = config.charset ?? utf8
+    this.fatal = config.fatal ?? true
+    this.shift = config.shift ?? false
 
     let stream
     if (typeof src === "string") {
@@ -60,183 +62,78 @@ export class FixlenReader {
       stream = src
     }
 
+    this.lineLength = config.lineLength
+    this.columns = Array.isArray(config.columns) ? this.normalizeColumns(this.lineLength, config.columns) :
+      config.columns
+
     this.decoder = charset.createDecoder({
       fatal: this.fatal,
-      ignoreBOM: options?.bom != null ? !options.bom : false,
+      ignoreBOM: config.bom != null ? !config.bom : false,
     })
     this.reader = stream.getReader()
   }
 
-  async *read(layout: FixlenReaderLayout): AsyncGenerator<(string | number | BigInt | null)[]> {
+  async read(options?: {
+    lineLength: number,
+    columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
+  }): Promise<(string | number)[] | undefined>  {
+    const items = new Array<string | number>()
+
+    const lineLength = options?.lineLength ?? this.lineLength
+
     let done = false
-
-    let buf = new Uint8Array()
-    let line: Uint8Array
-
-    const lineDecoder = <FixlenLineDecoder> {
-      decode: (layout: FixlenReaderColumn) => {
-        return this.decoder.decode(line.subarray(
-          layout.start,
-          layout.length ? layout.start + layout.length : undefined,
-        ))
-      },
-    }
-
+    let buf = this.buf
     do {
       const readed = await this.reader.read()
       done = readed.done
       if (readed.value) {
         buf = buf.length > 0 ? this.concat(buf, readed.value) : readed.value
       }
-      if (!done && buf.length < layout.lineLength) {
-        continue
+    } while (!done && buf.length < lineLength)
+
+    let line: Uint8Array
+    if (buf.length === 0) {
+      this.buf = buf
+      return
+    } else if (buf.length < lineLength) {
+      if (this.fatal) {
+        throw new TypeError("Insufficient data.")
       }
+      line = buf
+      this.buf = buf.subarray(buf.length)
+    } else {
+      line = buf.subarray(0, lineLength)
+      this.buf = buf.subarray(lineLength)
+    }
 
-      line = buf.slice(0, layout.lineLength)
-      if (done && line.length === 0) {
-        break
-      }
-
-      buf = buf.subarray(layout.lineLength)
-      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.index + 1)
-
-      const items = new Array<string | number | BigInt>()
-      if (cols && cols.length > 0) {
-        for (let i = 0; i < cols.length; i++) {
-          const start = cols[i].start
-          const clen = cols[i].length
-          const end = clen != null ? start + clen : ((i + 1 < cols.length) ? cols[i + 1].start : line.length)
-          const type = cols[i].type
-          const shift = cols[i].shift
-          if (!type || type === "decimal") {
-            let text = ""
-            if (start < end) {
-              if (this.ebcdic && shift) {
-
-              } else {
-                text = this.decoder.decode(line.subarray(start, end))
-              }
-              switch (cols[i].trim) {
-                case "left":
-                  text = text.trimStart()
-                  break
-                case "right":
-                  text = text.trimEnd()
-                  break
-                case "both":
-                  text = text.trim()
-                  break
-              }
-            }
-            if (type === "decimal") {
-              const value = Number.parseFloat(text)
-              if (this.fatal && Number.isNaN(value)) {
-                throw new RangeError(`tInvalid number: ${text}`)
-              }
-              items.push(value)
-            } else {
-              items.push(text)
-            }
-          } else if (type.startsWith("int-")) {
-            const view = new DataView(line.buffer)
-            const littleEndien = type === "int-le"
-            const len = end - start
-            if (len === 4) {
-              items.push(view.getInt32(start, littleEndien))
-            } else if (len === 2) {
-              items.push(view.getInt16(start, littleEndien))
-            } else if (len === 1) {
-              items.push(view.getInt8(start))
-            } else if (this.fatal) {
-              throw new RangeError("byte length must be 1, 2 or 4.")
-            } else {
-              items.push(Number.NaN)
-            }
-          } else if (type.startsWith("uint-")) {
-            const view = new DataView(line.buffer)
-            const littleEndien = type === "uint-le"
-            const len = end - start
-            if (len === 4) {
-              items.push(view.getUint32(start, littleEndien))
-            } else if (len === 2) {
-              items.push(view.getUint16(start, littleEndien))
-            } else if (len === 1) {
-              items.push(view.getUint8(start))
-            } else if (this.fatal) {
-              throw new RangeError("byte length must be 1, 2 or 4.")
-            } else {
-              items.push(Number.NaN)
-            }
-          } else if (type === "zoned") {
-            try {
-              let num = 0
-              for (let i = start; i < end; i++) {
-                if (i + 1 === end) {
-                  const h4 = (line[i] >>> 4) & 0xF
-                  if (h4 > 0x9) {
-                    throw new RangeError("high 4 bit at last must be A-F.")
-                  }
-                  if (h4 === 0xB || h4 === 0xD) {
-                    num = -1 * num
-                  }
-                }
-                const l4 = line[i] & 0xF
-                if (l4 > 0x9) {
-                  throw new RangeError("low 4 bit must be decimal.")
-                }
-                num = num *10 + l4
-              }
-              items.push(num)
-            } catch (err) {
-              if (this.fatal) {
-                throw err
-              } else {
-                items.push(Number.NaN)
-              }
-            }
-          } else if (type === "packed") {
-            try {
-              let num = 0
-              for (let i = start; i < end; i++) {
-                const h4 = (line[i] >> 8) & 0xF
-                if (h4 > 0x9) {
-                  throw new RangeError("high 4 bit must be decimal.")
-                }
-                num = num * 10 + h4
-
-                const l4 = line[i] & 0xF
-                if (i + 1 === end) {
-                  if (l4 > 0x9) {
-                    throw new RangeError("low 4 bit at last must be A-F.")
-                  }
-                  if (l4 === 0xB || l4 === 0xD) {
-                    num = -1 * num
-                  }
-                } else {
-                  if (l4 > 0x9) {
-                    throw new RangeError("low 4 bit must be decimal.")
-                  }
-                  num = num * 10 + l4
-                }
-              }
-              items.push(num)
-            } catch (err) {
-              if (this.fatal) {
-                throw err
-              } else {
-                items.push(Number.NaN)
-              }
-            }
-          } else {
-            throw new RangeError(`unknown column type: ${cols[i].type}`)
+    let columns = !(options?.columns) ? this.columns :
+      Array.isArray(options.columns) ? this.normalizeColumns(lineLength, options.columns) :
+      options.columns
+    if (!Array.isArray(columns)) {
+      columns = this.normalizeColumns(lineLength, columns({
+        decode: (column: FixlenReaderColumn) => {
+          const col: (FixlenReaderColumn & { end: number }) = {
+            ...column,
+            end: column.length != null ? column.start + column.length : lineLength,
           }
+          return this.decode(col, line)
         }
-      }
-      if (items.length > 0) {
-        this.index++
-        yield items
-      }
-    } while (!done)
+      }))
+    }
+
+    for (let i = 0; i < columns.length; i++) {
+      items.push(this.decode(columns[i], line))
+    }
+
+    this.index++
+    return items
+  }
+
+  async* [Symbol.asyncIterator](): AsyncGenerator<(string | number)[]> {
+    let record: (string | number)[] | undefined
+    while (record = await this.read()) {
+      yield record
+    }
   }
 
   get count() {
@@ -247,6 +144,162 @@ export class FixlenReader {
     await this.reader.cancel()
   }
 
+  private normalizeColumns(lineLength: number, columns: FixlenReaderColumn[]): (FixlenReaderColumn & { end: number })[] {
+    return columns.map((col, index, array) => {
+      if (col.start < 0) {
+        throw new RangeError(`columns[${index}].start must be positive.`)
+      }
+      if (col.start >= lineLength) {
+        throw new RangeError(`columns[${index}].start is too large.`)
+      }
+      if (col.length != null && col.length <= 0) {
+        throw new RangeError(`columns[${index}].length must be positive.`)
+      }
+      let end
+      if (col.length != null) {
+        end = col.start + col.length
+        if (end > lineLength) {
+          throw new RangeError(`columns[${index}].length is too large.`)
+        }
+      } else if (index + 1 === array.length) {
+        end = lineLength
+      } else if (col.start < array[index + 1].start) {
+        end = array[index + 1].start
+      } else {
+        throw new RangeError(`columns[${index}].length is required.`)
+      }
+      return {
+        start: col.start,
+        end,
+        length: col.length,
+        shift: col.shift ?? this.shift,
+        trim: col.trim,
+        type: col.type,
+      }
+    })
+  }
+
+  private decode(col: (FixlenReaderColumn & { end: number }), line: Uint8Array) {
+    if (!col.type || col.type === "decimal") {
+      let text = ""
+      const minEnd = Math.min(col.end, line.length)
+      if (col.start < minEnd) {
+        text = this.decoder.decode(line.subarray(col.start, minEnd), { shift: col.shift })
+        switch (col.trim) {
+          case "left":
+            text = text.trimStart()
+            break
+          case "right":
+            text = text.trimEnd()
+            break
+          case "both":
+            text = text.trim()
+            break
+        }
+      }
+      if (col.type === "decimal") {
+        const num = Number.parseFloat(text)
+        if (this.fatal && Number.isNaN(num)) {
+          throw new RangeError(`Invalid number: ${text}`)
+        }
+        return num
+      }
+      return text
+    } else if (col.type.startsWith("int-")) {
+      const view = new DataView(line.buffer, line.byteOffset, line.byteLength)
+      const littleEndien = col.type === "int-le"
+      const len = col.end - col.start
+      if (len === 4) {
+        return view.getInt32(col.start, littleEndien)
+      } else if (len === 2) {
+        return view.getInt16(col.start, littleEndien)
+      } else if (len === 1) {
+        return view.getInt8(col.start)
+      } else {
+        if (this.fatal) {
+          throw new RangeError("byte length must be 1, 2 or 4.")
+        }
+        return Number.NaN
+      }
+    } else if (col.type.startsWith("uint-")) {
+      const view = new DataView(line.buffer, line.byteOffset, line.byteLength)
+      const littleEndien = col.type === "uint-le"
+      const len = col.end - col.start
+      if (len === 4) {
+        return view.getUint32(col.start, littleEndien)
+      } else if (len === 2) {
+        return view.getUint16(col.start, littleEndien)
+      } else if (len === 1) {
+        return view.getUint8(col.start)
+      } else {
+        if (this.fatal) {
+          throw new RangeError("byte length must be 1, 2 or 4.")
+        }
+        return Number.NaN
+      }
+    } else if (col.type === "zoned") {
+      try {
+        let num = 0
+        for (let i = col.start; i < col.end; i++) {
+          if (i + 1 === col.end) {
+            const h4 = (line[i] >>> 4) & 0xF
+            if (h4 > 0x9) {
+              throw new RangeError("high 4 bit at last must be A-F.")
+            }
+            if (h4 === 0xB || h4 === 0xD) {
+              num = -1 * num
+            }
+          }
+          const l4 = line[i] & 0xF
+          if (l4 > 0x9) {
+            throw new RangeError("low 4 bit must be decimal.")
+          }
+          num = num *10 + l4
+        }
+        return num
+      } catch (err) {
+        if (this.fatal) {
+          throw err
+        }
+        return Number.NaN
+      }
+    } else if (col.type === "packed") {
+      try {
+        let num = 0
+        for (let i = col.start; i < col.end; i++) {
+          const h4 = (line[i] >> 8) & 0xF
+          if (h4 > 0x9) {
+            throw new RangeError("high 4 bit must be decimal.")
+          }
+          num = num * 10 + h4
+
+          const l4 = line[i] & 0xF
+          if (i + 1 === col.end) {
+            if (l4 > 0x9) {
+              throw new RangeError("low 4 bit at last must be A-F.")
+            }
+            if (l4 === 0xB || l4 === 0xD) {
+              num = -1 * num
+            }
+          } else {
+            if (l4 > 0x9) {
+              throw new RangeError("low 4 bit must be decimal.")
+            }
+            num = num * 10 + l4
+          }
+        }
+        return num
+      } catch (err) {
+        if (this.fatal) {
+          throw err
+        }
+        return Number.NaN
+      }
+    } else {
+      throw new RangeError(`unknown column type: ${col.type}`)
+    }
+  }
+
   private concat(a1: Uint8Array, a2: Uint8Array) {
     const result = new Uint8Array(a1.length + a2.length)
     result.set(a1, 0)
@@ -254,3 +307,4 @@ export class FixlenReader {
     return result
   }
 }
+

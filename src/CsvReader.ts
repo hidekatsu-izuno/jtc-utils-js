@@ -4,14 +4,12 @@ import { escapeRegExp } from "./util/escapeRegExp.js"
 
 export class CsvReader {
   private reader: ReadableStreamDefaultReader<string>
-
   private fieldSeparator: string
   private skipEmptyLine: boolean
-
   private reSeparator: RegExp
+
   private endsWithCR = false
   private buf: string = ""
-
   private index: number = 0
 
   constructor(
@@ -78,6 +76,7 @@ export class CsvReader {
     let pos = 0
     let quoted = false
     let done = false
+
     loop:
     do {
       const readed = await this.reader.read()
