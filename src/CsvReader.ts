@@ -150,7 +150,14 @@ export class CsvReader {
           return items
         }
       }
-    } while (!done)
+    } while (buf || !done)
+  }
+
+  async* [Symbol.asyncIterator](): AsyncGenerator<string[]> {
+    let record: string[] | undefined
+    while (record = await this.read()) {
+      yield record
+    }
   }
 
   get count() {

@@ -8,7 +8,7 @@ describe('windows31j', () => {
     const map = new Map()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/encode.windows-31j.csv"))
     try {
-      for await (const line of reader.read()) {
+      for await (const line of reader) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
       }
     } finally {

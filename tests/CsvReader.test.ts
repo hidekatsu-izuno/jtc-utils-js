@@ -24,8 +24,7 @@ describe('CsvReader', () => {
     const reader = new CsvReader(input)
     try {
       const list = new Array<any>()
-      let record: string[] | undefined
-      while (record = await reader.read()) {
+      for await (const record of reader) {
         list.push(record)
       }
       expect(list).toStrictEqual(expected)

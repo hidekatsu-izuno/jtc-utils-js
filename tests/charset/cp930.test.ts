@@ -8,7 +8,7 @@ describe('cp930', () => {
     const map = new Map<number, number>()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/decode.cp930.csv"))
     try {
-      for await (const line of reader.read()) {
+      for await (const line of reader) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
       }
     } finally {
@@ -47,7 +47,7 @@ describe('cp930', () => {
     const map = new Map()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/encode.cp930.csv"))
     try {
-      for await (const line of reader.read()) {
+      for await (const line of reader) {
         map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16))
       }
     } finally {

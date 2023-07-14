@@ -9,7 +9,7 @@ describe('node.CsvReader', () => {
     const reader = new CsvReader("あいう,かきく")
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -24,7 +24,7 @@ describe('node.CsvReader', () => {
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/sample.utf-8.bom.csv"))
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -40,7 +40,7 @@ describe('node.CsvReader', () => {
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../data/sample.utf-8.nobom.csv"))
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader) {
         list.push(item)
       }
       expect(list).toStrictEqual([
@@ -58,7 +58,7 @@ describe('node.CsvReader', () => {
     })
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
+      for await (const item of reader) {
         list.push(item)
       }
       expect(list).toStrictEqual([
