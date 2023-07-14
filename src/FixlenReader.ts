@@ -3,7 +3,7 @@ import { utf8 } from "./charset/utf8.js"
 
 export declare type FixlenReaderLayout = {
   lineLength: number,
-  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, lineNumber: number) => FixlenReaderColumn[]),
+  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, index: number) => FixlenReaderColumn[]),
 }
 
 export declare type FixlenReaderColumn = {
@@ -24,7 +24,7 @@ export class FixlenReader {
   private ebcdic: boolean
   private fatal: boolean
 
-  private index: number = 0
+  private current: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
@@ -98,7 +98,7 @@ export class FixlenReader {
       }
 
       buf = buf.subarray(layout.lineLength)
-      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.index + 1)
+      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.current + 1)
 
       const items = new Array<string | number | BigInt>()
       if (cols && cols.length > 0) {
@@ -232,11 +232,15 @@ export class FixlenReader {
           }
         }
       }
-      this.index++
+      this.current++
       if (items.length > 0) {
         yield items
       }
     } while (!done)
+  }
+
+  get index() {
+    return this.current
   }
 
   async close() {

@@ -25,7 +25,7 @@ export class FixlenWriter {
   private lineSeparator?: Uint8Array
   private fatal: boolean
 
-  private index: number = 0
+  private current: number = 0
 
   constructor(
     dest: WritableStream<Uint8Array>,
@@ -49,14 +49,14 @@ export class FixlenWriter {
   }
 
   async write(values: any[], layout: FixlenWriterLayout) {
-    this.index++
+    this.current++
 
     if (this.bom) {
       await this.writer.write(this.encoder.encode("\uFEFF"))
       this.bom = false
     }
 
-    const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(values, this.index + 1)
+    const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(values, this.current + 1)
     const filler = layout.filler ? this.encoder.encode(layout.filler) : this.filler
     const lineSeparator = layout.lineSeparator ? this.encoder.encode(layout.lineSeparator) : this.lineSeparator
 
@@ -230,7 +230,11 @@ export class FixlenWriter {
     }
 
     await this.writer.write(buf)
-    this.index++
+    this.current++
+  }
+
+  get index() {
+    return this.current
   }
 
   async close() {

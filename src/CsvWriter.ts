@@ -10,7 +10,7 @@ export class CsvWriter {
   private lineSeparator: string
   private quoteAlways: boolean
 
-  private index: number = 0
+  private current: number = 0
 
   constructor(
     dest: WritableStream<Uint8Array>,
@@ -56,11 +56,11 @@ export class CsvWriter {
     str += this.lineSeparator
 
     await this.writer.write(this.encoder.encode(str))
-    this.index++
+    this.current++
   }
 
-  get lineNumber() {
-    return this.index
+  get index() {
+    return this.current
   }
 
   async close() {

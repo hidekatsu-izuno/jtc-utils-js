@@ -8,7 +8,7 @@ export class CsvReader {
   private fieldSeparator: string
   private skipEmptyLine: boolean
 
-  private index: number = 0
+  private current: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
@@ -126,7 +126,7 @@ export class CsvReader {
           if (item || items.length > 0 || quoted) {
             items.push(item)
           }
-          this.index++
+          this.current++
           if (items.length > 0 || !this.skipEmptyLine) {
             yield items
           }
@@ -144,15 +144,15 @@ export class CsvReader {
           items.push(buf)
         }
         if (items.length > 0) {
-          this.index++
+          this.current++
           yield items
         }
       }
     } while (!done)
   }
 
-  get lineNumber() {
-    return this.index
+  get index() {
+    return this.current
   }
 
   async close() {

@@ -513,6 +513,49 @@ toZenginKana("アガサ・クリスティー") // -> "ｱｶﾞｻ.ｸﾘｽﾃ�
 
 #### CsvReader - CSV ファイルを読み込む
 
+データソースから読み込んだデータを CSV として解析し、行データを取得します。
+
+```typescript
+const reader = new CsvReader(
+  // 読み込みするデータソースです。
+  src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
+
+  // オプションです。
+  options?: {
+    // 文字セットです。
+    // jtc-utils/charset から import した文字セットオブジェクトを指定します。
+    // デフォルトは utf8 です。
+    charset?: Charset,
+
+    // 先頭に BOM にある場合に読み飛ばす場合 true
+    // デフォルトは true です。
+    bom?: boolean,
+
+    // 行内の区切り文字です。
+    // デフォルトは "," です。
+    fieldSeparator?: string,
+
+    // 空行をスキップする場合 true
+    // デフォルトは false です。
+    skipEmptyLine?: boolean,
+
+    // 変換できないなど無効なデータを読み込んだ時に Error にしたい場合 true
+    // デフォルトは true です。
+    fatal?: boolean,
+  }
+)
+
+// データを１行ずつ読み込むジェネレーターを取得します。
+reader.read(): AsyncGenerator<string[]>
+
+// データの行番号を取得します。
+// データ取得前 0 となり、データを取得する度に増加してきます。
+reader.index: number
+
+// ストリームをクローズします。
+reader.close(): Promise<void>
+```
+
 ##### 例
 
 ```javascript
@@ -520,23 +563,20 @@ import { CsvReader } from "jtc-utils"
 import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
-const input = fs.createReadStream("sample.csv"/*
-012,abc,あいう\r\n
-345,def,かきく\r\n
-*/)
+// sample.csv:
+// 012,abc,あいう\r\n
+// 345,def,かきく\r\n
+const input = fs.createReadStream("sample.csv")
 
 const reader = new CsvReader(input, {
   charset: windows31j
 })
 try {
   for await (const line of reader.read()) {
-    switch (reader.lineNumber) {
-      case 1:
-        line // -> ["012", "abc", "あいう"]
-        break
-      case 2:
-        line // -> ["345", "def", "かきく"]
-        break
+    if (reader.index === 1) {
+      line // -> ["012", "abc", "あいう"]
+    } else if (reader.index === 2) {
+      line // -> ["345", "def", "かきく"]
     }
   }
 } finally {
@@ -548,6 +588,47 @@ try {
 
 #### FixlenReader - 固定長ファイルを読み込む
 
+データソースから読み込んだデータを固定長ファイルとして解析し、行データを取得します。
+
+```typescript
+const reader = new FixlenReader(
+  // 読み込みするデータソースです。
+  src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
+
+  // オプションです。
+  options?: {
+    // 文字セットです。
+    // jtc-utils/charset から import した文字セットオブジェクトを指定します。
+    // デフォルトは utf8 です。
+    charset?: Charset,
+
+    // 先頭に BOM にある場合に読み飛ばす場合 true
+    // デフォルトは true です。
+    bom?: boolean,
+
+    // 変換できないなど無効なデータを読み込んだ時に Error にしたい場合 true
+    // デフォルトは true です。
+    fatal?: boolean,
+  }
+)
+
+// データを１行ずつ読み込むジェネレーターを取得します。
+// データはレイアウトに従い解析されます。
+reader.read(layout: {
+  // 行として読み込むバイト数です。
+  lineLength: number,
+
+  //
+  columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder, index: number) => FixlenReaderColumn[]),
+}): AsyncGenerator<string[]>
+
+// データの行番号を取得します。
+// データ取得前 0 となり、データを取得する度に増加してきます。
+reader.index: number
+
+// ストリームをクローズします。
+reader.close(): Promise<void>
+```
 
 ##### 例
 
@@ -556,10 +637,10 @@ import { FixlenReader } from "jtc-utils"
 import { windows31j } from "jtc-utils/charset"
 import fs from "node:fs"
 
-const input = fs.createReadStream("sample.dat"/*
-012abcあいう\r\n
-345defかきく\r\n
-*/)
+// sample.dat:
+// 012abcあいう\r\n
+// 345defかきく\r\n
+const input = fs.createReadStream("sample.dat")
 
 const reader = new FixlenReader(input, {
   charset: windows31j,
