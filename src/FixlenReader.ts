@@ -24,7 +24,7 @@ export class FixlenReader {
   private ebcdic: boolean
   private fatal: boolean
 
-  private current: number = 0
+  private index: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
@@ -98,7 +98,7 @@ export class FixlenReader {
       }
 
       buf = buf.subarray(layout.lineLength)
-      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.current + 1)
+      const cols = Array.isArray(layout.columns) ? layout.columns : layout.columns(lineDecoder, this.index + 1)
 
       const items = new Array<string | number | BigInt>()
       if (cols && cols.length > 0) {
@@ -232,15 +232,15 @@ export class FixlenReader {
           }
         }
       }
-      this.current++
       if (items.length > 0) {
+        this.index++
         yield items
       }
     } while (!done)
   }
 
-  get index() {
-    return this.current
+  get count() {
+    return this.index
   }
 
   async close() {

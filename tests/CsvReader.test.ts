@@ -24,8 +24,9 @@ describe('CsvReader', () => {
     const reader = new CsvReader(input)
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual(expected)
     } finally {
@@ -38,9 +39,10 @@ describe('CsvReader', () => {
       skipEmptyLine: true
     })
     try {
-      const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      const list = new Array<string[]>()
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual([["あい\"う"],["えお"],["かきく"]])
     } finally {
@@ -66,8 +68,9 @@ describe('CsvReader', () => {
     }))
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual([
         ["あいう", "え\nお"],
@@ -85,8 +88,9 @@ describe('CsvReader', () => {
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>)
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual([
         ["昔々","あるところに","grand father,mother","桃\r\n太郎"],
@@ -102,8 +106,9 @@ describe('CsvReader', () => {
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>)
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual([
         ["昔々","あるところに","grand father,mother","桃\r\n太郎"],
@@ -121,8 +126,9 @@ describe('CsvReader', () => {
     })
     try {
       const list = new Array<any>()
-      for await (const item of reader.read()) {
-        list.push(item)
+      let record: string[] | undefined
+      while (record = await reader.read()) {
+        list.push(record)
       }
       expect(list).toStrictEqual([
         ["昔々","あるところに","grand father,mother","桃\r\n太郎"],

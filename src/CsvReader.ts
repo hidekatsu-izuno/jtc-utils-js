@@ -8,7 +8,11 @@ export class CsvReader {
   private fieldSeparator: string
   private skipEmptyLine: boolean
 
-  private current: number = 0
+  private reSeparator: RegExp
+  private endsWithCR = false
+  private buf: string = ""
+
+  private index: number = 0
 
   constructor(
     src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
@@ -63,35 +67,32 @@ export class CsvReader {
 
     this.fieldSeparator = options?.fieldSeparator ?? ","
     this.skipEmptyLine = options?.skipEmptyLine ?? false
+
+    this.reSeparator = new RegExp(`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`, "g")
   }
 
-  async *read(): AsyncGenerator<string[]> {
-    const re = new RegExp(`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`, "g")
+  async read(): Promise<string[] | undefined> {
+    const items = []
 
-    let done = false
-    let endsWithCR = false
-
-    let buf = ""
+    let buf = this.buf
     let pos = 0
     let quoted = false
-
-    let items = []
-
+    let done = false
     loop:
     do {
       const readed = await this.reader.read()
       done = readed.done
 
       if (readed.value) {
-        if (endsWithCR && readed.value.startsWith("\n")) {
-          readed.value = readed.value.substring(1)
-          endsWithCR = false
+        let value = readed.value
+        if (this.endsWithCR && value.startsWith("\n")) {
+          value = value.substring(1)
+          this.endsWithCR = false
         }
-        if (readed.value.endsWith("\r")) {
-          endsWithCR = true
+        if (value.endsWith("\r")) {
+          this.endsWithCR = true
         }
-
-        buf = buf ? buf + readed.value : readed.value
+        buf = buf ? buf + value : value
       }
 
       while (pos < buf.length) {
@@ -115,26 +116,26 @@ export class CsvReader {
           }
         }
 
-        re.lastIndex = pos
-        if (!re.test(buf)) {
+        this.reSeparator.lastIndex = pos
+        if (!this.reSeparator.test(buf)) {
           pos = buf.length
           continue loop
         }
 
-        const item = buf.substring(0, re.lastIndex - (buf.endsWith("\r\n", re.lastIndex) ? 2 : 1))
-        if (!buf.endsWith(this.fieldSeparator, re.lastIndex)) {
+        const item = buf.substring(0, this.reSeparator.lastIndex - (buf.endsWith("\r\n", this.reSeparator.lastIndex) ? 2 : 1))
+        if (!buf.endsWith(this.fieldSeparator, this.reSeparator.lastIndex)) {
           if (item || items.length > 0 || quoted) {
             items.push(item)
           }
-          this.current++
           if (items.length > 0 || !this.skipEmptyLine) {
-            yield items
+            this.buf = buf.substring(this.reSeparator.lastIndex)
+            this.index++
+            return items
           }
-          items = []
         } else {
           items.push(item)
         }
-        buf = buf.substring(re.lastIndex)
+        buf = buf.substring(this.reSeparator.lastIndex)
         pos = 0
         quoted = false
       }
@@ -144,15 +145,16 @@ export class CsvReader {
           items.push(buf)
         }
         if (items.length > 0) {
-          this.current++
-          yield items
+          this.buf = ""
+          this.index++
+          return items
         }
       }
     } while (!done)
   }
 
-  get index() {
-    return this.current
+  get count() {
+    return this.index
   }
 
   async close() {

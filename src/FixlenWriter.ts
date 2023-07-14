@@ -23,7 +23,7 @@ export class FixlenWriter {
   private bom: boolean
   private fatal: boolean
 
-  private current: number = 0
+  private index: number = 0
 
   constructor(
     dest: WritableStream<Uint8Array>,
@@ -83,8 +83,6 @@ export class FixlenWriter {
     filler?: string,
     lineSeparator?: string,
   }) {
-    this.current++
-
     let shift = this.shift
     let filler = this.filler
     let lineSeparator = this.lineSeparator
@@ -289,11 +287,12 @@ export class FixlenWriter {
       buf.set(lineSeparator, buf.length - lineSeparator.length)
     }
 
+    this.index++
     await this.writer.write(buf)
   }
 
-  get index() {
-    return this.current
+  get count() {
+    return this.index
   }
 
   async close() {
