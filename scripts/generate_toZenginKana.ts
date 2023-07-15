@@ -1,5 +1,5 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/node/CsvReader.js"
+import { CsvReader } from "../src/CsvReader.js"
 
 const input = await fs.open("./data/map.zengin.csv")
 const reader = new CsvReader(input, {
@@ -9,8 +9,8 @@ try {
   const output = await fs.open("./src/toZenginKana.ts", "w")
   try {
     await output.write(`const M = new Map<string, string>([\n`)
-    for await (const line of reader.read()) {
-      if (reader.lineNumber === 1) {
+    for await (const line of reader) {
+      if (reader.count === 1) {
         continue
       }
       const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1")

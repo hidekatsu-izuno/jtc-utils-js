@@ -1,5 +1,5 @@
 import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/node/CsvReader.js"
+import { CsvReader } from "../src/CsvReader.js"
 
 const input = await fs.open("./data/decode.cp939.csv")
 const reader = new CsvReader(input, {
@@ -13,7 +13,7 @@ import { PackedMap } from "../util/PackedMap.js"
 
 export const IBMKanjiDecodeMap = new PackedMap((m) => {
 `.trimStart())
-    for await (const line of reader.read()) {
+    for await (const line of reader) {
       const ik = line[0]
       const cp = line[1]
       if (ik.length === 4) {
