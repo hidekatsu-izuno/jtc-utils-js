@@ -24,33 +24,33 @@
   },
   "exports": {
     "./locale": {
-      "import": {
-        "types": "./module/locale/index.d.ts",
-        "default": "./module/locale/index.js"
-      },
-      "default": {
+      "require": {
         "types": "./commonjs/locale/index.d.ts",
         "default": "./commonjs/locale/index.js"
+      },
+      "default": {
+        "types": "./module/locale/index.d.ts",
+        "default": "./module/locale/index.js"
       }
     },
     "./charset": {
-      "import": {
-        "types": "./module/charset/index.d.ts",
-        "default": "./module/charset/index.js"
-      },
-      "default": {
+      "require": {
         "types": "./commonjs/charset/index.d.ts",
         "default": "./commonjs/charset/index.js"
+      },
+      "default": {
+        "types": "./module/charset/index.d.ts",
+        "default": "./module/charset/index.js"
       }
     },
     ".": {
-      "import": {
-        "types": "./module/index.d.ts",
-        "default": "./module/index.js"
-      },
-      "default": {
+      "require": {
         "types": "./commonjs/index.d.ts",
         "default": "./commonjs/index.js"
+      },
+      "default": {
+        "types": "./module/index.d.ts",
+        "default": "./module/index.js"
       }
     },
     "./package.json": "./package.json"
