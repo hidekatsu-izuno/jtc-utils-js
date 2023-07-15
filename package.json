@@ -41,25 +41,13 @@
       }
     },
     ".": {
-      "browser": {
-        "import": {
-          "types": "./esm/index.d.ts",
-          "default": "./esm/index.js"
-        },
-        "default": {
-          "types": "./commonjs/index.d.ts",
-          "default": "./commonjs/index.js"
-        }
+      "import": {
+        "types": "./esm/node/index.d.ts",
+        "default": "./esm/node/index.js"
       },
       "default": {
-        "import": {
-          "types": "./esm/node/index.d.ts",
-          "default": "./esm/node/index.js"
-        },
-        "default": {
-          "types": "./commonjs/node/index.d.ts",
-          "default": "./commonjs/node/index.js"
-        }
+        "types": "./commonjs/node/index.d.ts",
+        "default": "./commonjs/node/index.js"
       }
     },
     "./package.json": "./package.json"

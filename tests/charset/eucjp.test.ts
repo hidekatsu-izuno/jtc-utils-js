@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import fs from "node:fs"
-import { CsvReader } from "../../src/node/CsvReader"
+import { CsvReader } from "../../src/CsvReader"
 import { eucjp } from "../../src/charset/eucjp"
 
 describe('eucjp', () => {

@@ -137,4 +137,54 @@ describe('CsvReader', () => {
       await reader.close()
     }
   })
+
+  test("test read utf-8 csv with bom", async () => {
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.utf-8.bom.csv"))
+    try {
+      const list = new Array<any>()
+      for await (const item of reader) {
+        list.push(item)
+      }
+      expect(list).toStrictEqual([
+        ["昔々","あるところに","grand father,mother","桃\r\n太郎"],
+        ["住んでいました。"],
+      ])
+    } finally {
+      await reader.close()
+    }
+  })
+
+  test("test read utf-8 csv without bom", async () => {
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.utf-8.nobom.csv"))
+    try {
+      const list = new Array<any>()
+      for await (const item of reader) {
+        list.push(item)
+      }
+      expect(list).toStrictEqual([
+        ["昔々","あるところに","grand father,mother","桃\r\n太郎"],
+        ["住んでいました。"],
+      ])
+    } finally {
+      await reader.close()
+    }
+  })
+
+  test("test read windows-31j csv", async () => {
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.windows-31j.csv"), {
+      charset: windows31j
+    })
+    try {
+      const list = new Array<any>()
+      for await (const item of reader) {
+        list.push(item)
+      }
+      expect(list).toStrictEqual([
+        ["昔々","あるところに","grand father,mother","桃\r\n太郎"],
+        ["住んでいました。"],
+      ])
+    } finally {
+      await reader.close()
+    }
+  })
 })

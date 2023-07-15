@@ -1,3 +1,5 @@
+import type { Readable } from "node:stream"
+import type { FileHandle } from "node:fs/promises"
 import { Charset, CharsetDecoder } from "./charset/charset.js"
 import { utf8 } from "./charset/utf8.js"
 
@@ -14,7 +16,7 @@ export interface FixlenLineDecoder {
 }
 
 export class FixlenReader {
-  private reader: ReadableStreamDefaultReader<Uint8Array>
+  private reader: Promise<ReadableStreamDefaultReader<Uint8Array>>
   private decoder: CharsetDecoder
   private lineLength: number
   private columns: (FixlenReaderColumn & { end: number })[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[])
@@ -26,7 +28,7 @@ export class FixlenReader {
   private index: number = 0
 
   constructor(
-    src: string | Uint8Array | Blob | ReadableStream<Uint8Array>,
+    src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
     config: {
       lineLength: number,
       columns: FixlenReaderColumn[] | ((line: FixlenLineDecoder) => FixlenReaderColumn[]),
@@ -39,38 +41,48 @@ export class FixlenReader {
     const charset = config.charset ?? utf8
     this.fatal = config.fatal ?? true
     this.shift = config.shift ?? false
+    this.lineLength = config.lineLength
+    this.columns = Array.isArray(config.columns) ? this.normalizeColumns(this.lineLength, config.columns, this.shift) :
+      config.columns
 
-    let stream
+    let stream: Promise<ReadableStream<Uint8Array>>
     if (typeof src === "string") {
-      stream = new ReadableStream<Uint8Array>({
+      stream = Promise.resolve(new ReadableStream<Uint8Array>({
         start(controller) {
           const encoder = charset.createEncoder()
           controller.enqueue(encoder.encode(src))
           controller.close()
         }
-      })
+      }))
     } else if (src instanceof Uint8Array) {
-      stream = new ReadableStream<Uint8Array>({
+      stream = Promise.resolve(new ReadableStream<Uint8Array>({
         start(controller) {
           controller.enqueue(src)
           controller.close()
         }
-      })
+      }))
     } else if (src instanceof Blob) {
-      stream = src.stream()
+      stream = Promise.resolve(src.stream())
+    } else if (src instanceof ReadableStream) {
+      stream = Promise.resolve(src)
+    } else if (typeof window === "undefined") {
+      stream = (async () => {
+        const { Readable } = await import("node:stream")
+        if (src instanceof Readable) {
+          return Readable.toWeb(src)
+        } else {
+          return Readable.toWeb((src as FileHandle).createReadStream())
+        }
+      })() as Promise<ReadableStream<Uint8Array>>
     } else {
-      stream = src
+      throw new TypeError(`Unsuppoted source: ${src}`)
     }
-
-    this.lineLength = config.lineLength
-    this.columns = Array.isArray(config.columns) ? this.normalizeColumns(this.lineLength, config.columns, this.shift) :
-      config.columns
 
     this.decoder = charset.createDecoder({
       fatal: this.fatal,
       ignoreBOM: config.bom != null ? !config.bom : false,
     })
-    this.reader = stream.getReader()
+    this.reader = stream.then(value => value.getReader())
   }
 
   async read(options?: {
@@ -85,8 +97,9 @@ export class FixlenReader {
 
     let done = false
     let buf = this.buf
+    const reader = await this.reader
     do {
-      const readed = await this.reader.read()
+      const readed = await reader.read()
       done = readed.done
       if (readed.value) {
         buf = buf.length > 0 ? this.concat(buf, readed.value) : readed.value
@@ -143,7 +156,8 @@ export class FixlenReader {
   }
 
   async close() {
-    await this.reader.cancel()
+    const reader = await this.reader
+    await reader.cancel()
   }
 
   private normalizeColumns(

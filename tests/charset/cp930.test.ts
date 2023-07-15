@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import fs from "node:fs"
-import { CsvReader } from "../../src/node/CsvReader.js"
+import { CsvReader } from "../../src/CsvReader.js"
 import { cp930 } from "../../src/charset/cp930.js"
 
 describe('cp930', () => {

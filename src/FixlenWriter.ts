@@ -1,3 +1,5 @@
+import type { Writable } from "node:stream"
+import type { FileHandle } from "node:fs/promises"
 import { Charset, CharsetEncoder } from "./charset/charset.js"
 import { utf8 } from "./charset/utf8.js"
 
@@ -10,7 +12,7 @@ export declare type FixlenWriterColumn = {
 }
 
 export class FixlenWriter {
-  private writer: WritableStreamDefaultWriter<Uint8Array>
+  private writer: Promise<WritableStreamDefaultWriter<Uint8Array>>
   private encoder: CharsetEncoder
   private ebcdic: boolean
 
@@ -26,7 +28,7 @@ export class FixlenWriter {
   private index: number = 0
 
   constructor(
-    dest: WritableStream<Uint8Array>,
+    dest: WritableStream<Uint8Array> | FileHandle | Writable,
     config: {
       columns: FixlenWriterColumn[],
       charset?: Charset,
@@ -70,7 +72,23 @@ export class FixlenWriter {
       this.lineLength += this.lineSeparator.length
     }
 
-    this.writer = dest.getWriter()
+    let stream: Promise<WritableStream<Uint8Array>>
+    if (dest instanceof WritableStream) {
+      stream = Promise.resolve(dest)
+    } else if (typeof window === "undefined") {
+      stream = (async () => {
+        const { Writable } = await import("node:stream")
+        if (dest instanceof Writable) {
+          return Writable.toWeb(dest)
+        } else {
+          return Writable.toWeb((dest as FileHandle).createWriteStream())
+        }
+      })() as Promise<WritableStream<Uint8Array>>
+    } else {
+      throw new TypeError(`Unsuppoted destination: ${dest}`)
+    }
+
+    this.writer = stream.then(value => value.getWriter())
   }
 
   async write(record: any[], options?: {
@@ -284,7 +302,8 @@ export class FixlenWriter {
     }
 
     this.index++
-    await this.writer.write(buf)
+    const writer = await this.writer
+    await writer.write(buf)
   }
 
   get count() {
@@ -292,10 +311,11 @@ export class FixlenWriter {
   }
 
   async close() {
+    const writer = await this.writer
     if (this.bom) {
-      await this.writer.write(this.encoder.encode("\uFEFF"))
+      await writer.write(this.encoder.encode("\uFEFF"))
       this.bom = false
     }
-    await this.writer.close()
+    await writer.close()
   }
 }

@@ -8,7 +8,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": true
   },
   "include": [
     "./src/**/*"
