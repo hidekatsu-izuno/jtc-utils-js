@@ -2,28 +2,30 @@
   "name": "jtc-utils",
   "version": "0.3.0-alpha.1",
   "description": "Utilities for Japanese Traditional Companies",
-  "type": "module",
-  "main": "./esm/index.js",
-  "types": "./esm/index.d.ts",
+  "main": "./commonjs/index.js",
+  "types": "./commonjs/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
-    "generate:IBMKanjiDecodeMap": "node --loader ts-node/esm ./scripts/generate_IBMKanjiDecodeMap.ts",
-    "generate:toFullwidth": "node --loader ts-node/esm ./scripts/generate_toFullwidth.ts",
-    "generate:toFullwidthKatakana": "node --loader ts-node/esm ./scripts/generate_toFullwidthKatakana.ts",
-    "generate:toHalfwidth": "node --loader ts-node/esm ./scripts/generate_toHalfwidth.ts",
-    "generate:toHiragana": "node --loader ts-node/esm ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "node --loader ts-node/esm ./scripts/generate_toZenginKana.ts"
+    "generate:IBMKanjiDecodeMap": "node --loader ts-node/module ./scripts/generate_IBMKanjiDecodeMap.ts",
+    "generate:toFullwidth": "node --loader ts-node/module ./scripts/generate_toFullwidth.ts",
+    "generate:toFullwidthKatakana": "node --loader ts-node/module ./scripts/generate_toFullwidthKatakana.ts",
+    "generate:toHalfwidth": "node --loader ts-node/module ./scripts/generate_toHalfwidth.ts",
+    "generate:toHiragana": "node --loader ts-node/module ./scripts/generate_toHiragana.ts",
+    "generate:toZenginKana": "node --loader ts-node/module ./scripts/generate_toZenginKana.ts"
   },
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
   "sideEffects": false,
+  "engines": {
+    "node": ">=16"
+  },
   "exports": {
     "./locale": {
       "import": {
-        "types": "./esm/locale/index.d.ts",
-        "default": "./esm/locale/index.js"
+        "types": "./module/locale/index.d.ts",
+        "default": "./module/locale/index.js"
       },
       "default": {
         "types": "./commonjs/locale/index.d.ts",
@@ -32,8 +34,8 @@
     },
     "./charset": {
       "import": {
-        "types": "./esm/charset/index.d.ts",
-        "default": "./esm/charset/index.js"
+        "types": "./module/charset/index.d.ts",
+        "default": "./module/charset/index.js"
       },
       "default": {
         "types": "./commonjs/charset/index.d.ts",
@@ -42,19 +44,19 @@
     },
     ".": {
       "import": {
-        "types": "./esm/node/index.d.ts",
-        "default": "./esm/node/index.js"
+        "types": "./module/index.d.ts",
+        "default": "./module/index.js"
       },
       "default": {
-        "types": "./commonjs/node/index.d.ts",
-        "default": "./commonjs/node/index.js"
+        "types": "./commonjs/index.d.ts",
+        "default": "./commonjs/index.js"
       }
     },
     "./package.json": "./package.json"
   },
   "files": [
     "commonjs/",
-    "esm/",
+    "module/",
     "src/",
     "LICENSE",
     "package.json",

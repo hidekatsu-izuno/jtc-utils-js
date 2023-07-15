@@ -1,5 +1,5 @@
-esm/
 commonjs/
+module/
 
 # Logs
 logs
