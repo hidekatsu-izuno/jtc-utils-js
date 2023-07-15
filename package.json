@@ -1,12 +1,12 @@
 {
   "name": "jtc-utils",
-  "version": "0.3.0-alpha.1",
+  "version": "0.3.0-alpha.2",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
   "main": "./module/index.js",
   "types": "./module/index.d.ts",
   "scripts": {
-    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json && tsx ./scripts/transform_paths.ts",
+    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
