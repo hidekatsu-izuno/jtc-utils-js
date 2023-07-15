@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.3.0-alpha.2",
+  "version": "0.3.0",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
   "main": "./module/index.js",
@@ -54,6 +54,13 @@
       }
     },
     "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "charset": ["./module/charset/index.d.ts"],
+      "locale": ["./module/locale/index.d.ts"],
+      "*": ["./module/index.d.ts"]
+    }
   },
   "files": [
     "commonjs/",
