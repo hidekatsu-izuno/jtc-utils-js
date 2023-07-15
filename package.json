@@ -1,11 +1,10 @@
 {
   "name": "jtc-utils",
-  "version": "0.3.0-alpha.0",
+  "version": "0.3.0-alpha.1",
   "description": "Utilities for Japanese Traditional Companies",
   "type": "module",
-  "main": "./lib/index.js",
-  "module": "./module/index.js",
-  "types": "./module/index.d.ts",
+  "main": "./esm/index.js",
+  "types": "./esm/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vitest.config.ts",
@@ -66,8 +65,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "lib/",
-    "module/",
+    "commonjs/",
+    "esm/",
     "src/",
     "LICENSE",
     "package.json",

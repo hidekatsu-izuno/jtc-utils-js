@@ -52,7 +52,7 @@ export class CsvWriter {
         str += this.fieldSeparator
       }
       if (quoteAll || item.includes(this.fieldSeparator) || /[\r\n]/.test(item)) {
-        str += '"' + item.replaceAll('"', '""') + '"'
+        str += '"' + item.replace(/"/g, '""') + '"'
       } else {
         str += item
       }
