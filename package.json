@@ -19,7 +19,7 @@
     "fixlen"
   ],
   "scripts": {
-    "build": "npm run build:types && npm run build:module && npm run build:cjs",
+    "build": "npm run build:types && npm run build:module && npm run build:cjs && tsx ./scripts/normalize_sourcemap.ts",
     "build:types": "tsc --build --clean && tsc -p ./tsconfig.json",
     "build:module": "babel src --config-file ./babel.config.json --out-dir lib --extensions .ts",
     "build:cjs": "babel src --config-file ./babel.config.cjs.json --out-dir cjs --extensions .ts --out-file-extension .cjs",
