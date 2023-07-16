@@ -34,11 +34,11 @@ export class NumberFormat {
 
         let prefix = (m[i * 4 + 1] || '').replace(ReDecimalText, m => {
           const sep = m.charAt(0)
-          return m.substring(1, m.length - 1).replace(new RegExp(escapeRegExp(sep + sep), "g"), sep)
+          return m.substring(1, m.length - 1).replaceAll(sep + sep, sep)
         })
         let suffix = (m[i * 4 + 4] || '').replace(ReDecimalText, m => {
           const sep = m.charAt(0)
-          return m.substring(1, m.length - 1).replace(new RegExp(escapeRegExp(sep + sep), "g"), sep)
+          return m.substring(1, m.length - 1).replaceAll(sep + sep, sep)
         })
 
         let minimumIntegerDigits = 1
@@ -59,7 +59,7 @@ export class NumberFormat {
         const groupingPos = iFormat.lastIndexOf(",")
         if (groupingPos !== -1) {
           groupingDigits = iFormat.length - groupingPos - 1
-          iFormat = iFormat.replace(/,/g, "")
+          iFormat = iFormat.replaceAll(",", "")
         }
 
         const zeroPos = iFormat.indexOf("0")

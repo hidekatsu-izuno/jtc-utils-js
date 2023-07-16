@@ -119,7 +119,7 @@ export class CsvReader {
             pos = lpos + 2
             continue
           } else {
-            const unquoted = buf.substring(1, lpos).replace(/""/g, '"')
+            const unquoted = buf.substring(1, lpos).replaceAll('""', '"')
             buf = unquoted + buf.substring(lpos + 1)
             pos = unquoted.length
             quoted = true

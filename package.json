@@ -5,14 +5,24 @@
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
   "keywords": [
-    "jtc", "legacy",
-    "halfwidth", "fullwidth",
-    "hiragana", "katakana",
-    "windows-31j", "euc-jp", "cp930", "cp939",
-    "csv", "fixlen"
+    "jtc",
+    "legacy",
+    "halfwidth",
+    "fullwidth",
+    "hiragana",
+    "katakana",
+    "windows-31j",
+    "euc-jp",
+    "cp930",
+    "cp939",
+    "csv",
+    "fixlen"
   ],
   "scripts": {
-    "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "build": "npm run build:types && npm run build:module && npm run build:cjs",
+    "build:types": "tsc --build --clean && tsc -p ./tsconfig.json",
+    "build:module": "babel src --config-file ./babel.config.json --out-dir lib --extensions .ts",
+    "build:cjs": "babel src --config-file ./babel.config.cjs.json --out-dir cjs --extensions .ts --out-file-extension .cjs",
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
@@ -23,52 +33,32 @@
     "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "type": "module",
-  "main": "./module/index.js",
-  "types": "./module/index.d.ts",
+  "sideEffects": false,
   "exports": {
     "./locale": {
-      "require": {
-        "types": "./commonjs/locale/index.d.ts",
-        "default": "./commonjs/locale/index.js"
-      },
-      "default": {
-        "types": "./module/locale/index.d.ts",
-        "default": "./module/locale/index.js"
-      }
+      "require": "./cjs/locale/index.js",
+      "default": "./lib/locale/index.js"
     },
     "./charset": {
-      "require": {
-        "types": "./commonjs/charset/index.d.ts",
-        "default": "./commonjs/charset/index.js"
-      },
-      "default": {
-        "types": "./module/charset/index.d.ts",
-        "default": "./module/charset/index.js"
-      }
+      "require": "./cjs/charset/index.js",
+      "default": "./lib/charset/index.js"
     },
     ".": {
-      "require": {
-        "types": "./commonjs/index.d.ts",
-        "default": "./commonjs/index.js"
-      },
-      "default": {
-        "types": "./module/index.d.ts",
-        "default": "./module/index.js"
-      }
+      "require": "./cjs/index.js",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "charset": ["./module/charset/index.d.ts"],
-      "locale": ["./module/locale/index.d.ts"],
-      "*": ["./module/index.d.ts"]
+      "charset": ["./types/charset/index.d.ts"],
+      "locale": ["./types/locale/index.d.ts"],
+      "*": ["./types/index.d.ts"]
     }
   },
-  "sideEffects": false,
   "files": [
     "commonjs/",
     "module/",
@@ -78,6 +68,10 @@
     "README.md"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.22.9",
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-typescript": "^7.22.5",
     "@tsconfig/recommended": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
