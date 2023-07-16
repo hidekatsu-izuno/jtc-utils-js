@@ -39,15 +39,15 @@
   "sideEffects": false,
   "exports": {
     "./locale": {
-      "require": "./cjs/locale/index.js",
+      "require": "./cjs/locale/index.cjs",
       "default": "./lib/locale/index.js"
     },
     "./charset": {
-      "require": "./cjs/charset/index.js",
+      "require": "./cjs/charset/index.cjs",
       "default": "./lib/charset/index.js"
     },
     ".": {
-      "require": "./cjs/index.js",
+      "require": "./cjs/index.cjs",
       "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
@@ -60,8 +60,9 @@
     }
   },
   "files": [
-    "commonjs/",
-    "module/",
+    "cjs/",
+    "lib/",
+    "types/",
     "src/",
     "LICENSE",
     "package.json",
