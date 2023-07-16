@@ -266,7 +266,7 @@ isHalfwidthKatakana("ﾔﾏﾀﾞ･ﾀﾛｰ") // -> true
 isHalfwidthKatakana("山田　太郎") // -> false
 ```
 
-#### isZenginkana - 文字列が全銀カナだけから構成されているか判定する
+#### isZenginKana - 文字列が全銀カナだけから構成されているか判定する
 
 文字列が銀行口座名義として使える文字のみから構成されている場合、 true を返します。
 
@@ -277,7 +277,7 @@ isHalfwidthKatakana("山田　太郎") // -> false
 - 半角丸括弧（()）、半角カギ括弧（｢｣）、半角スラッシュ（/）、半角円記号/バックスラッシュ（\）、半角ハイフン（-）、半角ピリオド（.）、半角スペース（ ）
 
 ```typescript
-function isZenginkana(
+function isZenginKana(
   // 検査する文字列です。
   value: string | null | undefined,
 ): boolean
@@ -342,7 +342,7 @@ isEmail("あいう@example_com") // -> false
 
 ITU-T E.164 に従い、国番号（"+" + 数字1～3桁）とハイフン区切りの数字からなり、合計15桁以内の場合に true を返します。日本で良く使われる市外局番を丸括弧でくくるケースもサポートしています。
 
-世界には、1桁の電話番号も存在しているため、厳密なチェックはで難しいことに注意してください。
+世界には、国内であれば1桁の電話番号も存在しているため、厳密なチェックは難しいことに注意してください（例えば、日本にも110番3桁特番があります）。
 
 ```typescript
 function isTelephoneNo(

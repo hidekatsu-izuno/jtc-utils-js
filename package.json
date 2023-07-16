@@ -2,9 +2,15 @@
   "name": "jtc-utils",
   "version": "0.3.0",
   "description": "Utilities for Japanese Traditional Companies",
-  "type": "module",
-  "main": "./module/index.js",
-  "types": "./module/index.d.ts",
+  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
+  "license": "MIT",
+  "keywords": [
+    "jtc", "legacy",
+    "halfwidth", "fullwidth",
+    "hiragana", "katakana",
+    "windows-31j", "euc-jp", "cp930", "cp939",
+    "csv", "fixlen"
+  ],
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest --config vitest.config.ts",
@@ -16,12 +22,12 @@
     "generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
     "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
   },
-  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
-  "license": "MIT",
-  "sideEffects": false,
   "engines": {
     "node": ">=16"
   },
+  "type": "module",
+  "main": "./module/index.js",
+  "types": "./module/index.d.ts",
   "exports": {
     "./locale": {
       "require": {
@@ -62,6 +68,7 @@
       "*": ["./module/index.d.ts"]
     }
   },
+  "sideEffects": false,
   "files": [
     "commonjs/",
     "module/",
