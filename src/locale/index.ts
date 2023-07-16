@@ -1,4 +1,4 @@
-export { Locale } from "date-fns"
+export type { Locale } from "date-fns"
 export { default as af } from "date-fns/locale/af/index.js"
 export { default as ar } from "date-fns/locale/ar/index.js"
 export { default as arDZ } from "date-fns/locale/ar-DZ/index.js"

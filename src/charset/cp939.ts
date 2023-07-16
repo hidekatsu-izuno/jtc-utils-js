@@ -150,7 +150,7 @@ class Cp939Encoder implements CharsetEncoder {
   }
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = []
+    const out = new Array<number>()
     const limit = options?.limit ?? Number.POSITIVE_INFINITY
     let shift = options?.shift ?? false
     let prev = 0

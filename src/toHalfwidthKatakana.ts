@@ -184,7 +184,7 @@ export function toHalfwidthKatakana(value: string | null | undefined) {
     return value
   }
 
-  const array = []
+  const array = new Array<string>()
   let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)

@@ -81,7 +81,7 @@ export class CsvReader {
   }
 
   async read(): Promise<string[] | undefined> {
-    const items = []
+    const items = new Array<string>()
 
     let buf = this.buf
     let pos = 0

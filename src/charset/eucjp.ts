@@ -91,7 +91,7 @@ class EucjpEncoder implements CharsetEncoder {
   }
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = []
+    const out = new Array<number>()
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
       if (cp <= 0x7F) { // ASCII

@@ -91,7 +91,7 @@ class Windows31jEncoder implements CharsetEncoder {
   }
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = []
+    const out = new Array<number>()
     const limit = options?.limit ?? Number.POSITIVE_INFINITY
     let prev = 0
     for (let i = 0; i < str.length; i++) {
