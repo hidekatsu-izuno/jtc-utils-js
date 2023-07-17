@@ -39,14 +39,17 @@
   "sideEffects": false,
   "exports": {
     "./locale": {
+      "types": "./types/locale/index.d.ts",
       "require": "./cjs/locale/index.cjs",
       "default": "./lib/locale/index.js"
     },
     "./charset": {
+      "types": "./types/charset/index.d.ts",
       "require": "./cjs/charset/index.cjs",
       "default": "./lib/charset/index.js"
     },
     ".": {
+      "types": "./types/index.d.ts",
       "require": "./cjs/index.cjs",
       "default": "./lib/index.js"
     },
