@@ -4,11 +4,11 @@ import {
   format as _format,
 } from "date-fns"
 import { utcToZonedTime, formatInTimeZone, OptionsWithTZ } from "date-fns-tz"
-import { getTimeZone } from "./util/getTimeZone.js"
-import { JapaneseEra } from "./JapaneseEra.js"
-import { DateFormat } from "./util/DateFormat.js"
-import { Locale, ja, enUS } from "./locale/index.js"
-import { getLocale } from "./util/getLocale.js"
+import { getTimeZone } from "./util/getTimeZone.ts"
+import { JapaneseEra } from "./JapaneseEra.ts"
+import { DateFormat } from "./util/DateFormat.ts"
+import { Locale, ja, enUS } from "./locale/index.ts"
+import { getLocale } from "./util/getLocale.ts"
 
 declare type FormatDateOptions = {
   locale?: Locale,

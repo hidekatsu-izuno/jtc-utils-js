@@ -1,7 +1,7 @@
-import { Charset, CharsetDecodeOptions, CharsetDecoder, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions } from "./charset.js"
-import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.js"
-import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.js"
-import { PackedMap } from "../util/PackedMap.js"
+import { Charset, CharsetDecodeOptions, CharsetDecoder, CharsetDecoderOptions, CharsetEncodeOptions, CharsetEncoder, CharsetEncoderOptions } from "./charset.ts"
+import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.ts"
+import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.ts"
+import { PackedMap } from "../util/PackedMap.ts"
 
 class Cp939Charset implements Charset {
   get name() {

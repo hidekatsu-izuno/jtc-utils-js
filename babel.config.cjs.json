@@ -11,7 +11,7 @@
   ],
   "plugins": [
     ["replace-import-extension", {
-      "extMapping": { ".js": ".cjs" }
+      "extMapping": { ".ts": ".cjs" }
     }]
   ]
 }

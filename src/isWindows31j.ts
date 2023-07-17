@@ -1,4 +1,4 @@
-import { windows31j } from "./charset/windows31j.js"
+import { windows31j } from "./charset/windows31j.ts"
 
 const encoder = windows31j.createEncoder()
 

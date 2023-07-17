@@ -1,4 +1,4 @@
-import { PackedMap } from "../util/PackedMap.js"
+import { PackedMap } from "../util/PackedMap.ts"
 
 export const JISEncodeMap = new PackedMap((m) => {
   const decoder = new TextDecoder("euc-jp")

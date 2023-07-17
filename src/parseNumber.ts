@@ -1,6 +1,6 @@
-import { NumberFormat } from "./util/NumberFormat.js"
-import { ja, enUS, Locale } from "./locale/index.js"
-import { getLocale } from "./util/getLocale.js"
+import { NumberFormat } from "./util/NumberFormat.ts"
+import { ja, enUS, Locale } from "./locale/index.ts"
+import { getLocale } from "./util/getLocale.ts"
 
 declare type ParseNumberOptions = {
   locale?: Locale,

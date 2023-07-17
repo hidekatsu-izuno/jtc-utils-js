@@ -1,7 +1,7 @@
 import type { Readable } from "node:stream"
 import type { FileHandle } from "node:fs/promises"
-import { Charset, CharsetDecoder } from "./charset/charset.js"
-import { utf8 } from "./charset/utf8.js"
+import { Charset, CharsetDecoder } from "./charset/charset.ts"
+import { utf8 } from "./charset/utf8.ts"
 
 export declare type FixlenReaderColumn = {
   start: number,

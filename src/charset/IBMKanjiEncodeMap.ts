@@ -1,5 +1,5 @@
-import { cp930 } from "./cp930.js"
-import { PackedMap } from "../util/PackedMap.js"
+import { cp930 } from "./cp930.ts"
+import { PackedMap } from "../util/PackedMap.ts"
 
 export const IBMKanjiEncodeMap = new PackedMap((m) => {
   const decoder = cp930.createDecoder({ fatal: false })

@@ -4,10 +4,10 @@ import {
   isValid,
 } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
-import { Locale, ja, enUS } from "./locale/index.js"
-import { getLocale } from "./util/getLocale.js"
-import { getTimeZone } from "./util/getTimeZone.js"
-import { JapaneseEra } from "./JapaneseEra.js"
+import { Locale, ja, enUS } from "./locale/index.ts"
+import { getLocale } from "./util/getLocale.ts"
+import { getTimeZone } from "./util/getTimeZone.ts"
+import { JapaneseEra } from "./JapaneseEra.ts"
 
 declare type ParseDateOptions = {
   locale?: Locale,

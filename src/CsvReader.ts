@@ -1,8 +1,8 @@
 import type { Readable } from "node:stream"
 import type { FileHandle } from "node:fs/promises"
-import { Charset } from "./charset/charset.js"
-import { utf8 } from "./charset/utf8.js"
-import { escapeRegExp } from "./util/escapeRegExp.js"
+import { Charset } from "./charset/charset.ts"
+import { utf8 } from "./charset/utf8.ts"
+import { escapeRegExp } from "./util/escapeRegExp.ts"
 
 export class CsvReader {
   private reader: Promise<ReadableStreamDefaultReader<string>>

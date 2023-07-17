@@ -1,6 +1,6 @@
 import { parseISO } from "date-fns"
-import { getLocale } from "./util/getLocale.js"
-import { escapeRegExp } from "./util/escapeRegExp.js"
+import { getLocale } from "./util/getLocale.ts"
+import { escapeRegExp } from "./util/escapeRegExp.ts"
 
 export class JapaneseEra {
   static MEIJI = new JapaneseEra(
