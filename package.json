@@ -40,19 +40,34 @@
   "sideEffects": false,
   "exports": {
     "./locale": {
-      "types": "./types/locale/index.d.ts",
-      "require": "./cjs/locale/index.cjs",
-      "default": "./lib/locale/index.js"
+      "require": {
+        "types": "./types/locale/index.d.ts",
+        "default": "./cjs/locale/index.cjs"
+      },
+      "default": {
+        "types": "./types/locale/index.d.ts",
+        "default": "./lib/locale/index.js"
+      }
     },
     "./charset": {
-      "types": "./types/charset/index.d.ts",
-      "require": "./cjs/charset/index.cjs",
-      "default": "./lib/charset/index.js"
+      "require": {
+        "types": "./types/charset/index.d.ts",
+        "default": "./cjs/charset/index.cjs"
+      },
+      "default": {
+        "types": "./types/charset/index.d.ts",
+        "default": "./lib/charset/index.js"
+      }
     },
     ".": {
-      "types": "./types/index.d.ts",
-      "require": "./cjs/index.cjs",
-      "default": "./lib/index.js"
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./cjs/index.cjs"
+      },
+      "default": {
+        "types": "./types/index.d.ts",
+        "default": "./lib/index.js"
+      }
     },
     "./package.json": "./package.json"
   },
