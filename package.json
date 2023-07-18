@@ -19,10 +19,7 @@
     "fixlen"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:types && npm run build:module && npm run build:cjs && tsx ./scripts/normalize_sourcemap.ts",
-    "build:types": "tsc --build --clean && tsc -p ./tsconfig.json",
-    "build:module": "babel src --config-file ./babel.config.json --out-dir lib --extensions .ts",
-    "build:cjs": "babel src --config-file ./babel.config.cjs.json --out-dir cjs --extensions .ts --out-file-extension .cjs",
+    "build": "tsx ./scripts/build_ts.ts",
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
@@ -30,63 +27,54 @@
     "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
     "generate:toHalfwidth": "tsx ./scripts/generate_toHalfwidth.ts",
     "generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts",
-    "clean": "tsx ./scripts/clean_dirs.ts"
+    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
     "node": ">=18"
   },
   "type": "module",
-  "sideEffects": false,
-  "exports": {
-    "./locale": {
-      "types": "./types/locale/index.d.ts",
-      "require": "./cjs/locale/index.cjs",
-      "default": "./lib/locale/index.js"
-    },
-    "./charset": {
-      "types": "./types/charset/index.d.ts",
-      "require": "./cjs/charset/index.cjs",
-      "default": "./lib/charset/index.js"
-    },
-    ".": {
-      "types": "./types/index.d.ts",
-      "require": "./cjs/index.cjs",
-      "default": "./lib/index.js"
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "./cjs/index.cjs",
   "typesVersions": {
     "*": {
       "charset": [
-        "./types/charset/index.d.ts"
+        "./cjs/charset/index.d.cts"
       ],
       "locale": [
-        "./types/locale/index.d.ts"
+        "./cjs/locale/index.d.cts"
       ],
       "*": [
-        "./types/index.d.ts"
+        "./cjs/index.d.cts"
       ]
     }
   },
+  "exports": {
+    "./charset": {
+      "require": "./cjs/charset/index.cjs",
+      "default": "./mjs/charset/index.mjs"
+    },
+    "./locale": {
+      "require": "./cjs/locale/index.cjs",
+      "default": "./mjs/locale/index.mjs"
+    },
+    ".": {
+      "require": "./cjs/index.cjs",
+      "default": "./mjs/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "cjs/",
-    "lib/",
-    "types/",
+    "mjs/",
     "src/",
     "LICENSE",
     "package.json",
     "README.md"
   ],
+  "sideEffects": false,
   "devDependencies": {
-    "@babel/cli": "^7.22.9",
-    "@babel/core": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
-    "@babel/preset-typescript": "^7.22.5",
     "@tsconfig/recommended": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "babel-plugin-replace-import-extension": "^1.1.3",
     "eslint": "^8.45.0",
     "release-please": "^15.12.0",
     "tsx": "^3.12.7",

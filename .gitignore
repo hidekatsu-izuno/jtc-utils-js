@@ -1,6 +1,6 @@
 cjs/
-lib/
-types/
+mjs/
+build/
 
 # Logs
 logs
