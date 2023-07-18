@@ -37,17 +37,8 @@
     "node": ">=18"
   },
   "type": "module",
+  "sideEffects": false,
   "exports": {
-    "./charset": {
-      "require": {
-        "types": "./types/charset/index.d.ts",
-        "default": "./cjs/charset/index.cjs"
-      },
-      "default": {
-        "types": "./types/charset/index.d.ts",
-        "default": "./lib/charset/index.js"
-      }
-    },
     "./locale": {
       "require": {
         "types": "./types/locale/index.d.ts",
@@ -56,6 +47,16 @@
       "default": {
         "types": "./types/locale/index.d.ts",
         "default": "./lib/locale/index.js"
+      }
+    },
+    "./charset": {
+      "require": {
+        "types": "./types/charset/index.d.ts",
+        "default": "./cjs/charset/index.cjs"
+      },
+      "default": {
+        "types": "./types/charset/index.d.ts",
+        "default": "./lib/charset/index.js"
       }
     },
     ".": {
@@ -86,13 +87,12 @@
   "files": [
     "cjs/",
     "lib/",
-    "src/",
     "types/",
+    "src/",
     "LICENSE",
     "package.json",
     "README.md"
   ],
-  "sideEffects": false,
   "devDependencies": {
     "@babel/cli": "^7.22.9",
     "@babel/core": "^7.22.9",

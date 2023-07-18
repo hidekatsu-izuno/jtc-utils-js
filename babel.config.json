@@ -1,0 +1,17 @@
+{
+  "sourceMaps": true,
+  "presets": [
+    ["@babel/preset-env", {
+      "modules": false,
+      "targets": {
+        "node": "18.0"
+      }
+    }],
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    ["replace-import-extension", {
+      "extMapping": { ".ts": ".js" }
+    }]
+  ]
+}
