@@ -151,6 +151,8 @@ const M = new Map<string, string>([
 	["\u3096", "\uff79"],
 	["\u3099", "\uff9e"],
 	["\u309a", "\uff9f"],
+	["\u309b", "\uff9e"],
+	["\u309c", "\uff9f"],
 	["\u30a1", "\uff67"],
 	["\u30a2", "\uff71"],
 	["\u30a3", "\uff68"],
@@ -347,7 +349,7 @@ export function toHalfwidth(value: string | null | undefined) {
     return value
   }
 
-  const array = new Array<string>()
+  const array = []
   let start = 0
   for (let i = 0; i < value.length; i++) {
     const c = value.charAt(i)
