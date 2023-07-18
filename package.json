@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.3.3",
+  "version": "0.3.4-beta.0",
   "description": "Utilities for Japanese Traditional Companies",
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -19,10 +19,7 @@
     "fixlen"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:types && npm run build:module && npm run build:cjs && tsx ./scripts/normalize_sourcemap.ts",
-    "build:types": "tsc --build --clean && tsc -p ./tsconfig.json",
-    "build:module": "babel src --config-file ./babel.config.json --out-dir lib --extensions .ts",
-    "build:cjs": "babel src --config-file ./babel.config.cjs.json --out-dir cjs --extensions .ts --out-file-extension .cjs",
+    "build": "tsx ./scripts/build_ts.ts",
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
@@ -30,8 +27,7 @@
     "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
     "generate:toHalfwidth": "tsx ./scripts/generate_toHalfwidth.ts",
     "generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts",
-    "clean": "tsx ./scripts/clean_dirs.ts"
+    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
     "node": ">=18"
@@ -41,69 +37,62 @@
   "exports": {
     "./locale": {
       "require": {
-        "types": "./types/locale/index.d.ts",
-        "default": "./cjs/locale/index.cjs"
+        "types": "./cjs/lib/locale/index.d.cts",
+        "default": "./cjs/lib/locale/index.cjs"
       },
       "default": {
-        "types": "./types/locale/index.d.ts",
-        "default": "./lib/locale/index.js"
+        "types": "./mjs/lib/locale/index.d.mts",
+        "default": "./mjs/lib/locale/index.mjs"
       }
     },
     "./charset": {
       "require": {
-        "types": "./types/charset/index.d.ts",
-        "default": "./cjs/charset/index.cjs"
+        "types": "./cjs/lib/charset/index.d.cts",
+        "default": "./cjs/lib/charset/index.cjs"
       },
       "default": {
-        "types": "./types/charset/index.d.ts",
-        "default": "./lib/charset/index.js"
+        "types": "./mjs/lib/charset/index.d.mts",
+        "default": "./mjs/lib/charset/index.mjs"
       }
     },
     ".": {
       "require": {
-        "types": "./types/index.d.ts",
-        "default": "./cjs/index.cjs"
+        "types": "./cjs/lib/index.d.cts",
+        "default": "./cjs/lib/index.cjs"
       },
       "default": {
-        "types": "./types/index.d.ts",
-        "default": "./lib/index.js"
+        "types": "./mjs/lib/index.d.mts",
+        "default": "./mjs/lib/index.mjs"
       }
     },
     "./package.json": "./package.json"
   },
+  "main": "./cjs/lib/index.cjs",
   "typesVersions": {
     "*": {
       "charset": [
-        "./types/charset/index.d.ts"
+        "./cjs/lib/charset/index.d.cts"
       ],
       "locale": [
-        "./types/locale/index.d.ts"
+        "./cjs/lib/locale/index.d.cts"
       ],
       "*": [
-        "./types/index.d.ts"
+        "./cjs/lib/index.d.cts"
       ]
     }
   },
   "files": [
     "cjs/",
-    "lib/",
-    "types/",
-    "src/",
+    "mjs/",
     "LICENSE",
     "package.json",
     "README.md"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.22.9",
-    "@babel/core": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
-    "@babel/preset-typescript": "^7.22.5",
     "@tsconfig/recommended": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "babel-plugin-replace-import-extension": "^1.1.3",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.45.0",
-    "release-please": "^15.12.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6",
     "vitest": "^0.33.0"
