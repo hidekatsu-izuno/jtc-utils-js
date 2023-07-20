@@ -1,5 +1,6 @@
 export * from "./CsvReader.ts"
 export * from "./CsvWriter.ts"
+export * from "./detectPlatform.ts"
 export * from "./FixlenReader.ts"
 export * from "./FixlenWriter.ts"
 export * from "./formatDate.ts"
