@@ -43,6 +43,7 @@ npm install jtc-utils
 <li>toNormalizedString</li>
 <li>toFullwidth, toHalfwidth</li>
 <li>toHiragana, toFullwidthKatakana, toZenginKana</li>
+<li>detectPlatform</li>
 <li>CsvReader, CsvWriter</li>
 <li>FixlenReader, FixlenWriter</li>
 <li>MemoryReadableStream, MemoryWritableStream</li>
@@ -555,6 +556,55 @@ function toZenginKana(
 import { toZenginKana } from "jtc-utils"
 
 toZenginKana("アガサ・クリスティー") // -> "ｱｶﾞｻ.ｸﾘｽﾃｲ-"
+```
+
+#### detectPlatform - プラットフォームを判別する
+
+User-Agent や javascript からプラットフォームを判別します。
+
+```typescript
+detectPlatform(
+  userAgent?: string
+): PlatformInfo
+
+type PlatformInfo = {
+  // server environment
+  server: boolean,
+  node: boolean,
+  deno: boolean,
+  cloudflareWorkers: boolean,
+  awsLambda: boolean,
+
+  // browser environment
+  browser: boolean,
+  ucbrowser: boolean,
+  edge: boolean,
+  msie: boolean,
+  chrome: boolean,
+  googlebot: boolean,
+  safari: boolean,
+  firefox: boolean,
+  opera: boolean,
+  line: boolean,
+  yahoo: boolean,
+
+  // engine
+  webkit: boolean,
+  trident: boolean,
+  edgeHtml: boolean,
+  blink: boolean,
+  gecko: boolean,
+
+  // os
+  windows: boolean,
+  macos: boolean,
+  android: boolean,
+  ios: boolean,
+
+  // machine
+  tablet: boolean,
+  mobile: boolean,
+}
 ```
 
 #### CsvReader - CSV ファイルを読み込む
