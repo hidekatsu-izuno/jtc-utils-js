@@ -1,5 +1,4 @@
 export declare type PlatformInfo = {
-  // server environment
   server: boolean,
   node: boolean,
   deno: boolean,
@@ -8,14 +7,16 @@ export declare type PlatformInfo = {
 
   // browser environment
   browser: boolean,
-  ucbrowser: boolean,
   edge: boolean,
   msie: boolean,
   chrome: boolean,
-  googlebot: boolean,
   safari: boolean,
   firefox: boolean,
   opera: boolean,
+
+  // sub bland
+  ucbrowser: boolean,
+  googlebot: boolean,
   line: boolean,
   yahoo: boolean,
 
@@ -25,12 +26,13 @@ export declare type PlatformInfo = {
   edgeHtml: boolean,
   blink: boolean,
   gecko: boolean,
+  presto: boolean,
 
   // os
   windows: boolean,
   macos: boolean,
-  android: boolean,
   ios: boolean,
+  android: boolean,
 
   // machine
   tablet: boolean,
@@ -39,22 +41,27 @@ export declare type PlatformInfo = {
 
 export function detectPlatform(userAgent?: string) {
   const info: PlatformInfo = {
+    // environment
+    browser: false,
     server: false,
+
+    // server platform bland
     node: false,
     deno: false,
     cloudflareWorkers: false,
     awsLambda: false,
 
-    // browser environment
-    browser: false,
-    ucbrowser: false,
+    // browser bland
     edge: false,
     msie: false,
     chrome: false,
-    googlebot: false,
     safari: false,
     firefox: false,
     opera: false,
+
+    // sub bland
+    googlebot: false,
+    ucbrowser: false,
     line: false,
     yahoo: false,
 
@@ -64,12 +71,13 @@ export function detectPlatform(userAgent?: string) {
     edgeHtml: false,
     blink: false,
     gecko: false,
+    presto: false,
 
     // os
     windows: false,
     macos: false,
-    android: false,
     ios: false,
+    android: false,
 
     // machine
     tablet: false,
@@ -92,34 +100,39 @@ export function detectPlatform(userAgent?: string) {
     info.browser = true
 
     const ua = userAgent ? userAgent.toLowerCase() : ""
-    if (ua.indexOf('ucbrowser') !== -1) {
-      info.ucbrowser = true
-    } else if (ua.indexOf('edge') !== -1) {
+    if (ua.indexOf('edge') !== -1) {
       info.edge = true
       info.edgeHtml = true
     } else if (ua.indexOf('edg') !== -1) {
       info.edge = true
-      info.webkit = true
       info.blink = true
     } else if (ua.indexOf('msie') !== -1 || ua.indexOf('trident') !== -1) {
       info.msie = true
       info.trident = true
     } else if (ua.indexOf('opera') !== -1) {
       info.opera = true
-    } else if (ua.indexOf('webkit') !== -1) {
+      info.presto = true
+    } else if (ua.indexOf('fxios') !== -1) {
+      info.firefox = true
       info.webkit = true
+    } else if (ua.indexOf('webkit') !== -1) {
       if (ua.indexOf('opr') !== -1) {
         info.opera = true
         info.blink = true
+      } else if (ua.indexOf('safari') !== -1 || ua.indexOf('ipad') !== -1 || ua.indexOf('iphone') !== -1) {
+        info.webkit = true
+        if (ua.indexOf('chrome') !== -1) {
+          info.chrome = true
+        } else {
+          info.safari = true
+        }
       } else if (ua.indexOf('chromium') !== -1) {
         info.blink = true
       } else if (ua.indexOf('chrome') !== -1) {
         info.chrome = true
         info.blink = true
-      } else if (ua.indexOf('fxios') !== -1) {
-        info.firefox = true
-      } else if (ua.indexOf('safari') !== -1 || ua.indexOf('ipad') !== -1 || ua.indexOf('iphone') !== -1) {
-        info.safari = true
+      } else {
+        info.webkit = true
       }
     } else if (ua.indexOf('firefox') !== -1) {
       info.firefox = true
@@ -129,17 +142,29 @@ export function detectPlatform(userAgent?: string) {
       info.trident = true
     } else if ('-ms-user-select' in document.documentElement.style) {
       info.edge = true
+      if ('chrome' in window) {
+        info.blink = true
+      } else {
+        info.edgeHtml = true
+      }
     } else if ('-moz-user-select' in document.documentElement.style) {
       info.firefox = true
+      info.gecko = true
     } else if ("opera" in window) {
       info.opera = true
+      if ("chrome" in window) {
+        info.blink = true
+      } else {
+        info.presto = true
+      }
     } else if ("chrome" in window) {
       info.chrome = true
-      info.webkit = true
       info.blink = true
     }
 
-    if (ua.indexOf('googlebot') !== -1) {
+    if (ua.indexOf('ucbrowser') !== -1) {
+      info.ucbrowser = true
+    } else if (ua.indexOf('googlebot') !== -1) {
       info.googlebot = true
     } else if (ua.indexOf('line') !== -1) {
       info.line = true
