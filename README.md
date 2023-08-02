@@ -558,6 +558,7 @@ import { toZenginKana } from "jtc-utils"
 toZenginKana("アガサ・クリスティー") // -> "ｱｶﾞｻ.ｸﾘｽﾃｲ-"
 ```
 
+<!--
 #### detectPlatform - プラットフォームを判別する
 
 User-Agent や javascript からプラットフォームを判別します。
@@ -606,6 +607,7 @@ type PlatformInfo = {
   mobile: boolean,
 }
 ```
+-->
 
 #### CsvReader - CSV ファイルを読み込む
 

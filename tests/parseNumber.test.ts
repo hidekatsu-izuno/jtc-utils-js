@@ -3,6 +3,11 @@ import { parseNumber } from "../src/parseNumber.js"
 import { de, enUS, fr } from "../src/locale/index.js"
 
 describe('parseNumber', () => {
+  test("test parsing no formats", () => {
+    expect(parseNumber("1,000.01")).toBe(1000.01)
+    expect(parseNumber("01,000.01")).toBe(1000.01)
+  })
+
   test("test parse from string", () => {
     expect(parseNumber("0", "######")).toBe(0)
     expect(parseNumber("0", "###,###")).toBe(0)

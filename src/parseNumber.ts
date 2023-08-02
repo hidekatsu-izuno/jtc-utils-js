@@ -18,7 +18,7 @@ export function parseNumber(str: string | null | undefined, format?: string, opt
     const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
     num = NumberFormat.get(format, locale.code).parse(str)
   } else {
-    num = Number.parseFloat(str.replace(/^[^0-9.-]+/g, ""))
+    num = Number.parseFloat(str.replace(/[^0-9.-]+/g, ""))
   }
 
   return Number.isFinite(num) ? num : undefined
