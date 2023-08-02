@@ -2,10 +2,8 @@ import { describe, expect, test } from "vitest"
 import { parseDate } from "../src/parseDate.js"
 import { getTimeZone } from "../src/util/getTimeZone.js"
 import { jaJPUCaJapanese } from "../src/locale/jaJPUCaJapanese.js"
-import { enUS } from "date-fns/locale"
-import { parse } from "date-fns"
 
-describe('formatDate', () => {
+describe("formatDate", () => {
   test("test parse from string", () => {
     expect(parseDate("2000/01/01", "uuuu/M/d")).toStrictEqual(new Date(2000, 0, 1))
   })

@@ -3,7 +3,7 @@ import {
   isValid,
   format as _format,
 } from "date-fns"
-import { utcToZonedTime, formatInTimeZone, OptionsWithTZ } from "date-fns-tz"
+import { utcToZonedTime, formatInTimeZone } from "date-fns-tz"
 import { getTimeZone } from "./util/getTimeZone.ts"
 import { JapaneseEra } from "./JapaneseEra.ts"
 import { DateFormat } from "./util/DateFormat.ts"
@@ -82,7 +82,6 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   try {
-    const formatOptions = { locale: locale as any }
     if (timeZone && timeZone !== getTimeZone()) {
       return formatInTimeZone(date, timeZone, format, { locale })
     } else {

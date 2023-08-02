@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { toHalfwidth } from "../src/toHalfwidth.js"
 
-describe('toHalfwidth', () => {
+describe("toHalfwidth", () => {
   test("test converting to half width", () => {
     expect(toHalfwidth("\0")).toBe("\0")
     expect(toHalfwidth("！")).toBe("!")

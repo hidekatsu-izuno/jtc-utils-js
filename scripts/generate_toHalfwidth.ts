@@ -8,7 +8,7 @@ const reader = new CsvReader(input, {
 try {
   const output = await fs.open("./src/toHalfwidth.ts", "w")
   try {
-    await output.write(`const M = new Map<string, string>([\n`)
+    await output.write("const M = new Map<string, string>([\n")
     for await (const line of reader) {
       if (reader.count === 1) {
         continue

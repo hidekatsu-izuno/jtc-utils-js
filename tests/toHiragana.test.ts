@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { toHiragana } from "../src/toHiragana.js"
 
-describe('toHiragana', () => {
+describe("toHiragana", () => {
   test("Convert to hiragana", () => {
     expect(toHiragana("\0")).toBe("\0")
     expect(toHiragana("!")).toBe("!")

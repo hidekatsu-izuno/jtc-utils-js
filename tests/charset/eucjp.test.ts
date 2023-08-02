@@ -3,7 +3,7 @@ import fs from "node:fs"
 import { CsvReader } from "../../src/CsvReader"
 import { eucjp } from "../../src/charset/eucjp"
 
-describe('eucjp', () => {
+describe("eucjp", () => {
   test("compare euc-jp encoder output", async () => {
     const map = new Map()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/encode.euc-jp.csv"))

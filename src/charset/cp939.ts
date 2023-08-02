@@ -137,10 +137,9 @@ class Cp939Encoder implements CharsetEncoder {
   canEncode(str: string) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i)
-      let enc: number | undefined
-      if ((enc = EbcdicEncodeMap.get(cp)) != null) { // EBCDIC
+      if (EbcdicEncodeMap.get(cp) != null) { // EBCDIC
         // no handle
-      } else if ((enc = IBMKanjiEncodeMap.get(cp)) != null) {
+      } else if (IBMKanjiEncodeMap.get(cp) != null) {
         // no handle
       } else {
         return false

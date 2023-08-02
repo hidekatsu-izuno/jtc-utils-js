@@ -100,54 +100,54 @@ export function detectPlatform(userAgent?: string) {
     info.browser = true
 
     const ua = userAgent ? userAgent.toLowerCase() : ""
-    if (ua.indexOf('edge') !== -1) {
+    if (ua.indexOf("edge") !== -1) {
       info.edge = true
       info.edgeHtml = true
-    } else if (ua.indexOf('edg') !== -1) {
+    } else if (ua.indexOf("edg") !== -1) {
       info.edge = true
       info.blink = true
-    } else if (ua.indexOf('msie') !== -1 || ua.indexOf('trident') !== -1) {
+    } else if (ua.indexOf("msie") !== -1 || ua.indexOf("trident") !== -1) {
       info.msie = true
       info.trident = true
-    } else if (ua.indexOf('opera') !== -1) {
+    } else if (ua.indexOf("opera") !== -1) {
       info.opera = true
       info.presto = true
-    } else if (ua.indexOf('fxios') !== -1) {
+    } else if (ua.indexOf("fxios") !== -1) {
       info.firefox = true
       info.webkit = true
-    } else if (ua.indexOf('webkit') !== -1) {
-      if (ua.indexOf('opr') !== -1) {
+    } else if (ua.indexOf("webkit") !== -1) {
+      if (ua.indexOf("opr") !== -1) {
         info.opera = true
         info.blink = true
-      } else if (ua.indexOf('safari') !== -1 || ua.indexOf('ipad') !== -1 || ua.indexOf('iphone') !== -1) {
+      } else if (ua.indexOf("safari") !== -1 || ua.indexOf("ipad") !== -1 || ua.indexOf("iphone") !== -1) {
         info.webkit = true
-        if (ua.indexOf('chrome') !== -1) {
+        if (ua.indexOf("chrome") !== -1) {
           info.chrome = true
         } else {
           info.safari = true
         }
-      } else if (ua.indexOf('chromium') !== -1) {
+      } else if (ua.indexOf("chromium") !== -1) {
         info.blink = true
-      } else if (ua.indexOf('chrome') !== -1) {
+      } else if (ua.indexOf("chrome") !== -1) {
         info.chrome = true
         info.blink = true
       } else {
         info.webkit = true
       }
-    } else if (ua.indexOf('firefox') !== -1) {
+    } else if (ua.indexOf("firefox") !== -1) {
       info.firefox = true
       info.gecko = true
-    } else if ('ActiveXObject' in window) {
+    } else if ("ActiveXObject" in window) {
       info.msie = true
       info.trident = true
-    } else if ('-ms-user-select' in document.documentElement.style) {
+    } else if ("-ms-user-select" in document.documentElement.style) {
       info.edge = true
-      if ('chrome' in window) {
+      if ("chrome" in window) {
         info.blink = true
       } else {
         info.edgeHtml = true
       }
-    } else if ('-moz-user-select' in document.documentElement.style) {
+    } else if ("-moz-user-select" in document.documentElement.style) {
       info.firefox = true
       info.gecko = true
     } else if ("opera" in window) {
@@ -162,32 +162,32 @@ export function detectPlatform(userAgent?: string) {
       info.blink = true
     }
 
-    if (ua.indexOf('ucbrowser') !== -1) {
+    if (ua.indexOf("ucbrowser") !== -1) {
       info.ucbrowser = true
-    } else if (ua.indexOf('googlebot') !== -1) {
+    } else if (ua.indexOf("googlebot") !== -1) {
       info.googlebot = true
-    } else if (ua.indexOf('line') !== -1) {
+    } else if (ua.indexOf("line") !== -1) {
       info.line = true
-    } else if (ua.indexOf('yahoo') !== -1) {
+    } else if (ua.indexOf("yahoo") !== -1) {
       info.yahoo = true
     }
 
-    if (ua.indexOf('ipad') !== -1) {
+    if (ua.indexOf("ipad") !== -1) {
       info.ios = true
       info.tablet = true
-    } else if (ua.indexOf('iphone') !== -1) {
+    } else if (ua.indexOf("iphone") !== -1) {
       info.ios = true
       info.mobile = true
-    } else if (ua.indexOf('macintosh') !== -1) {
+    } else if (ua.indexOf("macintosh") !== -1) {
       info.macos = true
-    } else if (ua.indexOf('windows') !== -1) {
+    } else if (ua.indexOf("windows") !== -1) {
       info.windows = true
-      if (ua.indexOf('phone') !== -1) {
+      if (ua.indexOf("phone") !== -1) {
         info.mobile = true
       }
-    } else if (ua.indexOf('android') !== -1) {
+    } else if (ua.indexOf("android") !== -1) {
       info.android = true
-      if (ua.indexOf('tablet') !== -1) {
+      if (ua.indexOf("tablet") !== -1) {
         info.tablet = true
       } else {
         info.mobile = true

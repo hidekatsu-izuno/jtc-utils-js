@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isWindows31j } from "../src/isWindows31j.js"
 
-describe('isWindows31j', () => {
+describe("isWindows31j", () => {
 
   test("test no string", () => {
     expect(isWindows31j(undefined)).toBe(false)
@@ -10,22 +10,22 @@ describe('isWindows31j', () => {
   })
 
   test("test basic sequcence", () => {
-    expect(isWindows31j('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ')).toBe(true)
-    expect(isWindows31j('あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ')).toBe(true)
-    expect(isWindows31j('ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ')).toBe(true)
-    expect(isWindows31j('亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ')).toBe(true)
+    expect(isWindows31j("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ")).toBe(true)
+    expect(isWindows31j("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ")).toBe(true)
+    expect(isWindows31j("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ")).toBe(true)
+    expect(isWindows31j("亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ")).toBe(true)
   })
 
   test("test ascii", () => {
-    expect(isWindows31j('\0')).toBe(true)
-    expect(isWindows31j('\t')).toBe(true)
-    expect(isWindows31j('\r')).toBe(true)
-    expect(isWindows31j('\n')).toBe(true)
-    expect(isWindows31j(' ')).toBe(true)
-    expect(isWindows31j('a')).toBe(true)
-    expect(isWindows31j('0')).toBe(true)
-    expect(isWindows31j('@')).toBe(true)
-    expect(isWindows31j('\x7F')).toBe(true)
+    expect(isWindows31j("\0")).toBe(true)
+    expect(isWindows31j("\t")).toBe(true)
+    expect(isWindows31j("\r")).toBe(true)
+    expect(isWindows31j("\n")).toBe(true)
+    expect(isWindows31j(" ")).toBe(true)
+    expect(isWindows31j("a")).toBe(true)
+    expect(isWindows31j("0")).toBe(true)
+    expect(isWindows31j("@")).toBe(true)
+    expect(isWindows31j("\x7F")).toBe(true)
   })
 
   test("test fullwidth hiragana", () => {

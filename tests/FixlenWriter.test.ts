@@ -5,7 +5,7 @@ import { FixlenWriter } from "../src/FixlenWriter"
 import { windows31j } from "../src/charset/windows31j"
 import { cp939 } from "../src/charset/cp939"
 
-describe('FixlenWriter', () => {
+describe("FixlenWriter", () => {
   test("test write utf-8 fixlen without bom", async () => {
     const buf = new MemoryWritableStream()
     const writer = new FixlenWriter(buf, {

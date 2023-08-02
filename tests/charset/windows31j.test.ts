@@ -3,7 +3,7 @@ import fs from "node:fs"
 import { CsvReader } from "../../src/CsvReader"
 import { windows31j } from "../../src/charset/windows31j.js"
 
-describe('windows31j', () => {
+describe("windows31j", () => {
   test("compare windows-31j encoder output", async () => {
     const map = new Map()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/encode.windows-31j.csv"))

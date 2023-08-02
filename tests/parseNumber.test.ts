@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { parseNumber } from "../src/parseNumber.js"
 import { de, enUS, fr } from "../src/locale/index.js"
 
-describe('parseNumber', () => {
+describe("parseNumber", () => {
   test("test parsing no formats", () => {
     expect(parseNumber("1,000.01")).toBe(1000.01)
     expect(parseNumber("01,000.01")).toBe(1000.01)

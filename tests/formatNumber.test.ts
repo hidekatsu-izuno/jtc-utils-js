@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { formatNumber } from "../src/formatNumber.js"
 import { de, enUS, fr } from "../src/locale/index.js"
 
-describe('formatNumber', () => {
+describe("formatNumber", () => {
   test("test format from number to string", () => {
     expect(formatNumber(0, "######")).toBe("0")
     expect(formatNumber(0, "###,###")).toBe("0")

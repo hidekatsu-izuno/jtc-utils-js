@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { toNormalizedString } from "../src/toNormalizedString.js"
 
-describe('toNormalizedString', () => {
+describe("toNormalizedString", () => {
   test("test safe unicode", () => {
     expect(toNormalizedString("\0")).toBe("\0")
     expect(toNormalizedString("\t")).toBe("\t")

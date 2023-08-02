@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { MemoryWritableStream } from "../src/MemoryWritableStream"
 
-describe('MemoryWritableStream', () => {
+describe("MemoryWritableStream", () => {
   test("test writable stream", async () => {
     const stream = new MemoryWritableStream()
 

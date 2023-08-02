@@ -166,7 +166,7 @@ export class CsvReader {
 
   async* [Symbol.asyncIterator](): AsyncGenerator<string[]> {
     let record: string[] | undefined
-    while (record = await this.read()) {
+    while ((record = await this.read()) != null) {
       yield record
     }
   }

@@ -24,6 +24,7 @@ for (const mapping of mappings) {
   try {
     await fs.rm(mapping.outDir, { recursive: true })
   } catch (err) {
+    // no handle
   }
 
   const newFileNames = new Array<string>()

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isHiragana } from "../src/isHiragana.js"
 
-describe('isHiragana', () => {
+describe("isHiragana", () => {
   test("test empty", () => {
     expect(isHiragana(undefined)).toBe(false)
     expect(isHiragana(null)).toBe(false)
@@ -9,21 +9,21 @@ describe('isHiragana', () => {
   })
 
   test("test basic sequcence", () => {
-    expect(isHiragana('あいうえお')).toBe(true)
-    expect(isHiragana('あイうエお')).toBe(false)
-    expect(isHiragana('アいウえオ')).toBe(false)
+    expect(isHiragana("あいうえお")).toBe(true)
+    expect(isHiragana("あイうエお")).toBe(false)
+    expect(isHiragana("アいウえオ")).toBe(false)
   })
 
   test("test ascii", () => {
-    expect(isHiragana('\0')).toBe(false)
-    expect(isHiragana('\t')).toBe(false)
-    expect(isHiragana('\r')).toBe(false)
-    expect(isHiragana('\n')).toBe(false)
-    expect(isHiragana(' ')).toBe(false)
-    expect(isHiragana('a')).toBe(false)
-    expect(isHiragana('0')).toBe(false)
-    expect(isHiragana('@')).toBe(false)
-    expect(isHiragana('\x7F')).toBe(false)
+    expect(isHiragana("\0")).toBe(false)
+    expect(isHiragana("\t")).toBe(false)
+    expect(isHiragana("\r")).toBe(false)
+    expect(isHiragana("\n")).toBe(false)
+    expect(isHiragana(" ")).toBe(false)
+    expect(isHiragana("a")).toBe(false)
+    expect(isHiragana("0")).toBe(false)
+    expect(isHiragana("@")).toBe(false)
+    expect(isHiragana("\x7F")).toBe(false)
   })
 
   test("test fullwidth symbol", () => {

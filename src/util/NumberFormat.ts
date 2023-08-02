@@ -1,5 +1,3 @@
-import { escapeRegExp } from "./escapeRegExp.ts"
-
 const ReNumberFormat = /^((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*)(?:;((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*))?(?:;((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*))?$/
 const ReDecimalText = /("(""|[^"])*"|'(''|[^'])*')/g
 
@@ -26,17 +24,17 @@ export class NumberFormat {
 
       const patterns = new Array<NumberFormatPattern>()
       for (let i = 0; i < 3; i++) {
-        let iFormat = m[i * 4 + 2] || ''
-        let fFormat = m[i * 4 + 3] || ''
+        let iFormat = m[i * 4 + 2] || ""
+        const fFormat = m[i * 4 + 3] || ""
         if (!iFormat) {
           break
         }
 
-        let prefix = (m[i * 4 + 1] || '').replace(ReDecimalText, m => {
+        const prefix = (m[i * 4 + 1] || "").replace(ReDecimalText, m => {
           const sep = m.charAt(0)
           return m.substring(1, m.length - 1).replaceAll(sep + sep, sep)
         })
-        let suffix = (m[i * 4 + 4] || '').replace(ReDecimalText, m => {
+        let suffix = (m[i * 4 + 4] || "").replace(ReDecimalText, m => {
           const sep = m.charAt(0)
           return m.substring(1, m.length - 1).replaceAll(sep + sep, sep)
         })
@@ -139,7 +137,7 @@ export class NumberFormat {
     let formatted = Number.isFinite(value) ? format.formatter.format(Math.abs(value)) : Math.abs(value).toString()
     if (format.groupingDigits > 0 && this.groupingSeparator) {
       const re = new RegExp("\\B(?=(\\d{" + format.groupingDigits + "})+(?!\\d))", "g")
-      let sep = formatted.indexOf(this.decimalSeparator)
+      const sep = formatted.indexOf(this.decimalSeparator)
       if (sep !== -1) {
         formatted = formatted.substring(0, sep).replace(re, this.groupingSeparator) + ((sep !== -1) ? formatted.substring(sep) : "")
       } else {

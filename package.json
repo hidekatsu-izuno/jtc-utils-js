@@ -21,7 +21,8 @@
   "scripts": {
     "build": "tsx ./scripts/build_ts.ts",
     "test": "vitest --config vitest.config.ts",
-    "lint": "eslint --ext ts",
+    "lint": "eslint --ext cjs,ts src",
+    "lint:fix": "eslint --ext cjs,ts --fix src",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",

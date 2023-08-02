@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isTelephoneNo } from "../src/isTelephoneNo.js"
 
-describe('isTelephoneNo', () => {
+describe("isTelephoneNo", () => {
 
   test("test empty", () => {
     expect(isTelephoneNo(undefined)).toBe(false)

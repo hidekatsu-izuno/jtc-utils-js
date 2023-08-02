@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { toFullwidthKatakana } from "../src/toFullwidthKatakana.js"
 
-describe('toFullwidthKatakana', () => {
+describe("toFullwidthKatakana", () => {
   test("Convert to katakana", () => {
     expect(toFullwidthKatakana("\0")).toBe("\0")
     expect(toFullwidthKatakana("!")).toBe("!")

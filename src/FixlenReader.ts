@@ -146,7 +146,7 @@ export class FixlenReader {
 
   async* [Symbol.asyncIterator](): AsyncGenerator<(string | number)[]> {
     let record: (string | number)[] | undefined
-    while (record = await this.read()) {
+    while ((record = await this.read()) != null) {
       yield record
     }
   }

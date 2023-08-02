@@ -29,16 +29,16 @@ export function parseDate(str: string | null | undefined, format?: string, optio
     if (!format) {
       tmp = parseISO(str)
     } else {
-      const parseOptions = { locale: locale as any }
+      const parseOptions: Parameters<typeof parse>[3] = { locale }
       let era: JapaneseEra | undefined
       if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
-        parseOptions.locale = {
+        parseOptions.locale = <Locale> {
           ...locale,
           match: {
             ...locale.match,
             era(dateString: string, options: Record<any, any>) {
               let m
-              if (m = /^([MTSHR]|明治?|大正?|昭和?|平成?|令和?)/.exec(dateString)) {
+              if ((m = /^([MTSHR]|明治?|大正?|昭和?|平成?|令和?)/.exec(dateString)) != null) {
                 era = JapaneseEra.from(m[0], { locale: "ja" })
                 return {
                   value: 1,

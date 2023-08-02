@@ -4,7 +4,7 @@ import fs from "node:fs"
 import { Readable } from "node:stream"
 import { windows31j } from "../src/charset/windows31j.js"
 
-describe('CsvReader', () => {
+describe("CsvReader", () => {
 
   test.each([
     ["", []],

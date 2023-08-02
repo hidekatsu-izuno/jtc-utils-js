@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isZenginKana } from "../src/isZenginKana.js"
 
-describe('isZenginKana', () => {
+describe("isZenginKana", () => {
   test("test empty", () => {
     expect(isZenginKana(undefined)).toBe(false)
     expect(isZenginKana(null)).toBe(false)
@@ -9,35 +9,35 @@ describe('isZenginKana', () => {
   })
 
   test("test basic sequcence", () => {
-    expect(isZenginKana('ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ.-ABC')).toBe(true)
-    expect(isZenginKana('あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ')).toBe(false)
-    expect(isZenginKana('ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ')).toBe(false)
+    expect(isZenginKana("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ.-ABC")).toBe(true)
+    expect(isZenginKana("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ")).toBe(false)
+    expect(isZenginKana("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ")).toBe(false)
   })
 
   test("test ascii", () => {
-    expect(isZenginKana('\0')).toBe(false)
-    expect(isZenginKana('\t')).toBe(false)
-    expect(isZenginKana('\r')).toBe(false)
-    expect(isZenginKana('\n')).toBe(false)
-    expect(isZenginKana(' ')).toBe(true)
-    expect(isZenginKana('A')).toBe(true)
-    expect(isZenginKana('Z')).toBe(true)
-    expect(isZenginKana('a')).toBe(false)
-    expect(isZenginKana('z')).toBe(false)
-    expect(isZenginKana('0')).toBe(true)
-    expect(isZenginKana('9')).toBe(true)
-    expect(isZenginKana('-')).toBe(true)
-    expect(isZenginKana(',')).toBe(false)
-    expect(isZenginKana('.')).toBe(true)
-    expect(isZenginKana('@')).toBe(false)
-    expect(isZenginKana('\\')).toBe(true)
-    expect(isZenginKana('(')).toBe(true)
-    expect(isZenginKana(')')).toBe(true)
-    expect(isZenginKana('[')).toBe(false)
-    expect(isZenginKana(']')).toBe(false)
-    expect(isZenginKana('{')).toBe(false)
-    expect(isZenginKana('}')).toBe(false)
-    expect(isZenginKana('\x7F')).toBe(false)
+    expect(isZenginKana("\0")).toBe(false)
+    expect(isZenginKana("\t")).toBe(false)
+    expect(isZenginKana("\r")).toBe(false)
+    expect(isZenginKana("\n")).toBe(false)
+    expect(isZenginKana(" ")).toBe(true)
+    expect(isZenginKana("A")).toBe(true)
+    expect(isZenginKana("Z")).toBe(true)
+    expect(isZenginKana("a")).toBe(false)
+    expect(isZenginKana("z")).toBe(false)
+    expect(isZenginKana("0")).toBe(true)
+    expect(isZenginKana("9")).toBe(true)
+    expect(isZenginKana("-")).toBe(true)
+    expect(isZenginKana(",")).toBe(false)
+    expect(isZenginKana(".")).toBe(true)
+    expect(isZenginKana("@")).toBe(false)
+    expect(isZenginKana("\\")).toBe(true)
+    expect(isZenginKana("(")).toBe(true)
+    expect(isZenginKana(")")).toBe(true)
+    expect(isZenginKana("[")).toBe(false)
+    expect(isZenginKana("]")).toBe(false)
+    expect(isZenginKana("{")).toBe(false)
+    expect(isZenginKana("}")).toBe(false)
+    expect(isZenginKana("\x7F")).toBe(false)
   })
 
   test("test fullwidth symbol", () => {

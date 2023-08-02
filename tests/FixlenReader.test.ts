@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { FixlenReader } from "../src/FixlenReader"
 import { windows31j } from "../src/charset/windows31j"
 
-describe('FixlenReader', () => {
+describe("FixlenReader", () => {
   test("test read string", async () => {
     const reader = new FixlenReader("01234567890123456789", {
       lineLength: 10,

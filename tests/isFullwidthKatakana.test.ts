@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isFullwidthKatakana } from "../src/isFullwidthKatakana.js"
 
-describe('isFullwidthKatakana', () => {
+describe("isFullwidthKatakana", () => {
   test("test empty", () => {
     expect(isFullwidthKatakana(undefined)).toBe(false)
     expect(isFullwidthKatakana(null)).toBe(false)
@@ -9,21 +9,21 @@ describe('isFullwidthKatakana', () => {
   })
 
   test("test basic sequcence", () => {
-    expect(isFullwidthKatakana('アイウエオ')).toBe(true)
-    expect(isFullwidthKatakana('あイうエお')).toBe(false)
-    expect(isFullwidthKatakana('アいウえオ')).toBe(false)
+    expect(isFullwidthKatakana("アイウエオ")).toBe(true)
+    expect(isFullwidthKatakana("あイうエお")).toBe(false)
+    expect(isFullwidthKatakana("アいウえオ")).toBe(false)
   })
 
   test("test ascii", () => {
-    expect(isFullwidthKatakana('\0')).toBe(false)
-    expect(isFullwidthKatakana('\t')).toBe(false)
-    expect(isFullwidthKatakana('\r')).toBe(false)
-    expect(isFullwidthKatakana('\n')).toBe(false)
-    expect(isFullwidthKatakana(' ')).toBe(false)
-    expect(isFullwidthKatakana('a')).toBe(false)
-    expect(isFullwidthKatakana('0')).toBe(false)
-    expect(isFullwidthKatakana('@')).toBe(false)
-    expect(isFullwidthKatakana('\x7F')).toBe(false)
+    expect(isFullwidthKatakana("\0")).toBe(false)
+    expect(isFullwidthKatakana("\t")).toBe(false)
+    expect(isFullwidthKatakana("\r")).toBe(false)
+    expect(isFullwidthKatakana("\n")).toBe(false)
+    expect(isFullwidthKatakana(" ")).toBe(false)
+    expect(isFullwidthKatakana("a")).toBe(false)
+    expect(isFullwidthKatakana("0")).toBe(false)
+    expect(isFullwidthKatakana("@")).toBe(false)
+    expect(isFullwidthKatakana("\x7F")).toBe(false)
   })
 
   test("test fullwidth symbol", () => {

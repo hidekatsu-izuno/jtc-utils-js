@@ -3,7 +3,7 @@ import fs from "node:fs"
 import { CsvReader } from "../../src/CsvReader.js"
 import { cp930 } from "../../src/charset/cp930.js"
 
-describe('cp930', () => {
+describe("cp930", () => {
   test("compare cp930 decoder output", async () => {
     const map = new Map<number, number>()
     const reader = new CsvReader(fs.createReadStream(__dirname + "/../../data/decode.cp930.csv"))

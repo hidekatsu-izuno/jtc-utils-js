@@ -44,7 +44,7 @@ function toPlainString(num: number | string) {
     minus = "-"
   }
 
-  let esign = str.charAt(sep + 1)
+  const esign = str.charAt(sep + 1)
 
   const e = Number.parseInt(str.substring(sep + 2), 10)
   str = str.substring(0, sep)

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { toZenginKana } from "../src/toZenginKana.js"
 
-describe('toZenginKana', () => {
+describe("toZenginKana", () => {
   test("test characters", () => {
     expect(toZenginKana("\0")).toBe("\0")
     expect(toZenginKana("¥")).toBe("\\")

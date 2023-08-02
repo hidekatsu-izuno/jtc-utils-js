@@ -15,7 +15,7 @@ export class DateFormat {
     const re = /('(?:''|[^'])*')|(P+p+|(?:G+|y+|Y+|R+|u+|Q+|q+|M+|L+|w+|I+|d+|E+|i+|e+|c+|a+|b+|B+|h+|H+|K+|k+|m+|s+|S+|X+|x+|O+|z+|t+|T+|P+|p+)o?)|(.+?)/y
     const parts = new Array<DateFormatPart>()
     let m
-    while (m = re.exec(format)) {
+    while ((m = re.exec(format)) != null) {
       if (m[1]) {
         parts.push({ type: "quoted", text: m[1] })
       } else if (m[2]) {

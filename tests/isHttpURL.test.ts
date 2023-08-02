@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { isHttpURL } from "../src/isHttpURL.js"
 
-describe('isHttpURL', () => {
+describe("isHttpURL", () => {
 
   test("test empty", () => {
     expect(isHttpURL(undefined)).toBe(false)

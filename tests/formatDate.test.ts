@@ -3,7 +3,7 @@ import { formatDate } from "../src/formatDate.js"
 import { getTimeZone } from "../src/util/getTimeZone.js"
 import { enUS, ja, jaJPUCaJapanese } from "../src/locale/index.js"
 
-describe('formatDate', () => {
+describe("formatDate", () => {
   test("test format from string to string", () => {
     expect(formatDate("2000-01-01", "uuuu/M/d")).toBe("2000/1/1")
   })
