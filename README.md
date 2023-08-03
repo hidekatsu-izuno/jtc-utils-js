@@ -41,7 +41,7 @@ npm install jtc-utils
 <li>isHttpURL, isEmail, isTelephoneNo</li>
 <li>isWindows31j, isUnicodeBMP, isWebSafeString</li>
 <li>toNormalizedString</li>
-<li>toFullwidth, toHalfwidth</li>
+<li>toFullwidth, toHalfwidth, toHalfwidthAscii</li>
 <li>toHiragana, toFullwidthKatakana, toZenginKana</li>
 <li>detectPlatform</li>
 <li>CsvReader, CsvWriter</li>
@@ -492,10 +492,31 @@ function toHalfwidth(
 ##### 例
 
 ```typescript
-import { toFullwidth } from "jtc-utils"
+import { toHalfwidth } from "jtc-utils"
 
-toHalfwidth("0Aｱｶﾞﾊﾟｰ") // -> "０Ａアガパー"
+toHalfwidth("０Ａアガパー") // -> "0Aｱｶﾞﾊﾟｰ"
 ```
+
+
+#### toHalfwidthAscii - 全角ASCII文字を半角文字に変換する
+
+全角ASCII文字を半角文字に変換します。null、undefined が入力された場合にはそのままの値を返します。
+
+```typescript
+function toHalfwidthAscii(
+  // 変換対象の文字列です。
+  value: string | null | undefined,
+): string | null | undefined
+```
+
+##### 例
+
+```typescript
+import { toHalfwidthAscii } from "jtc-utils"
+
+toHalfwidthAscii("０Ａアガパー") // -> "0Aアガパー"
+```
+
 
 #### toHiragana - カタカナをひらがなに変換する
 
