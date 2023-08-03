@@ -1,3 +1,5 @@
+import { toHalfwidthAscii } from "../toHalfwidthAscii"
+
 const ReNumberFormat = /^((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*)(?:;((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*))?(?:;((?:"[^"]*"|'[^']*'|[^"'#0,.])*)([#,]*[0,]*)([.]0*#*)?((?:"[^"]*"|'[^']*'|[^"'#0])*))?$/
 const ReDecimalText = /("(""|[^"])*"|'(''|[^'])*')/g
 
@@ -172,6 +174,6 @@ export class NumberFormat {
       value = value2
     }
 
-    return Number.parseFloat(value)
+    return Number.parseFloat(toHalfwidthAscii(value))
   }
 }

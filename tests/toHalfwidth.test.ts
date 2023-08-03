@@ -4,6 +4,7 @@ import { toHalfwidth } from "../src/toHalfwidth.js"
 describe("toHalfwidth", () => {
   test("test converting to half width", () => {
     expect(toHalfwidth("\0")).toBe("\0")
+    expect(toHalfwidth("　")).toBe(" ")
     expect(toHalfwidth("！")).toBe("!")
     expect(toHalfwidth("０")).toBe("0")
     expect(toHalfwidth("Ａ")).toBe("A")
