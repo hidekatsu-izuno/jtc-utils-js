@@ -4,6 +4,11 @@ import { getTimeZone } from "../src/util/getTimeZone.js"
 import { jaJPUCaJapanese } from "../src/locale/jaJPUCaJapanese.js"
 
 describe("formatDate", () => {
+  test("test parse by no format", () => {
+    expect(parseDate("2000-01-01")).toStrictEqual(new Date(2000, 0, 1))
+    expect(parseDate("20000101")).toStrictEqual(new Date(2000, 0, 1))
+  })
+
   test("test parse from string", () => {
     expect(parseDate("2000/01/01", "uuuu/M/d")).toStrictEqual(new Date(2000, 0, 1))
   })
