@@ -90,13 +90,13 @@
     "README.md"
   ],
   "devDependencies": {
-    "@tsconfig/recommended": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
-    "eslint": "^8.46.0",
-    "tsx": "^3.12.7",
-    "typescript": "^5.1.6",
-    "vitest": "^0.34.1"
+    "@tsconfig/recommended": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
   },
   "dependencies": {
     "date-fns": "^2.30.0",
