@@ -4,6 +4,7 @@ import { MemoryWritableStream } from "../src/MemoryWritableStream"
 import { FixlenWriter } from "../src/FixlenWriter"
 import { windows31j } from "../src/charset/windows31j"
 import { cp939 } from "../src/charset/cp939"
+import fs from "node:fs"
 
 describe("FixlenWriter", () => {
   test("test write utf-8 fixlen without bom", async () => {
@@ -135,5 +136,26 @@ describe("FixlenWriter", () => {
       0x00, 0x00, 0x34, 0x1D, // packed
       0x15,
     ))
+  })
+
+  test("test write file", async () => {
+    const filename = __dirname + "/data/FixlenWriter.windows-31j.txt"
+    const fd = await fs.promises.open(filename, "w")
+    const writer = new FixlenWriter(fd, {
+      columns: [{ length: 3 }, { length: 4, filler: "　" }, { length: 6 }],
+      charset: windows31j,
+      lineSeparator: "\r\n"
+    })
+    try {
+      await writer.write(["aaa", "あい", "ｶｶﾞﾊﾟ"])
+      await writer.write(["dd", "あ", "ｱｲｳ"])
+    } finally {
+      await writer.close()
+    }
+
+    const buf = await fs.promises.readFile(filename)
+    expect(new TextDecoder("windows-31j").decode(buf)).toStrictEqual("aaaあいｶｶﾞﾊﾟ \r\ndd あ　ｱｲｳ   \r\n")
+
+    await fs.promises.rm(filename)
   })
 })

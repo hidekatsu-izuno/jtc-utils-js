@@ -2,7 +2,7 @@ export class MemoryWritableStream extends WritableStream<Uint8Array> {
   private buf: Array<Uint8Array>
 
   constructor() {
-    const buf = new  Array<Uint8Array>()
+    const buf = new Array<Uint8Array>()
     super({
       write(chunk: Uint8Array) {
         buf.push(chunk)

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { FixlenReader } from "../src/FixlenReader"
 import { windows31j } from "../src/charset/windows31j"
+import fs from "node:fs"
 
 describe("FixlenReader", () => {
   test("test read string", async () => {
@@ -68,7 +69,8 @@ describe("FixlenReader", () => {
     const columns1 = [{ start: 1, length: 10 }]
     const columns2 = [{ start: 1 }, { start: 6 }, { start: 11, length: 5 }]
 
-    const reader = new FixlenReader("1あいうえお     \r\n0ABCDEabcde01234\r\n", {
+    const fd = await fs.promises.open(__dirname + "/data/FixlenReader.windows-31j.txt")
+    const reader = new FixlenReader(fd, {
       lineLength: 18,
       columns(line) {
         const flag = line.decode({ start: 0, length: 1 })

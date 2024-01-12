@@ -83,7 +83,7 @@ describe("CsvReader", () => {
   })
 
   test("test read utf-8 csv with bom", async () => {
-    const stream = fs.createReadStream(__dirname + "/data/sample.utf-8.bom.csv")
+    const stream = fs.createReadStream(__dirname + "/data/CsvReader.utf-8.bom.csv")
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>)
     try {
       const list = new Array<any>()
@@ -101,7 +101,7 @@ describe("CsvReader", () => {
   })
 
   test("test read utf-8 csv without bom", async () => {
-    const stream = fs.createReadStream(__dirname + "/data/sample.utf-8.nobom.csv")
+    const stream = fs.createReadStream(__dirname + "/data/CsvReader.utf-8.nobom.csv")
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>)
     try {
       const list = new Array<any>()
@@ -119,7 +119,7 @@ describe("CsvReader", () => {
   })
 
   test("test read windows-31j csv", async () => {
-    const stream = fs.createReadStream(__dirname + "/data/sample.windows-31j.csv")
+    const stream = fs.createReadStream(__dirname + "/data/CsvReader.windows-31j.csv")
     const reader = new CsvReader(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
       charset: windows31j
     })
@@ -139,7 +139,7 @@ describe("CsvReader", () => {
   })
 
   test("test read utf-8 csv with bom", async () => {
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.utf-8.bom.csv"))
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/CsvReader.utf-8.bom.csv"))
     try {
       const list = new Array<any>()
       for await (const item of reader) {
@@ -155,7 +155,7 @@ describe("CsvReader", () => {
   })
 
   test("test read utf-8 csv without bom", async () => {
-    const fd = await fs.promises.open(__dirname + "/data/sample.utf-8.nobom.csv")
+    const fd = await fs.promises.open(__dirname + "/data/CsvReader.utf-8.nobom.csv")
     const reader = new CsvReader(fd)
     try {
       const list = new Array<any>()
@@ -172,7 +172,7 @@ describe("CsvReader", () => {
   })
 
   test("test read windows-31j csv", async () => {
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.windows-31j.csv"), {
+    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/CsvReader.windows-31j.csv"), {
       charset: windows31j
     })
     try {
