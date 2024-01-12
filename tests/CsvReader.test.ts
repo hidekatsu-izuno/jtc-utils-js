@@ -40,7 +40,7 @@ describe("CsvReader", () => {
     try {
       const list = new Array<string[]>()
       let record: string[] | undefined
-      while (record = await reader.read()) {
+      while ((record = await reader.read())) {
         list.push(record)
       }
       expect(list).toStrictEqual([["あい\"う"],["えお"],["かきく"]])
@@ -68,7 +68,7 @@ describe("CsvReader", () => {
     try {
       const list = new Array<any>()
       let record: string[] | undefined
-      while (record = await reader.read()) {
+      while ((record = await reader.read())) {
         list.push(record)
       }
       expect(list).toStrictEqual([
@@ -88,7 +88,7 @@ describe("CsvReader", () => {
     try {
       const list = new Array<any>()
       let record: string[] | undefined
-      while (record = await reader.read()) {
+      while ((record = await reader.read())) {
         list.push(record)
       }
       expect(list).toStrictEqual([
@@ -106,7 +106,7 @@ describe("CsvReader", () => {
     try {
       const list = new Array<any>()
       let record: string[] | undefined
-      while (record = await reader.read()) {
+      while ((record = await reader.read())) {
         list.push(record)
       }
       expect(list).toStrictEqual([
@@ -126,7 +126,7 @@ describe("CsvReader", () => {
     try {
       const list = new Array<any>()
       let record: string[] | undefined
-      while (record = await reader.read()) {
+      while ((record = await reader.read())) {
         list.push(record)
       }
       expect(list).toStrictEqual([
@@ -155,7 +155,8 @@ describe("CsvReader", () => {
   })
 
   test("test read utf-8 csv without bom", async () => {
-    const reader = new CsvReader(fs.createReadStream(__dirname + "/data/sample.utf-8.nobom.csv"))
+    const fd = await fs.promises.open(__dirname + "/data/sample.utf-8.nobom.csv")
+    const reader = new CsvReader(fd)
     try {
       const list = new Array<any>()
       for await (const item of reader) {

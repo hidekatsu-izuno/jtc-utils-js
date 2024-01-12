@@ -75,17 +75,15 @@ export class FixlenWriter {
     let stream: Promise<WritableStream<Uint8Array>>
     if (dest instanceof WritableStream) {
       stream = Promise.resolve(dest)
-    } else if (typeof window === "undefined") {
-      stream = (async () => {
-        const { Writable } = await import("node:stream")
-        if (dest instanceof Writable) {
-          return Writable.toWeb(dest)
-        } else {
-          return Writable.toWeb((dest as FileHandle).createWriteStream())
-        }
-      })() as Promise<WritableStream<Uint8Array>>
     } else {
-      throw new TypeError(`Unsuppoted destination: ${dest}`)
+      const writable = "createWriteStream" in dest ? dest.createWriteStream() : dest
+      if ("constructor" in writable &&
+        "toWeb" in writable.constructor &&
+        typeof writable.constructor.toWeb === "function") {
+        stream = Promise.resolve(writable.constructor.toWeb(writable))
+      } else {
+        throw new TypeError(`Unsuppoted destination: ${dest}`)
+      }
     }
 
     this.writer = stream.then(value => value.getWriter())

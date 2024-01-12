@@ -1,5 +1,5 @@
-import type { Readable } from "node:stream"
 import type { FileHandle } from "node:fs/promises"
+import type { Readable } from "node:stream"
 import { Charset, CharsetDecoder } from "./charset/charset.ts"
 import { utf8 } from "./charset/utf8.ts"
 
@@ -65,17 +65,15 @@ export class FixlenReader {
       stream = Promise.resolve(src.stream())
     } else if (src instanceof ReadableStream) {
       stream = Promise.resolve(src)
-    } else if (typeof window === "undefined") {
-      stream = (async () => {
-        const { Readable } = await import("node:stream")
-        if (src instanceof Readable) {
-          return Readable.toWeb(src)
-        } else {
-          return Readable.toWeb((src as FileHandle).createReadStream())
-        }
-      })() as Promise<ReadableStream<Uint8Array>>
     } else {
-      throw new TypeError(`Unsuppoted source: ${src}`)
+      const readable = "createReadStream" in src ? src.createReadStream() : src
+      if ("constructor" in readable &&
+        "toWeb" in readable.constructor &&
+        typeof readable.constructor.toWeb === "function") {
+        stream = Promise.resolve(readable.constructor.toWeb(readable))
+      } else {
+        throw new TypeError(`Unsuppoted source: ${src}`)
+      }
     }
 
     this.decoder = charset.createDecoder({
