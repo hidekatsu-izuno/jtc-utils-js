@@ -1,6 +1,8 @@
 # JTC-utils (Utilities for Japanese Traditional Companies)
 
 <!--
+npm run build
+npm run test
 npm publish
 npm publish --tag beta
 -->
