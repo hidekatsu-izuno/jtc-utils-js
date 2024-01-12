@@ -12,6 +12,7 @@
     "declarationMap": true
   },
   "include": [
-    "./src/**/*",
+    "./src",
+    "./tests",
   ]
 }
