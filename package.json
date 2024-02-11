@@ -18,6 +18,10 @@
     "csv",
     "fixlen"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
+  },
   "scripts": {
     "build": "tsx ./scripts/build_ts.ts",
     "test": "vitest --config vitest.config.ts",
