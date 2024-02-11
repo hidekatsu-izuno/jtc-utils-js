@@ -83,8 +83,8 @@
     }
   },
   "files": [
-    "cjs/",
-    "mjs/",
+    "cjs/lib",
+    "mjs/lib",
     "LICENSE",
     "package.json",
     "README.md"
