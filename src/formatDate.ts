@@ -3,7 +3,7 @@ import {
   isValid,
   format as _format,
 } from "date-fns"
-import { utcToZonedTime } from "date-fns-tz"
+import { offsetTimeZone } from "./util/offsetTimeZone.ts"
 import { getTimeZone } from "./util/getTimeZone.ts"
 import { JapaneseEra } from "./JapaneseEra.ts"
 import { DateFormat } from "./util/DateFormat.ts"
@@ -16,40 +16,38 @@ declare type FormatDateOptions = {
 }
 
 export function formatDate(date: Date | number | string | null | undefined, format: string, options?: FormatDateOptions) {
-  if (!date) {
-    return ""
-  }
-
   const timeZone = options?.timeZone
 
-  if (typeof date === "number") {
-    date = new Date(date)
-  }
-
-  if (date instanceof Date) {
+  let dDate
+  if (!date) {
+    return ""
+  } else if (typeof date === "number") {
+    dDate = new Date(date)
+  } else if (date instanceof Date) {
     if (timeZone && timeZone !== getTimeZone()) {
-      date = utcToZonedTime(date, timeZone)
+      dDate = offsetTimeZone(date, timeZone)
+    } else {
+      dDate = date
     }
-  } else if (typeof date === "string") {
+  } else {
+    const sDate = date.toString()
     try {
-      const tmp = parseISO(date)
-      if (isValid(tmp)) {
-        if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(date)) {
-          date = utcToZonedTime(tmp, timeZone)
-        } else {
-          date = tmp
+      dDate = parseISO(sDate)
+      if (isValid(dDate)) {
+        if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(sDate)) {
+          dDate = offsetTimeZone(dDate, timeZone)
         }
       } else {
-        return date as string
+        return sDate
       }
     } catch (err) {
-      return date as string
+      return sDate
     }
   }
 
   const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
   if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
-    const target = date
+    const target = dDate
     const era = JapaneseEra.of(target)
     if (era) {
       const dFormat = DateFormat.get(format)
@@ -83,9 +81,9 @@ export function formatDate(date: Date | number | string | null | undefined, form
 
   try {
     if (timeZone && timeZone !== getTimeZone()) {
-      return _format(utcToZonedTime(date, timeZone), format, { locale })
+      return _format(offsetTimeZone(dDate, timeZone), format, { locale })
     } else {
-      return _format(date, format, { locale })
+      return _format(dDate, format, { locale })
     }
   } catch (err) {
     if (err instanceof RangeError) {

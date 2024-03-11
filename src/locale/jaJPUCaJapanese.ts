@@ -1,4 +1,5 @@
-import { default as ja } from "date-fns/locale/ja/index.js"
+import type { Locale } from "date-fns"
+import { ja } from "date-fns/locale"
 
 export const jaJPUCaJapanese: Locale = {
   ...ja,
