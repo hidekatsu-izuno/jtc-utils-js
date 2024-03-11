@@ -3,7 +3,7 @@
 <!--
 npm run build
 npm run test
-git tag -d vX.X.X && git push origin --tags
+git tag vX.X.X && git push origin --tags
 npm publish --tag beta
 npm publish
 -->
