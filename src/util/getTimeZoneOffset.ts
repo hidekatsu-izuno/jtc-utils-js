@@ -1,9 +1,9 @@
 import { getTimeZone } from "./getTimeZone"
 
-export function offsetTimeZone(date: Date, tz: string) {
+export function getTimeZoneOffset(date: Date, tz: string) {
   const tzDate = relativeTime(date, tz)
   const zDate = relativeTime(date, getTimeZone())
-  return new Date(date.getTime() - (zDate.getTime() - tzDate.getTime()))
+  return zDate.getTime() - tzDate.getTime()
 }
 
 function relativeTime(date: Date, timeZone: string): Date {

@@ -3,7 +3,7 @@ import {
   isValid,
   format as _format,
 } from "date-fns"
-import { offsetTimeZone } from "./util/offsetTimeZone.ts"
+import { getTimeZoneOffset } from "./util/getTimeZoneOffset.ts"
 import { getTimeZone } from "./util/getTimeZone.ts"
 import { JapaneseEra } from "./JapaneseEra.ts"
 import { DateFormat } from "./util/DateFormat.ts"
@@ -25,7 +25,7 @@ export function formatDate(date: Date | number | string | null | undefined, form
     dDate = new Date(date)
   } else if (date instanceof Date) {
     if (timeZone && timeZone !== getTimeZone()) {
-      dDate = offsetTimeZone(date, timeZone)
+      dDate = new Date(date.getTime() - getTimeZoneOffset(date, timeZone))
     } else {
       dDate = date
     }
@@ -34,8 +34,8 @@ export function formatDate(date: Date | number | string | null | undefined, form
     try {
       dDate = parseISO(sDate)
       if (isValid(dDate)) {
-        if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(sDate)) {
-          dDate = offsetTimeZone(dDate, timeZone)
+        if (timeZone && timeZone !== getTimeZone()) {
+          dDate = new Date(dDate.getTime() - getTimeZoneOffset(dDate, timeZone))
         }
       } else {
         return sDate
@@ -80,11 +80,7 @@ export function formatDate(date: Date | number | string | null | undefined, form
   }
 
   try {
-    if (timeZone && timeZone !== getTimeZone()) {
-      return _format(offsetTimeZone(dDate, timeZone), format, { locale })
-    } else {
-      return _format(dDate, format, { locale })
-    }
+    return _format(dDate, format, { locale })
   } catch (err) {
     if (err instanceof RangeError) {
       return date.toString()

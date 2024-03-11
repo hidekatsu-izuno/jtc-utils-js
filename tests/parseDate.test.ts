@@ -16,7 +16,9 @@ describe("formatDate", () => {
   test("test parse from string with tz", () => {
     const current = getTimeZone()
     expect(parseDate("2000/01/01 00:00:00", "uuuu/M/d H:m:s", { timeZone: current })).toStrictEqual(new Date(2000, 0, 1, 0, 0))
-    expect(parseDate("2000/01/01 00:00:00", "uuuu/M/d H:m:s", { timeZone: "UTC" })).toStrictEqual(new Date(1999, 11, 31, 15))
+    expect(parseDate("2000/01/01 00:00:00", "uuuu/M/d H:m:s", { timeZone: "UTC" })).toStrictEqual(new Date(2000, 0, 1, 9))
+    expect(parseDate("2000-01-01 00:00:00Z", "uuuu-MM-dd HH:mm:ssx", { timeZone: current })).toStrictEqual(new Date(2000, 0, 1, 9))
+    expect(parseDate("2000-01-01 00:00:00Z", "uuuu-MM-dd HH:mm:ssx", { timeZone: "UTC" })).toStrictEqual(new Date(2000, 0, 1, 9))
   })
 
   test("test parse japanese calendar", () => {

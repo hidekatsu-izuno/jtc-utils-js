@@ -12,6 +12,8 @@ describe("formatDate", () => {
     const current = getTimeZone()
     expect(formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", { timeZone: current })).toBe("2000/1/1 0:0:0")
     expect(formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", { timeZone: "UTC" })).toBe("1999/12/31 15:0:0")
+    expect(formatDate("2000-01-01 00:00:00Z", "uuuu/M/d H:m:s", { timeZone: current })).toBe("2000/1/1 9:0:0")
+    expect(formatDate("2000-01-01 00:00:00Z", "uuuu/M/d H:m:s", { timeZone: "UTC" })).toBe("2000/1/1 0:0:0")
   })
 
   test("test format japanese calendar", () => {

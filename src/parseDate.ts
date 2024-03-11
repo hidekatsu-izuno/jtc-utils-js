@@ -3,7 +3,7 @@ import {
   parseISO,
   isValid,
 } from "date-fns"
-import { offsetTimeZone } from "./util/offsetTimeZone.ts"
+import { getTimeZoneOffset } from "./util/getTimeZoneOffset.ts"
 import { Locale, ja, enUS } from "./locale/index.ts"
 import { getLocale } from "./util/getLocale.ts"
 import { getTimeZone } from "./util/getTimeZone.ts"
@@ -57,8 +57,8 @@ export function parseDate(str: string | null | undefined, format?: string, optio
       }
     }
     if (isValid(tmp)) {
-      if (timeZone && timeZone !== getTimeZone() && !/[+-]/.test(str)) {
-        tmp = offsetTimeZone(tmp, timeZone)
+      if (timeZone && timeZone !== getTimeZone() && !/[Xx]/.test(format || "")) {
+        tmp = new Date(tmp.getTime() + getTimeZoneOffset(tmp, timeZone))
       }
       return tmp
     }
