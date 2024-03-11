@@ -31,24 +31,19 @@ export function formatDate(date: Date | number | string | null | undefined, form
     }
   } else {
     const sDate = date.toString()
-    try {
-      dDate = parseISO(sDate)
-      if (isValid(dDate)) {
-        if (timeZone && timeZone !== getTimeZone()) {
-          dDate = new Date(dDate.getTime() - getTimeZoneOffset(dDate, timeZone))
-        }
-      } else {
-        return sDate
-      }
-    } catch (err) {
+    dDate = parseISO(sDate)
+    if (!isValid(dDate)) {
       return sDate
+    }
+
+    if (timeZone && timeZone !== getTimeZone()) {
+      dDate = new Date(dDate.getTime() - getTimeZoneOffset(dDate, timeZone))
     }
   }
 
   const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS)
   if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
-    const target = dDate
-    const era = JapaneseEra.of(target)
+    const era = JapaneseEra.of(dDate)
     if (era) {
       const dFormat = DateFormat.get(format)
       const parts = [...dFormat.parts]
@@ -64,7 +59,7 @@ export function formatDate(date: Date | number | string | null | undefined, form
               parts[i] = { type: "quoted", text: `'${era.toLocaleString(locale.code, { style: "narrow" })}'` }
             }
           } else if (part.text.startsWith("y")) {
-            const gYear = target.getFullYear() - era.start.getFullYear() + 1
+            const gYear = dDate.getFullYear() - era.start.getFullYear() + 1
             if (part.text.length === 1) {
               parts[i] = { type: "quoted", text:  `'${gYear}'` }
             } else if (part.text.endsWith("o")) {

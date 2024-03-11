@@ -8,6 +8,7 @@ import { Locale, ja, enUS } from "./locale/index.ts"
 import { getLocale } from "./util/getLocale.ts"
 import { getTimeZone } from "./util/getTimeZone.ts"
 import { JapaneseEra } from "./JapaneseEra.ts"
+import { DateFormat } from "./util/DateFormat.ts"
 
 declare type ParseDateOptions = {
   locale?: Locale,
@@ -25,9 +26,16 @@ export function parseDate(str: string | null | undefined, format?: string, optio
   const timeZone = options?.timeZone
 
   try {
-    let tmp
+    let dDate
     if (!format) {
-      tmp = parseISO(str)
+      dDate = parseISO(str)
+      if (!isValid(dDate)) {
+        return null
+      }
+
+      if (timeZone && timeZone !== getTimeZone() && !/(Z|[+-][0-9]{2}(:?[0-9]{2})?)$/.test(str)) {
+        dDate = new Date(dDate.getTime() + getTimeZoneOffset(dDate, timeZone))
+      }
     } else {
       const parseOptions: Parameters<typeof parse>[3] = { locale }
       let era: JapaneseEra | undefined
@@ -51,18 +59,23 @@ export function parseDate(str: string | null | undefined, format?: string, optio
           }
         }
       }
-      tmp = parse(str, format, new Date(), parseOptions)
+      dDate = parse(str, format, new Date(), parseOptions)
+      if (!isValid(dDate)) {
+        return null
+      }
+
       if (era) {
-        tmp.setFullYear(tmp.getFullYear() + era.start.getFullYear() - 1)
+        dDate.setFullYear(dDate.getFullYear() + era.start.getFullYear() - 1)
+      }
+
+      if (
+        timeZone && timeZone !== getTimeZone()
+        && !DateFormat.get(format).parts.some(part => part.type === "pattern" && /^[xX]/.test(part.text))
+      ) {
+        dDate = new Date(dDate.getTime() + getTimeZoneOffset(dDate, timeZone))
       }
     }
-    if (isValid(tmp)) {
-      if (timeZone && timeZone !== getTimeZone() && !/[Xx]/.test(format || "")) {
-        tmp = new Date(tmp.getTime() + getTimeZoneOffset(tmp, timeZone))
-      }
-      return tmp
-    }
-    return null
+    return dDate
   } catch (err) {
     if (err instanceof RangeError) {
       return null
