@@ -1,4 +1,4 @@
-import { getTimeZone } from "./getTimeZone"
+import { getTimeZone } from "./getTimeZone.ts"
 
 export function getTimeZoneOffset(date: Date, tz: string) {
   const tzDate = relativeTime(date, tz)
