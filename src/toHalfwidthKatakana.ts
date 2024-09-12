@@ -174,31 +174,31 @@ const M = new Map<string, string>([
 	["\u30f4", "\uff73\uff9e"],
 	["\u30fb", "\uff65"],
 	["\u30fc", "\uff70"],
-])
+]);
 
 export function toHalfwidthKatakana(str: string): string;
 export function toHalfwidthKatakana(str: null): null;
 export function toHalfwidthKatakana(str: undefined): undefined;
 export function toHalfwidthKatakana(value: string | null | undefined) {
-  if (!value) {
-    return value
-  }
+	if (!value) {
+		return value;
+	}
 
-  const array = new Array<string>()
-  let start = 0
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    const m = M.get(c)
-    if (m != null) {
-      if (start < i) {
-        array.push(value.substring(start, i))
-      }
-      array.push(m)
-      start = i + 1
-    }
-  }
-  if (start < value.length) {
-    array.push(value.substring(start))
-  }
-  return array.join("")
+	const array = new Array<string>();
+	let start = 0;
+	for (let i = 0; i < value.length; i++) {
+		const c = value.charAt(i);
+		const m = M.get(c);
+		if (m != null) {
+			if (start < i) {
+				array.push(value.substring(start, i));
+			}
+			array.push(m);
+			start = i + 1;
+		}
+	}
+	if (start < value.length) {
+		array.push(value.substring(start));
+	}
+	return array.join("");
 }

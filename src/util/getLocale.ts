@@ -1,5 +1,5 @@
-const locale = Intl.DateTimeFormat().resolvedOptions().locale
+const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 
 export function getLocale() {
-  return locale
+	return locale;
 }

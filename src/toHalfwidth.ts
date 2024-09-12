@@ -337,31 +337,31 @@ const M = new Map<string, string>([
 	["\uffe4", "\u00a6"],
 	["\uffe5", "\u00a5"],
 	["\uffe6", "\u20a9"],
-])
+]);
 
 export function toHalfwidth(str: string): string;
 export function toHalfwidth(str: null): null;
 export function toHalfwidth(str: undefined): undefined;
 export function toHalfwidth(value: string | null | undefined) {
-  if (!value) {
-    return value
-  }
+	if (!value) {
+		return value;
+	}
 
-  const array = new Array<string>()
-  let start = 0
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    const m = M.get(c)
-    if (m != null) {
-      if (start < i) {
-        array.push(value.substring(start, i))
-      }
-      array.push(m)
-      start = i + 1
-    }
-  }
-  if (start < value.length) {
-    array.push(value.substring(start))
-  }
-  return array.join("")
+	const array = new Array<string>();
+	let start = 0;
+	for (let i = 0; i < value.length; i++) {
+		const c = value.charAt(i);
+		const m = M.get(c);
+		if (m != null) {
+			if (start < i) {
+				array.push(value.substring(start, i));
+			}
+			array.push(m);
+			start = i + 1;
+		}
+	}
+	if (start < value.length) {
+		array.push(value.substring(start));
+	}
+	return array.join("");
 }

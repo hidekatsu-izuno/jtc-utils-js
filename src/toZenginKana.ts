@@ -259,31 +259,31 @@ const M = new Map<string, string>([
 	["\uff5b", "\u0028"],
 	["\uff5d", "\u0029"],
 	["\uffe5", "\u005c"],
-])
+]);
 
 export function toZenginKana(str: string): string;
 export function toZenginKana(str: null): null;
 export function toZenginKana(str: undefined): undefined;
 export function toZenginKana(value: string | null | undefined) {
-  if (!value) {
-    return value
-  }
+	if (!value) {
+		return value;
+	}
 
-  const array = new Array<string>()
-  let start = 0
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    const m = M.get(c)
-    if (m != null) {
-      if (start < i) {
-        array.push(value.substring(start, i))
-      }
-      array.push(m)
-      start = i + 1
-    }
-  }
-  if (start < value.length) {
-    array.push(value.substring(start))
-  }
-  return array.join("")
+	const array = new Array<string>();
+	let start = 0;
+	for (let i = 0; i < value.length; i++) {
+		const c = value.charAt(i);
+		const m = M.get(c);
+		if (m != null) {
+			if (start < i) {
+				array.push(value.substring(start, i));
+			}
+			array.push(m);
+			start = i + 1;
+		}
+	}
+	if (start < value.length) {
+		array.push(value.substring(start));
+	}
+	return array.join("");
 }

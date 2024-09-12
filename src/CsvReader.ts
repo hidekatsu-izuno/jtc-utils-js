@@ -1,180 +1,203 @@
-import type { FileHandle } from "node:fs/promises"
-import type { Readable } from "node:stream"
-import { Charset } from "./charset/charset.ts"
-import { utf8 } from "./charset/utf8.ts"
-import { escapeRegExp } from "./util/escapeRegExp.ts"
+import type { FileHandle } from "node:fs/promises";
+import type { Readable } from "node:stream";
+import type { Charset } from "./charset/charset.ts";
+import { utf8 } from "./charset/utf8.ts";
+import { escapeRegExp } from "./util/escapeRegExp.ts";
 
 export class CsvReader {
-  private reader: Promise<ReadableStreamDefaultReader<string>>
-  private fieldSeparator: string
-  private skipEmptyLine: boolean
-  private reSeparator: RegExp
+	private reader: Promise<ReadableStreamDefaultReader<string>>;
+	private fieldSeparator: string;
+	private skipEmptyLine: boolean;
+	private reSeparator: RegExp;
 
-  private endsWithCR = false
-  private buf: string = ""
-  private index: number = 0
+	private endsWithCR = false;
+	private buf = "";
+	private index = 0;
 
-  constructor(
-    src: string | Uint8Array | Blob | ReadableStream<Uint8Array> | FileHandle | Readable,
-    options?: {
-      charset?: Charset,
-      bom?: boolean,
-      fieldSeparator?: string,
-      skipEmptyLine?: boolean,
-      fatal?: boolean,
-    }
-  ) {
-    const charset = options?.charset ?? utf8
-    this.fieldSeparator = options?.fieldSeparator ?? ","
-    this.skipEmptyLine = options?.skipEmptyLine ?? false
-    this.reSeparator = new RegExp(`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`, "g")
+	constructor(
+		src:
+			| string
+			| Uint8Array
+			| Blob
+			| ReadableStream<Uint8Array>
+			| FileHandle
+			| Readable,
+		options?: {
+			charset?: Charset;
+			bom?: boolean;
+			fieldSeparator?: string;
+			skipEmptyLine?: boolean;
+			fatal?: boolean;
+		},
+	) {
+		const charset = options?.charset ?? utf8;
+		this.fieldSeparator = options?.fieldSeparator ?? ",";
+		this.skipEmptyLine = options?.skipEmptyLine ?? false;
+		this.reSeparator = new RegExp(
+			`\n|\r\n?|${escapeRegExp(this.fieldSeparator)}`,
+			"g",
+		);
 
-    if (typeof src === "string") {
-      this.reader = Promise.resolve(new ReadableStream<string>({
-        start(controller) {
-          controller.enqueue(src)
-          controller.close()
-        }
-      }).getReader())
-    } else {
-      let stream: Promise<ReadableStream<Uint8Array>>
-      if (src instanceof Uint8Array) {
-        stream = Promise.resolve(new ReadableStream<Uint8Array>({
-          start(controller) {
-            controller.enqueue(src)
-            controller.close()
-          }
-        }))
-      } else if (src instanceof Blob) {
-        stream = Promise.resolve(src.stream())
-      } else if (src instanceof ReadableStream) {
-        stream = Promise.resolve(src)
-      } else {
-        const readable = "createReadStream" in src ? src.createReadStream() : src
-        if ("constructor" in readable &&
-          "toWeb" in readable.constructor &&
-          typeof readable.constructor.toWeb === "function") {
-          stream = Promise.resolve(readable.constructor.toWeb(readable))
-        } else {
-          throw new TypeError(`Unsuppoted source: ${src}`)
-        }
-      }
+		if (typeof src === "string") {
+			this.reader = Promise.resolve(
+				new ReadableStream<string>({
+					start(controller) {
+						controller.enqueue(src);
+						controller.close();
+					},
+				}).getReader(),
+			);
+		} else {
+			let stream: Promise<ReadableStream<Uint8Array>>;
+			if (src instanceof Uint8Array) {
+				stream = Promise.resolve(
+					new ReadableStream<Uint8Array>({
+						start(controller) {
+							controller.enqueue(src);
+							controller.close();
+						},
+					}),
+				);
+			} else if (src instanceof Blob) {
+				stream = Promise.resolve(src.stream());
+			} else if (src instanceof ReadableStream) {
+				stream = Promise.resolve(src);
+			} else {
+				const readable =
+					"createReadStream" in src ? src.createReadStream() : src;
+				if (
+					"constructor" in readable &&
+					"toWeb" in readable.constructor &&
+					typeof readable.constructor.toWeb === "function"
+				) {
+					stream = Promise.resolve(readable.constructor.toWeb(readable));
+				} else {
+					throw new TypeError(`Unsuppoted source: ${src}`);
+				}
+			}
 
-      const decoder = charset.createDecoder({
-        fatal: options?.fatal ?? true,
-        ignoreBOM: options?.bom != null ? !options.bom : false,
-      })
+			const decoder = charset.createDecoder({
+				fatal: options?.fatal ?? true,
+				ignoreBOM: options?.bom != null ? !options.bom : false,
+			});
 
-      this.reader = stream.then(value => value
-        .pipeThrough(new TransformStream({
-          transform(chunk, controller) {
-            controller.enqueue(decoder.decode(chunk, { stream: true }))
-          },
-          flush() {
-            decoder.decode(new Uint8Array())
-          }
-        }))
-        .getReader())
-    }
-  }
+			this.reader = stream.then((value) =>
+				value
+					.pipeThrough(
+						new TransformStream({
+							transform(chunk, controller) {
+								controller.enqueue(decoder.decode(chunk, { stream: true }));
+							},
+							flush() {
+								decoder.decode(new Uint8Array());
+							},
+						}),
+					)
+					.getReader(),
+			);
+		}
+	}
 
-  async read(): Promise<string[] | undefined> {
-    const items = new Array<string>()
+	async read(): Promise<string[] | undefined> {
+		const items = new Array<string>();
 
-    let buf = this.buf
-    let pos = 0
-    let quoted = false
-    let done = false
+		let buf = this.buf;
+		let pos = 0;
+		let quoted = false;
+		let done = false;
 
-    const reader = await this.reader
-    loop:
-    do {
-      const readed = await reader.read()
-      done = readed.done
+		const reader = await this.reader;
+		loop: do {
+			const readed = await reader.read();
+			done = readed.done;
 
-      if (readed.value) {
-        let value = readed.value
-        if (this.endsWithCR && value.startsWith("\n")) {
-          value = value.substring(1)
-          this.endsWithCR = false
-        }
-        if (value.endsWith("\r")) {
-          this.endsWithCR = true
-        }
-        buf = buf ? buf + value : value
-      }
+			if (readed.value) {
+				let value = readed.value;
+				if (this.endsWithCR && value.startsWith("\n")) {
+					value = value.substring(1);
+					this.endsWithCR = false;
+				}
+				if (value.endsWith("\r")) {
+					this.endsWithCR = true;
+				}
+				buf = buf ? buf + value : value;
+			}
 
-      while (pos < buf.length) {
-        if (!quoted && buf.startsWith('"')) {
-          if (pos === 0) {
-            pos = 1
-          }
-          const lpos = buf.indexOf('"', pos)
-          if (lpos === -1) {
-            pos = buf.length
-            continue loop
-          } else if (buf.startsWith('"', lpos + 1)) {
-            pos = lpos + 2
-            continue
-          } else {
-            const unquoted = buf.substring(1, lpos).replaceAll('""', '"')
-            buf = unquoted + buf.substring(lpos + 1)
-            pos = unquoted.length
-            quoted = true
-            continue
-          }
-        }
+			while (pos < buf.length) {
+				if (!quoted && buf.startsWith('"')) {
+					if (pos === 0) {
+						pos = 1;
+					}
+					const lpos = buf.indexOf('"', pos);
+					if (lpos === -1) {
+						pos = buf.length;
+						continue loop;
+					} else if (buf.startsWith('"', lpos + 1)) {
+						pos = lpos + 2;
+						continue;
+					} else {
+						const unquoted = buf.substring(1, lpos).replaceAll('""', '"');
+						buf = unquoted + buf.substring(lpos + 1);
+						pos = unquoted.length;
+						quoted = true;
+						continue;
+					}
+				}
 
-        this.reSeparator.lastIndex = pos
-        if (!this.reSeparator.test(buf)) {
-          pos = buf.length
-          continue loop
-        }
+				this.reSeparator.lastIndex = pos;
+				if (!this.reSeparator.test(buf)) {
+					pos = buf.length;
+					continue loop;
+				}
 
-        const item = buf.substring(0, this.reSeparator.lastIndex - (buf.endsWith("\r\n", this.reSeparator.lastIndex) ? 2 : 1))
-        if (!buf.endsWith(this.fieldSeparator, this.reSeparator.lastIndex)) {
-          if (item || items.length > 0 || quoted) {
-            items.push(item)
-          }
-          if (items.length > 0 || !this.skipEmptyLine) {
-            this.buf = buf.substring(this.reSeparator.lastIndex)
-            this.index++
-            return items
-          }
-        } else {
-          items.push(item)
-        }
-        buf = buf.substring(this.reSeparator.lastIndex)
-        pos = 0
-        quoted = false
-      }
+				const item = buf.substring(
+					0,
+					this.reSeparator.lastIndex -
+						(buf.endsWith("\r\n", this.reSeparator.lastIndex) ? 2 : 1),
+				);
+				if (!buf.endsWith(this.fieldSeparator, this.reSeparator.lastIndex)) {
+					if (item || items.length > 0 || quoted) {
+						items.push(item);
+					}
+					if (items.length > 0 || !this.skipEmptyLine) {
+						this.buf = buf.substring(this.reSeparator.lastIndex);
+						this.index++;
+						return items;
+					}
+				} else {
+					items.push(item);
+				}
+				buf = buf.substring(this.reSeparator.lastIndex);
+				pos = 0;
+				quoted = false;
+			}
 
-      if (done) {
-        if (buf || items.length > 0 || quoted) {
-          items.push(buf)
-        }
-        if (items.length > 0) {
-          this.buf = ""
-          this.index++
-          return items
-        }
-      }
-    } while (buf || !done)
-  }
+			if (done) {
+				if (buf || items.length > 0 || quoted) {
+					items.push(buf);
+				}
+				if (items.length > 0) {
+					this.buf = "";
+					this.index++;
+					return items;
+				}
+			}
+		} while (buf || !done);
+	}
 
-  async* [Symbol.asyncIterator](): AsyncGenerator<string[]> {
-    let record: string[] | undefined
-    while ((record = await this.read()) != null) {
-      yield record
-    }
-  }
+	async *[Symbol.asyncIterator](): AsyncGenerator<string[]> {
+		let record: string[] | undefined;
+		while ((record = await this.read()) != null) {
+			yield record;
+		}
+	}
 
-  get count() {
-    return this.index
-  }
+	get count() {
+		return this.index;
+	}
 
-  async close() {
-    const reader = await this.reader
-    await reader.cancel()
-  }
+	async close() {
+		const reader = await this.reader;
+		await reader.cancel();
+	}
 }

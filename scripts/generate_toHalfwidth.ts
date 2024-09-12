@@ -1,23 +1,23 @@
-import { promises as fs }  from "node:fs"
-import { CsvReader } from "../src/CsvReader.js"
+import { promises as fs } from "node:fs";
+import { CsvReader } from "../src/CsvReader.js";
 
-const input = await fs.open("./data/map.halfwidth.csv")
+const input = await fs.open("./data/map.halfwidth.csv");
 const reader = new CsvReader(input, {
-  skipEmptyLine: true,
-})
+	skipEmptyLine: true,
+});
 try {
-  const output = await fs.open("./src/toHalfwidth.ts", "w")
-  try {
-    await output.write("const M = new Map<string, string>([\n")
-    for await (const line of reader) {
-      if (reader.count === 1) {
-        continue
-      }
-      const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
-      const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1")
-      await output.write(`\t["${from}", "${to}"],\n`)
-    }
-    await output.write(`])
+	const output = await fs.open("./src/toHalfwidth.ts", "w");
+	try {
+		await output.write("const M = new Map<string, string>([\n");
+		for await (const line of reader) {
+			if (reader.count === 1) {
+				continue;
+			}
+			const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
+			const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
+			await output.write(`\t["${from}", "${to}"],\n`);
+		}
+		await output.write(`])
 
 export function toHalfwidth(str: string): string;
 export function toHalfwidth(str: null): null;
@@ -45,11 +45,10 @@ export function toHalfwidth(value: string | null | undefined) {
   }
   return array.join("")
 }
-`)
-  } finally {
-    await output.close()
-  }
+`);
+	} finally {
+		await output.close();
+	}
 } finally {
-  await reader.close()
+	await reader.close();
 }
-

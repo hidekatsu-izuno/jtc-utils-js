@@ -180,47 +180,47 @@ const M = new Map<string, string>([
 	["\uff9d", "\u3093"],
 	["\uff9e", "\u309b"],
 	["\uff9f", "\u309c"],
-])
+]);
 
 export function toHiragana(str: string): string;
 export function toHiragana(str: null): null;
 export function toHiragana(str: undefined): undefined;
 export function toHiragana(value: string | null | undefined) {
-  if (!value) {
-    return value
-  }
+	if (!value) {
+		return value;
+	}
 
-  const array = new Array<string>()
-  let start = 0
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i + 1)
-      if (c2 == "\uFF9E" || c2 == "\uFF9F") {
-        const m = M.get(c + c2)
-        if (m != null) {
-          if (start < i) {
-            array.push(value.substring(start, i))
-          }
-          array.push(m)
-          i++
-          start = i + 1
-          continue
-        }
-      }
-    }
+	const array = new Array<string>();
+	let start = 0;
+	for (let i = 0; i < value.length; i++) {
+		const c = value.charAt(i);
+		if (i + 1 < value.length) {
+			const c2 = value.charAt(i + 1);
+			if (c2 == "\uFF9E" || c2 == "\uFF9F") {
+				const m = M.get(c + c2);
+				if (m != null) {
+					if (start < i) {
+						array.push(value.substring(start, i));
+					}
+					array.push(m);
+					i++;
+					start = i + 1;
+					continue;
+				}
+			}
+		}
 
-    const m = M.get(c)
-    if (m != null) {
-      if (start < i) {
-        array.push(value.substring(start, i))
-      }
-      array.push(m)
-      start = i + 1
-    }
-  }
-  if (start < value.length) {
-    array.push(value.substring(start))
-  }
-  return array.join("")
+		const m = M.get(c);
+		if (m != null) {
+			if (start < i) {
+				array.push(value.substring(start, i));
+			}
+			array.push(m);
+			start = i + 1;
+		}
+	}
+	if (start < value.length) {
+		array.push(value.substring(start));
+	}
+	return array.join("");
 }

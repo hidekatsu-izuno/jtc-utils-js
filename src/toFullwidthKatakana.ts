@@ -182,47 +182,52 @@ const M = new Map<string, string>([
 	["\uff9d", "\u30f3"],
 	["\uff9e", "\u309b"],
 	["\uff9f", "\u309c"],
-])
+]);
 
 export function toFullwidthKatakana(str: string): string;
 export function toFullwidthKatakana(str: null): null;
 export function toFullwidthKatakana(str: undefined): undefined;
 export function toFullwidthKatakana(value: string | null | undefined) {
-  if (!value) {
-    return value
-  }
+	if (!value) {
+		return value;
+	}
 
-  const array = new Array<string>()
-  let start = 0
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    if (i + 1 < value.length) {
-      const c2 = value.charAt(i + 1)
-      if (c2 == "\u3099" || c2 == "\u309A" || c2 == "\uFF9E" || c2 == "\uFF9F") {
-        const m = M.get(c + c2)
-        if (m != null) {
-          if (start < i) {
-            array.push(value.substring(start, i))
-          }
-          array.push(m)
-          i++
-          start = i + 1
-          continue
-        }
-      }
-    }
+	const array = new Array<string>();
+	let start = 0;
+	for (let i = 0; i < value.length; i++) {
+		const c = value.charAt(i);
+		if (i + 1 < value.length) {
+			const c2 = value.charAt(i + 1);
+			if (
+				c2 == "\u3099" ||
+				c2 == "\u309A" ||
+				c2 == "\uFF9E" ||
+				c2 == "\uFF9F"
+			) {
+				const m = M.get(c + c2);
+				if (m != null) {
+					if (start < i) {
+						array.push(value.substring(start, i));
+					}
+					array.push(m);
+					i++;
+					start = i + 1;
+					continue;
+				}
+			}
+		}
 
-    const m = M.get(c)
-    if (m != null) {
-      if (start < i) {
-        array.push(value.substring(start, i))
-      }
-      array.push(m)
-      start = i + 1
-    }
-  }
-  if (start < value.length) {
-    array.push(value.substring(start))
-  }
-  return array.join("")
+		const m = M.get(c);
+		if (m != null) {
+			if (start < i) {
+				array.push(value.substring(start, i));
+			}
+			array.push(m);
+			start = i + 1;
+		}
+	}
+	if (start < value.length) {
+		array.push(value.substring(start));
+	}
+	return array.join("");
 }
