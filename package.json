@@ -1,109 +1,97 @@
 {
-  "name": "jtc-utils",
-  "version": "0.4.0",
-  "description": "Utilities for Japanese Traditional Companies",
-  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
-  "license": "MIT",
-  "keywords": [
-    "jtc",
-    "legacy",
-    "halfwidth",
-    "fullwidth",
-    "hiragana",
-    "katakana",
-    "windows-31j",
-    "euc-jp",
-    "cp930",
-    "cp939",
-    "csv",
-    "fixlen"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
-  },
-  "scripts": {
-    "build": "tsx ./scripts/build_ts.ts",
-    "test": "vitest --config vitest.config.ts",
-    "format": "@biomejs/biome check --write",
-    "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
-    "generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
-    "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
-    "generate:toHalfwidth": "tsx ./scripts/generate_toHalfwidth.ts",
-    "generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "type": "module",
-  "sideEffects": false,
-  "exports": {
-    "./locale": {
-      "require": {
-        "types": "./cjs/lib/locale/index.d.cts",
-        "default": "./cjs/lib/locale/index.cjs"
-      },
-      "default": {
-        "types": "./mjs/lib/locale/index.d.mts",
-        "default": "./mjs/lib/locale/index.mjs"
-      }
-    },
-    "./charset": {
-      "require": {
-        "types": "./cjs/lib/charset/index.d.cts",
-        "default": "./cjs/lib/charset/index.cjs"
-      },
-      "default": {
-        "types": "./mjs/lib/charset/index.d.mts",
-        "default": "./mjs/lib/charset/index.mjs"
-      }
-    },
-    ".": {
-      "require": {
-        "types": "./cjs/lib/index.d.cts",
-        "default": "./cjs/lib/index.cjs"
-      },
-      "default": {
-        "types": "./mjs/lib/index.d.mts",
-        "default": "./mjs/lib/index.mjs"
-      }
-    },
-    "./package.json": "./package.json"
-  },
-  "main": "./cjs/lib/index.cjs",
-  "typesVersions": {
-    "*": {
-      "charset": [
-        "./cjs/lib/charset/index.d.cts"
-      ],
-      "locale": [
-        "./cjs/lib/locale/index.d.cts"
-      ],
-      "*": [
-        "./cjs/lib/index.d.cts"
-      ]
-    }
-  },
-  "files": [
-    "cjs/",
-    "mjs/",
-    "LICENSE",
-    "package.json",
-    "README.md"
-  ],
-  "devDependencies": {
-    "@biomejs/biome": "1.9.0",
-    "@tsconfig/recommended": "^1.0.7",
-    "@types/node": "^20.16.5",
-    "tsx": "^4.19.1",
-    "typescript": "^5.4.2",
-    "vitest": "^2.1.0"
-  },
-  "dependencies": {
-    "date-fns": "^3.6.0"
-  },
-  "volta": {
-    "node": "20.10.0"
-  }
+	"name": "jtc-utils",
+	"version": "0.4.0",
+	"description": "Utilities for Japanese Traditional Companies",
+	"author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
+	"license": "MIT",
+	"keywords": [
+		"jtc",
+		"legacy",
+		"halfwidth",
+		"fullwidth",
+		"hiragana",
+		"katakana",
+		"windows-31j",
+		"euc-jp",
+		"cp930",
+		"cp939",
+		"csv",
+		"fixlen"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
+	},
+	"scripts": {
+		"build": "tsx ./scripts/build_ts.ts",
+		"test": "vitest --config vitest.config.ts",
+		"format": "biome check --write",
+		"generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
+		"generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
+		"generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
+		"generate:toHalfwidth": "tsx ./scripts/generate_toHalfwidth.ts",
+		"generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
+		"generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		"./locale": {
+			"require": {
+				"types": "./cjs/lib/locale/index.d.cts",
+				"default": "./cjs/lib/locale/index.cjs"
+			},
+			"default": {
+				"types": "./mjs/lib/locale/index.d.mts",
+				"default": "./mjs/lib/locale/index.mjs"
+			}
+		},
+		"./charset": {
+			"require": {
+				"types": "./cjs/lib/charset/index.d.cts",
+				"default": "./cjs/lib/charset/index.cjs"
+			},
+			"default": {
+				"types": "./mjs/lib/charset/index.d.mts",
+				"default": "./mjs/lib/charset/index.mjs"
+			}
+		},
+		".": {
+			"require": {
+				"types": "./cjs/lib/index.d.cts",
+				"default": "./cjs/lib/index.cjs"
+			},
+			"default": {
+				"types": "./mjs/lib/index.d.mts",
+				"default": "./mjs/lib/index.mjs"
+			}
+		},
+		"./package.json": "./package.json"
+	},
+	"main": "./cjs/lib/index.cjs",
+	"typesVersions": {
+		"*": {
+			"charset": ["./cjs/lib/charset/index.d.cts"],
+			"locale": ["./cjs/lib/locale/index.d.cts"],
+			"*": ["./cjs/lib/index.d.cts"]
+		}
+	},
+	"files": ["cjs/", "mjs/", "LICENSE", "package.json", "README.md"],
+	"devDependencies": {
+		"@biomejs/biome": "1.9.0",
+		"@tsconfig/recommended": "^1.0.7",
+		"@types/node": "^20.16.5",
+		"tsx": "^4.19.1",
+		"typescript": "^5.4.2",
+		"vitest": "^2.1.0"
+	},
+	"dependencies": {
+		"date-fns": "^3.6.0"
+	},
+	"volta": {
+		"node": "20.10.0"
+	}
 }
