@@ -1,15 +1,15 @@
 {
-	"extends": "@tsconfig/recommended/tsconfig.json",
-	"compilerOptions": {
-		"emitDeclarationOnly": true,
-		"module": "ES2022",
-		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"target": "ES2022",
-		"newLine": "LF",
-		"declaration": true,
-		"declarationDir": "./types/",
-		"declarationMap": true
-	},
-	"include": ["./src"]
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "target": "ES2022",
+    "newLine": "LF",
+    "declaration": true,
+    "declarationDir": "./types/",
+    "declarationMap": true
+  },
+  "include": ["./src"]
 }
