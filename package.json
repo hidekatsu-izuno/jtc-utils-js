@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Utilities for Japanese Traditional Companies",
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -23,9 +23,9 @@
     "url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
   },
   "scripts": {
-    "build": "tsx ./scripts/build_ts.ts",
-    "test": "vitest --config vitest.config.ts",
     "check": "biome check --write",
+    "build": "tsx ./scripts/build_ts.ts",
+    "test": "vitest run --config vitest.config.ts",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
