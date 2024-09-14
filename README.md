@@ -20,7 +20,7 @@ JTC-utils は、伝統的な日本企業では必要とされるにも関わら�
 なお、このライブラリは次の方針に基づき開発しています。
 
 - 国際化は必ずしも目標とせず、日/英環境のみをターゲットにする。
-- [lodash](https://lodash.com/) に存在する機能は実装しない。
+- [lodash](https://lodash.com/) や [es-toolkit](https://es-toolkit.slash.page/) に存在する機能は実装しない。
 
 ## インストール
 
@@ -692,7 +692,7 @@ const reader = new CsvReader(fs.createReadStream("sample.csv"), {
 })
 try {
   const result = []
-  for await (const line of reader.read(layout)) {
+  for await (const line of reader) {
     result.push(line)
   }
 } finally {
@@ -715,6 +715,24 @@ try {
   let line = reader.read() // 1行スキップ
   while (line = reader.read()) {
     result.push(line)
+  }
+} finally {
+  await reader.close()
+}
+```
+
+ヘッダを使ってオブジェクトに変換したい場合は lodash や es-toolkit などの zipObject を使います。
+
+```typescript
+import { zipObject } from 'es-toolkit'
+
+try {
+  const result = []
+  let headers = reader.read()
+  if (headers) {
+    for await (const line of reader) {
+      result.push(zipObject(headers, line))
+    }
   }
 } finally {
   await reader.close()
@@ -943,6 +961,22 @@ try {
   })
   while (line = reader.read()) {
     result.push(line)
+  }
+} finally {
+  await reader.close()
+}
+```
+
+ヘッダを使ってオブジェクトに変換したい場合は lodash や es-toolkit などの zipObject を使います。
+
+```typescript
+import { zipObject } from 'es-toolkit'
+
+try {
+  const headers = ["c1", "c2", "c3"]
+  const result = []
+  for await (const line of reader) {
+    result.push(zipObject(headers, line))
   }
 } finally {
   await reader.close()
