@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsx ./scripts/build_ts.ts",
     "test": "vitest --config vitest.config.ts",
-    "format": "biome check --write",
+    "check": "biome check --write",
     "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
@@ -85,8 +85,8 @@
     "@tsconfig/recommended": "^1.0.7",
     "@types/node": "^20.16.5",
     "tsx": "^4.19.1",
-    "typescript": "^5.4.2",
-    "vitest": "^2.1.0"
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
   },
   "dependencies": {
     "date-fns": "^3.6.0"
