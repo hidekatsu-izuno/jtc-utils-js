@@ -81,12 +81,12 @@
   },
   "files": ["cjs/", "mjs/", "LICENSE", "package.json", "README.md"],
   "devDependencies": {
-    "@biomejs/biome": "1.9.2",
-    "@tsconfig/recommended": "^1.0.7",
-    "@types/node": "^20.16.5",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.2",
-    "vitest": "^2.1.1"
+    "@biomejs/biome": "1.9.4",
+    "@tsconfig/recommended": "^1.0.8",
+    "@types/node": "^20.17.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "date-fns": "^4.1.0"
