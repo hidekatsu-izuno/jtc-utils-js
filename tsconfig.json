@@ -9,7 +9,8 @@
     "newLine": "LF",
     "declaration": true,
     "declarationDir": "./types/",
-    "declarationMap": true
+    "declarationMap": true,
+    "erasableSyntaxOnly": true
   },
   "include": ["./src"]
 }

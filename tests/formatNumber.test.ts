@@ -21,7 +21,7 @@ describe("formatNumber", () => {
     expect(formatNumber(-10000, "###,###.#")).toBe("-10,000");
     expect(formatNumber(-10000, "###,###.0")).toBe("-10,000.0");
     expect(formatNumber(-10000, "##,##,##.#")).toBe("-1,00,00");
-    
+
     expect(formatNumber(-10000, "0000000")).toBe("-0010000");
     expect(formatNumber(10000, "0,000,000")).toBe("0,010,000");
     expect(formatNumber(-10000, "0,000,000.#")).toBe("-0,010,000");
