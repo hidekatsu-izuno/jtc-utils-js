@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { MemoryWritableStream } from "../src/MemoryWritableStream";
 
@@ -10,6 +11,6 @@ describe("MemoryWritableStream", () => {
     await out.write(Buffer.from("def"));
     await out.close();
 
-    expect(stream.toString("utf-8")).toStrictEqual("abcdef");
+    assert.strictEqual(stream.toString("utf-8"), "abcdef");
   });
 });

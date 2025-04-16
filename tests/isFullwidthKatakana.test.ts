@@ -1,103 +1,104 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { isFullwidthKatakana } from "../src/isFullwidthKatakana.js";
 
 describe("isFullwidthKatakana", () => {
   test("test empty", () => {
-    expect(isFullwidthKatakana(undefined)).toBe(false);
-    expect(isFullwidthKatakana(null)).toBe(false);
-    expect(isFullwidthKatakana("")).toBe(false);
+    assert.equal(isFullwidthKatakana(undefined), false);
+    assert.equal(isFullwidthKatakana(null), false);
+    assert.equal(isFullwidthKatakana(""), false);
   });
 
   test("test basic sequcence", () => {
-    expect(isFullwidthKatakana("アイウエオ")).toBe(true);
-    expect(isFullwidthKatakana("あイうエお")).toBe(false);
-    expect(isFullwidthKatakana("アいウえオ")).toBe(false);
+    assert.equal(isFullwidthKatakana("アイウエオ"), true);
+    assert.equal(isFullwidthKatakana("あイうエお"), false);
+    assert.equal(isFullwidthKatakana("アいウえオ"), false);
   });
 
   test("test ascii", () => {
-    expect(isFullwidthKatakana("\0")).toBe(false);
-    expect(isFullwidthKatakana("\t")).toBe(false);
-    expect(isFullwidthKatakana("\r")).toBe(false);
-    expect(isFullwidthKatakana("\n")).toBe(false);
-    expect(isFullwidthKatakana(" ")).toBe(false);
-    expect(isFullwidthKatakana("a")).toBe(false);
-    expect(isFullwidthKatakana("0")).toBe(false);
-    expect(isFullwidthKatakana("@")).toBe(false);
-    expect(isFullwidthKatakana("\x7F")).toBe(false);
+    assert.equal(isFullwidthKatakana("\0"), false);
+    assert.equal(isFullwidthKatakana("\t"), false);
+    assert.equal(isFullwidthKatakana("\r"), false);
+    assert.equal(isFullwidthKatakana("\n"), false);
+    assert.equal(isFullwidthKatakana(" "), false);
+    assert.equal(isFullwidthKatakana("a"), false);
+    assert.equal(isFullwidthKatakana("0"), false);
+    assert.equal(isFullwidthKatakana("@"), false);
+    assert.equal(isFullwidthKatakana("\x7F"), false);
   });
 
   test("test fullwidth symbol", () => {
-    expect(isFullwidthKatakana("　")).toBe(true);
-    expect(isFullwidthKatakana("゠")).toBe(false);
-    expect(isFullwidthKatakana("・")).toBe(true);
-    expect(isFullwidthKatakana("ー")).toBe(true);
-    expect(isFullwidthKatakana("「")).toBe(false);
-    expect(isFullwidthKatakana("」")).toBe(false);
-    expect(isFullwidthKatakana("、")).toBe(false);
-    expect(isFullwidthKatakana("。")).toBe(false);
-    expect(isFullwidthKatakana("￠")).toBe(false);
-    expect(isFullwidthKatakana("￦")).toBe(false);
-    expect(isFullwidthKatakana("｟")).toBe(false);
-    expect(isFullwidthKatakana("｠")).toBe(false);
+    assert.equal(isFullwidthKatakana("　"), true);
+    assert.equal(isFullwidthKatakana("゠"), false);
+    assert.equal(isFullwidthKatakana("・"), true);
+    assert.equal(isFullwidthKatakana("ー"), true);
+    assert.equal(isFullwidthKatakana("「"), false);
+    assert.equal(isFullwidthKatakana("」"), false);
+    assert.equal(isFullwidthKatakana("、"), false);
+    assert.equal(isFullwidthKatakana("。"), false);
+    assert.equal(isFullwidthKatakana("￠"), false);
+    assert.equal(isFullwidthKatakana("￦"), false);
+    assert.equal(isFullwidthKatakana("｟"), false);
+    assert.equal(isFullwidthKatakana("｠"), false);
   });
 
   test("test fullwidth hiragana", () => {
-    expect(isFullwidthKatakana("あ")).toBe(false);
-    expect(isFullwidthKatakana("ぁ")).toBe(false);
-    expect(isFullwidthKatakana("が")).toBe(false);
-    expect(isFullwidthKatakana("ぱ")).toBe(false);
-    expect(isFullwidthKatakana("ゐ")).toBe(false);
-    expect(isFullwidthKatakana("ゑ")).toBe(false);
-    expect(isFullwidthKatakana("ん")).toBe(false);
-    expect(isFullwidthKatakana("ゔ")).toBe(false);
-    expect(isFullwidthKatakana("ゕ")).toBe(false);
-    expect(isFullwidthKatakana("ゖ")).toBe(false);
+    assert.equal(isFullwidthKatakana("あ"), false);
+    assert.equal(isFullwidthKatakana("ぁ"), false);
+    assert.equal(isFullwidthKatakana("が"), false);
+    assert.equal(isFullwidthKatakana("ぱ"), false);
+    assert.equal(isFullwidthKatakana("ゐ"), false);
+    assert.equal(isFullwidthKatakana("ゑ"), false);
+    assert.equal(isFullwidthKatakana("ん"), false);
+    assert.equal(isFullwidthKatakana("ゔ"), false);
+    assert.equal(isFullwidthKatakana("ゕ"), false);
+    assert.equal(isFullwidthKatakana("ゖ"), false);
   });
 
   test("test fullwidth katakana", () => {
-    expect(isFullwidthKatakana("ア")).toBe(true);
-    expect(isFullwidthKatakana("ァ")).toBe(true);
-    expect(isFullwidthKatakana("ガ")).toBe(true);
-    expect(isFullwidthKatakana("パ")).toBe(true);
-    expect(isFullwidthKatakana("ヰ")).toBe(true);
-    expect(isFullwidthKatakana("ヱ")).toBe(true);
-    expect(isFullwidthKatakana("ン")).toBe(true);
-    expect(isFullwidthKatakana("ヷ")).toBe(true);
-    expect(isFullwidthKatakana("ヸ")).toBe(true);
-    expect(isFullwidthKatakana("ヴ")).toBe(true);
-    expect(isFullwidthKatakana("ヺ")).toBe(true);
-    expect(isFullwidthKatakana("ヹ")).toBe(true);
-    expect(isFullwidthKatakana("ヵ")).toBe(true);
-    expect(isFullwidthKatakana("ヶ")).toBe(true);
+    assert.equal(isFullwidthKatakana("ア"), true);
+    assert.equal(isFullwidthKatakana("ァ"), true);
+    assert.equal(isFullwidthKatakana("ガ"), true);
+    assert.equal(isFullwidthKatakana("パ"), true);
+    assert.equal(isFullwidthKatakana("ヰ"), true);
+    assert.equal(isFullwidthKatakana("ヱ"), true);
+    assert.equal(isFullwidthKatakana("ン"), true);
+    assert.equal(isFullwidthKatakana("ヷ"), true);
+    assert.equal(isFullwidthKatakana("ヸ"), true);
+    assert.equal(isFullwidthKatakana("ヴ"), true);
+    assert.equal(isFullwidthKatakana("ヺ"), true);
+    assert.equal(isFullwidthKatakana("ヹ"), true);
+    assert.equal(isFullwidthKatakana("ヵ"), true);
+    assert.equal(isFullwidthKatakana("ヶ"), true);
   });
 
   test("test halfwidth symbol", () => {
-    expect(isFullwidthKatakana("｡")).toBe(false);
-    expect(isFullwidthKatakana("｢")).toBe(false);
-    expect(isFullwidthKatakana("｣")).toBe(false);
-    expect(isFullwidthKatakana("､")).toBe(false);
-    expect(isFullwidthKatakana("･")).toBe(false);
-    expect(isFullwidthKatakana("ｰ")).toBe(false);
-    expect(isFullwidthKatakana("ﾞ")).toBe(false);
-    expect(isFullwidthKatakana("ﾟ")).toBe(false);
-    expect(isFullwidthKatakana("¢")).toBe(false);
-    expect(isFullwidthKatakana("€")).toBe(false);
-    expect(isFullwidthKatakana("₩")).toBe(false);
+    assert.equal(isFullwidthKatakana("｡"), false);
+    assert.equal(isFullwidthKatakana("｢"), false);
+    assert.equal(isFullwidthKatakana("｣"), false);
+    assert.equal(isFullwidthKatakana("､"), false);
+    assert.equal(isFullwidthKatakana("･"), false);
+    assert.equal(isFullwidthKatakana("ｰ"), false);
+    assert.equal(isFullwidthKatakana("ﾞ"), false);
+    assert.equal(isFullwidthKatakana("ﾟ"), false);
+    assert.equal(isFullwidthKatakana("¢"), false);
+    assert.equal(isFullwidthKatakana("€"), false);
+    assert.equal(isFullwidthKatakana("₩"), false);
   });
 
   test("test halfwidth katakana", () => {
-    expect(isFullwidthKatakana("ｱ")).toBe(false);
-    expect(isFullwidthKatakana("ｧ")).toBe(false);
-    expect(isFullwidthKatakana("ｶﾞ")).toBe(false);
-    expect(isFullwidthKatakana("ﾊﾟ")).toBe(false);
-    expect(isFullwidthKatakana("ｳﾞ")).toBe(false);
-    expect(isFullwidthKatakana("ﾝ")).toBe(false);
+    assert.equal(isFullwidthKatakana("ｱ"), false);
+    assert.equal(isFullwidthKatakana("ｧ"), false);
+    assert.equal(isFullwidthKatakana("ｶﾞ"), false);
+    assert.equal(isFullwidthKatakana("ﾊﾟ"), false);
+    assert.equal(isFullwidthKatakana("ｳﾞ"), false);
+    assert.equal(isFullwidthKatakana("ﾝ"), false);
   });
 
   test("test fullwidth kanji", () => {
-    expect(isFullwidthKatakana("亜")).toBe(false);
-    expect(isFullwidthKatakana("腕")).toBe(false);
-    expect(isFullwidthKatakana("黑")).toBe(false);
-    expect(isFullwidthKatakana("𠮟")).toBe(false);
+    assert.equal(isFullwidthKatakana("亜"), false);
+    assert.equal(isFullwidthKatakana("腕"), false);
+    assert.equal(isFullwidthKatakana("黑"), false);
+    assert.equal(isFullwidthKatakana("𠮟"), false);
   });
 });

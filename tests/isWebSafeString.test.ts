@@ -1,51 +1,52 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { isWebSafeString } from "../src/isWebSafeString.js";
 
 describe("isWebSafeString", () => {
   test("test no string", () => {
-    expect(isWebSafeString(undefined)).toBe(false);
-    expect(isWebSafeString(null)).toBe(false);
-    expect(isWebSafeString("")).toBe(true);
+    assert.equal(isWebSafeString(undefined), false);
+    assert.equal(isWebSafeString(null), false);
+    assert.equal(isWebSafeString(""), true);
   });
 
   test("test basic sequcence", () => {
-    expect(isWebSafeString("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ")).toBe(true);
-    expect(isWebSafeString("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ")).toBe(true);
-    expect(isWebSafeString("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ")).toBe(true);
-    expect(isWebSafeString("亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ")).toBe(true);
-    expect(isWebSafeString("\uFEFF")).toBe(false);
-    expect(isWebSafeString("\uE000")).toBe(false);
-    expect(isWebSafeString("\uD800")).toBe(false);
+    assert.equal(isWebSafeString("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ"), true);
+    assert.equal(isWebSafeString("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ"), true);
+    assert.equal(isWebSafeString("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ"), true);
+    assert.equal(isWebSafeString("亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ"), true);
+    assert.equal(isWebSafeString("\uFEFF"), false);
+    assert.equal(isWebSafeString("\uE000"), false);
+    assert.equal(isWebSafeString("\uD800"), false);
   });
 
   test("test ascii", () => {
-    expect(isWebSafeString("\0")).toBe(false);
-    expect(isWebSafeString("\t")).toBe(true);
-    expect(isWebSafeString("\r")).toBe(true);
-    expect(isWebSafeString("\n")).toBe(true);
-    expect(isWebSafeString(" ")).toBe(true);
-    expect(isWebSafeString("a")).toBe(true);
-    expect(isWebSafeString("0")).toBe(true);
-    expect(isWebSafeString("@")).toBe(true);
-    expect(isWebSafeString("\x7F")).toBe(false);
+    assert.equal(isWebSafeString("\0"), false);
+    assert.equal(isWebSafeString("\t"), true);
+    assert.equal(isWebSafeString("\r"), true);
+    assert.equal(isWebSafeString("\n"), true);
+    assert.equal(isWebSafeString(" "), true);
+    assert.equal(isWebSafeString("a"), true);
+    assert.equal(isWebSafeString("0"), true);
+    assert.equal(isWebSafeString("@"), true);
+    assert.equal(isWebSafeString("\x7F"), false);
   });
 
   test("test special", () => {
-    expect(isWebSafeString("\uFFF0")).toBe(false);
-    expect(isWebSafeString("\uFFF1")).toBe(false);
-    expect(isWebSafeString("\uFFF2")).toBe(false);
-    expect(isWebSafeString("\uFFF3")).toBe(false);
-    expect(isWebSafeString("\uFFF4")).toBe(false);
-    expect(isWebSafeString("\uFFF5")).toBe(false);
-    expect(isWebSafeString("\uFFF6")).toBe(false);
-    expect(isWebSafeString("\uFFF7")).toBe(false);
-    expect(isWebSafeString("\uFFF8")).toBe(false);
-    expect(isWebSafeString("\uFFF9")).toBe(false);
-    expect(isWebSafeString("\uFFFA")).toBe(false);
-    expect(isWebSafeString("\uFFFB")).toBe(false);
-    expect(isWebSafeString("\uFFFC")).toBe(false);
-    expect(isWebSafeString("\uFFFD")).toBe(false);
-    expect(isWebSafeString("\uFFFE")).toBe(false);
-    expect(isWebSafeString("\uFFFF")).toBe(false);
+    assert.equal(isWebSafeString("\uFFF0"), false);
+    assert.equal(isWebSafeString("\uFFF1"), false);
+    assert.equal(isWebSafeString("\uFFF2"), false);
+    assert.equal(isWebSafeString("\uFFF3"), false);
+    assert.equal(isWebSafeString("\uFFF4"), false);
+    assert.equal(isWebSafeString("\uFFF5"), false);
+    assert.equal(isWebSafeString("\uFFF6"), false);
+    assert.equal(isWebSafeString("\uFFF7"), false);
+    assert.equal(isWebSafeString("\uFFF8"), false);
+    assert.equal(isWebSafeString("\uFFF9"), false);
+    assert.equal(isWebSafeString("\uFFFA"), false);
+    assert.equal(isWebSafeString("\uFFFB"), false);
+    assert.equal(isWebSafeString("\uFFFC"), false);
+    assert.equal(isWebSafeString("\uFFFD"), false);
+    assert.equal(isWebSafeString("\uFFFE"), false);
+    assert.equal(isWebSafeString("\uFFFF"), false);
   });
 });

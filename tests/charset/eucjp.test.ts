@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import { describe, expect, test } from "vitest";
 import { CsvReader } from "../../src/CsvReader";
@@ -37,7 +38,7 @@ describe("eucjp", () => {
         // no handle
       }
 
-      expect([i.toString(16), c, actual?.toString(16)]).toStrictEqual([
+      assert.deepStrictEqual([i.toString(16), c, actual?.toString(16)], [
         i.toString(16),
         c,
         expected?.toString(16),

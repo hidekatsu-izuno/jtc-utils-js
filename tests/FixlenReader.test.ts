@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import { describe, expect, test } from "vitest";
 import { FixlenReader } from "../src/FixlenReader";
@@ -15,7 +16,7 @@ describe("FixlenReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["012", "345", "789"],
         ["012", "345", "789"],
       ]);
@@ -35,7 +36,7 @@ describe("FixlenReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["012", "345", "789"],
         ["012", "345", "789"],
       ]);
@@ -60,7 +61,7 @@ describe("FixlenReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["012", "3４５", "789"],
         ["012", "3４５", "789"],
       ]);
@@ -89,7 +90,7 @@ describe("FixlenReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([["あいうえお"], ["ABCDE", "abcde", "01234"]]);
+      assert.deepEqual(list, [["あいうえお"], ["ABCDE", "abcde", "01234"]]);
     } finally {
       await reader.close();
     }

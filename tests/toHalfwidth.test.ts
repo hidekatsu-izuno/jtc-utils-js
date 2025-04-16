@@ -1,27 +1,28 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { toHalfwidth } from "../src/toHalfwidth.js";
 
 describe("toHalfwidth", () => {
   test("test converting to half width", () => {
-    expect(toHalfwidth("\0")).toBe("\0");
-    expect(toHalfwidth("　")).toBe(" ");
-    expect(toHalfwidth("！")).toBe("!");
-    expect(toHalfwidth("０")).toBe("0");
-    expect(toHalfwidth("Ａ")).toBe("A");
-    expect(toHalfwidth("ａ")).toBe("a");
-    expect(toHalfwidth("～")).toBe("~");
-    expect(toHalfwidth("亜")).toBe("亜");
-    expect(toHalfwidth("ア")).toBe("ｱ");
-    expect(toHalfwidth("ｱ")).toBe("ｱ");
-    expect(toHalfwidth("ガ")).toBe("ｶﾞ");
-    expect(toHalfwidth("ｶﾞ")).toBe("ｶﾞ");
-    expect(toHalfwidth("パ")).toBe("ﾊﾟ");
-    expect(toHalfwidth("ﾊﾟ")).toBe("ﾊﾟ");
-    expect(toHalfwidth("「")).toBe("｢");
-    expect(toHalfwidth("」")).toBe("｣");
+    assert.equal(toHalfwidth("\0"), "\0");
+    assert.equal(toHalfwidth("　"), " ");
+    assert.equal(toHalfwidth("！"), "!");
+    assert.equal(toHalfwidth("０"), "0");
+    assert.equal(toHalfwidth("Ａ"), "A");
+    assert.equal(toHalfwidth("ａ"), "a");
+    assert.equal(toHalfwidth("～"), "~");
+    assert.equal(toHalfwidth("亜"), "亜");
+    assert.equal(toHalfwidth("ア"), "ｱ");
+    assert.equal(toHalfwidth("ｱ"), "ｱ");
+    assert.equal(toHalfwidth("ガ"), "ｶﾞ");
+    assert.equal(toHalfwidth("ｶﾞ"), "ｶﾞ");
+    assert.equal(toHalfwidth("パ"), "ﾊﾟ");
+    assert.equal(toHalfwidth("ﾊﾟ"), "ﾊﾟ");
+    assert.equal(toHalfwidth("「"), "｢");
+    assert.equal(toHalfwidth("」"), "｣");
   });
 
   test("test basic sequences", () => {
-    expect(toHalfwidth("０Ａアガパー")).toBe("0Aｱｶﾞﾊﾟｰ");
+    assert.equal(toHalfwidth("０Ａアガパー"), "0Aｱｶﾞﾊﾟｰ");
   });
 });

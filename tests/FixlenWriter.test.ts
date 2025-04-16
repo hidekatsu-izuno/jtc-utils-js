@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
-
+import { describe, test } from "vitest";
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import { FixlenWriter } from "../src/FixlenWriter";
 import { MemoryWritableStream } from "../src/MemoryWritableStream";
@@ -19,7 +19,7 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    expect(buf.toString("utf-8")).toStrictEqual("aaabbbccc dddee f   ");
+    assert.equal(buf.toString("utf-8"), "aaabbbccc dddee f   ");
   });
 
   test("test write utf-8 fixlen with bom", async () => {
@@ -37,7 +37,7 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    expect(buf.toString("utf-8")).toStrictEqual("\uFEFFaaabbbccc\ndddeeefff\n");
+    assert.equal(buf.toString("utf-8"), "\uFEFFaaabbbccc\ndddeeefff\n");
   });
 
   test("test write windows-31j fixlen", async () => {
@@ -55,7 +55,7 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    expect(buf.toString("windows-31j")).toStrictEqual(
+    assert.equal(buf.toString("windows-31j"), 
       "aaaあいｶｶﾞﾊﾟ \r\ndd あ　ｱｲｳ   \r\n",
     );
   });
@@ -79,7 +79,7 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    expect(buf.toUint8Array()).toStrictEqual(
+    assert.deepEqual(buf.toUint8Array(), 
       Uint8Array.of(
         0x81,
         0x81,
@@ -140,7 +140,7 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    expect(buf.toUint8Array()).toStrictEqual(
+    assert.deepEqual(buf.toUint8Array(), 
       Uint8Array.of(
         // line 1
         0x40,
@@ -264,7 +264,7 @@ describe("FixlenWriter", () => {
     }
 
     const buf = await fs.promises.readFile(filename);
-    expect(new TextDecoder("windows-31j").decode(buf)).toStrictEqual(
+    assert.equal(new TextDecoder("windows-31j").decode(buf), 
       "aaaあいｶｶﾞﾊﾟ \r\ndd あ　ｱｲｳ   \r\n",
     );
 

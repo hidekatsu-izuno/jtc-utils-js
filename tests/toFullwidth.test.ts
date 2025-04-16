@@ -1,26 +1,27 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { toFullwidth } from "../src/toFullwidth.js";
 
 describe("toFullwidth", () => {
   test("test converting to full width", () => {
-    expect(toFullwidth("\0")).toBe("\0");
-    expect(toFullwidth("!")).toBe("！");
-    expect(toFullwidth("0")).toBe("０");
-    expect(toFullwidth("A")).toBe("Ａ");
-    expect(toFullwidth("a")).toBe("ａ");
-    expect(toFullwidth("~")).toBe("～");
-    expect(toFullwidth("亜")).toBe("亜");
-    expect(toFullwidth("ｱ")).toBe("ア");
-    expect(toFullwidth("ア")).toBe("ア");
-    expect(toFullwidth("ｶﾞ")).toBe("ガ");
-    expect(toFullwidth("ガ")).toBe("ガ");
-    expect(toFullwidth("ﾊﾟ")).toBe("パ");
-    expect(toFullwidth("パ")).toBe("パ");
-    expect(toFullwidth("｢")).toBe("「");
-    expect(toFullwidth("ｰ")).toBe("ー");
+    assert.equal(toFullwidth("\0"), "\0");
+    assert.equal(toFullwidth("!"), "！");
+    assert.equal(toFullwidth("0"), "０");
+    assert.equal(toFullwidth("A"), "Ａ");
+    assert.equal(toFullwidth("a"), "ａ");
+    assert.equal(toFullwidth("~"), "～");
+    assert.equal(toFullwidth("亜"), "亜");
+    assert.equal(toFullwidth("ｱ"), "ア");
+    assert.equal(toFullwidth("ア"), "ア");
+    assert.equal(toFullwidth("ｶﾞ"), "ガ");
+    assert.equal(toFullwidth("ガ"), "ガ");
+    assert.equal(toFullwidth("ﾊﾟ"), "パ");
+    assert.equal(toFullwidth("パ"), "パ");
+    assert.equal(toFullwidth("｢"), "「");
+    assert.equal(toFullwidth("ｰ"), "ー");
   });
 
   test("test basic sequences", () => {
-    expect(toFullwidth("0Aｱｶﾞﾊﾟｰ")).toBe("０Ａアガパー");
+    assert.equal(toFullwidth("0Aｱｶﾞﾊﾟｰ"), "０Ａアガパー");
   });
 });

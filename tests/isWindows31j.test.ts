@@ -1,70 +1,71 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { isWindows31j } from "../src/isWindows31j.js";
 
 describe("isWindows31j", () => {
   test("test no string", () => {
-    expect(isWindows31j(undefined)).toBe(false);
-    expect(isWindows31j(null)).toBe(false);
-    expect(isWindows31j("")).toBe(false);
+    assert.equal(isWindows31j(undefined), false);
+    assert.equal(isWindows31j(null), false);
+    assert.equal(isWindows31j(""), false);
   });
 
   test("test basic sequcence", () => {
-    expect(isWindows31j("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ")).toBe(true);
-    expect(isWindows31j("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ")).toBe(true);
-    expect(isWindows31j("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ")).toBe(true);
-    expect(isWindows31j("亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ")).toBe(true);
+    assert.equal(isWindows31j("ｱｲｳｴｵｶﾞｷﾞｸﾞｹﾞｺﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ"), true);
+    assert.equal(isWindows31j("あｲｳｴｵｶﾞｷﾞｸﾞゲｺﾞﾊﾟﾋﾟﾌﾟﾍﾟぽ"), true);
+    assert.equal(isWindows31j("ｱいｳエｵガｷﾞぐｹﾞゴﾊﾟぴﾌﾟプﾎﾟ"), true);
+    assert.equal(isWindows31j("亜いｳエｵガｷﾞ具ｹﾞゴﾊﾟぴプﾎﾟ"), true);
   });
 
   test("test ascii", () => {
-    expect(isWindows31j("\0")).toBe(true);
-    expect(isWindows31j("\t")).toBe(true);
-    expect(isWindows31j("\r")).toBe(true);
-    expect(isWindows31j("\n")).toBe(true);
-    expect(isWindows31j(" ")).toBe(true);
-    expect(isWindows31j("a")).toBe(true);
-    expect(isWindows31j("0")).toBe(true);
-    expect(isWindows31j("@")).toBe(true);
-    expect(isWindows31j("\x7F")).toBe(true);
+    assert.equal(isWindows31j("\0"), true);
+    assert.equal(isWindows31j("\t"), true);
+    assert.equal(isWindows31j("\r"), true);
+    assert.equal(isWindows31j("\n"), true);
+    assert.equal(isWindows31j(" "), true);
+    assert.equal(isWindows31j("a"), true);
+    assert.equal(isWindows31j("0"), true);
+    assert.equal(isWindows31j("@"), true);
+    assert.equal(isWindows31j("\x7F"), true);
   });
 
   test("test fullwidth hiragana", () => {
-    expect(isWindows31j("あ")).toBe(true);
-    expect(isWindows31j("ぁ")).toBe(true);
-    expect(isWindows31j("が")).toBe(true);
-    expect(isWindows31j("ぱ")).toBe(true);
+    assert.equal(isWindows31j("あ"), true);
+    assert.equal(isWindows31j("ぁ"), true);
+    assert.equal(isWindows31j("が"), true);
+    assert.equal(isWindows31j("ぱ"), true);
   });
 
   test("test fullwidth katakana", () => {
-    expect(isWindows31j("ア")).toBe(true);
-    expect(isWindows31j("ァ")).toBe(true);
-    expect(isWindows31j("ガ")).toBe(true);
-    expect(isWindows31j("パ")).toBe(true);
-    expect(isWindows31j("ヴ")).toBe(true);
+    assert.equal(isWindows31j("ア"), true);
+    assert.equal(isWindows31j("ァ"), true);
+    assert.equal(isWindows31j("ガ"), true);
+    assert.equal(isWindows31j("パ"), true);
+    assert.equal(isWindows31j("ヴ"), true);
   });
 
   test("test halfwidth katakana", () => {
-    expect(isWindows31j("ｱ")).toBe(true);
-    expect(isWindows31j("ｧ")).toBe(true);
-    expect(isWindows31j("ｶﾞ")).toBe(true);
-    expect(isWindows31j("ﾊﾟ")).toBe(true);
-    expect(isWindows31j("ｳﾞ")).toBe(true);
+    assert.equal(isWindows31j("ｱ"), true);
+    assert.equal(isWindows31j("ｧ"), true);
+    assert.equal(isWindows31j("ｶﾞ"), true);
+    assert.equal(isWindows31j("ﾊﾟ"), true);
+    assert.equal(isWindows31j("ｳﾞ"), true);
   });
 
   test("test halfwidth symbol", () => {
-    expect(isWindows31j("€")).toBe(false);
-    expect(isWindows31j("₩")).toBe(false);
+    assert.equal(isWindows31j("€"), false);
+    assert.equal(isWindows31j("₩"), false);
   });
 
   test("test fullwidth symbol", () => {
-    expect(isWindows31j("　")).toBe(true);
-    expect(isWindows31j("、")).toBe(true);
-    expect(isWindows31j("￦")).toBe(false);
+    assert.equal(isWindows31j("　"), true);
+    assert.equal(isWindows31j("、"), true);
+    assert.equal(isWindows31j("￦"), false);
   });
 
   test("test fullwidth kanji", () => {
-    expect(isWindows31j("亜")).toBe(true);
-    expect(isWindows31j("腕")).toBe(true);
-    expect(isWindows31j("黑")).toBe(true);
-    expect(isWindows31j("𠮟")).toBe(false);
+    assert.equal(isWindows31j("亜"), true);
+    assert.equal(isWindows31j("腕"), true);
+    assert.equal(isWindows31j("黑"), true);
+    assert.equal(isWindows31j("𠮟"), false);
   });
 });

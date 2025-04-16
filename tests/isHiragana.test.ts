@@ -1,103 +1,104 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { isHiragana } from "../src/isHiragana.js";
 
 describe("isHiragana", () => {
   test("test empty", () => {
-    expect(isHiragana(undefined)).toBe(false);
-    expect(isHiragana(null)).toBe(false);
-    expect(isHiragana("")).toBe(false);
+    assert.equal(isHiragana(undefined), false);
+    assert.equal(isHiragana(null), false);
+    assert.equal(isHiragana(""), false);
   });
 
   test("test basic sequcence", () => {
-    expect(isHiragana("あいうえお")).toBe(true);
-    expect(isHiragana("あイうエお")).toBe(false);
-    expect(isHiragana("アいウえオ")).toBe(false);
+    assert.equal(isHiragana("あいうえお"), true);
+    assert.equal(isHiragana("あイうエお"), false);
+    assert.equal(isHiragana("アいウえオ"), false);
   });
 
   test("test ascii", () => {
-    expect(isHiragana("\0")).toBe(false);
-    expect(isHiragana("\t")).toBe(false);
-    expect(isHiragana("\r")).toBe(false);
-    expect(isHiragana("\n")).toBe(false);
-    expect(isHiragana(" ")).toBe(false);
-    expect(isHiragana("a")).toBe(false);
-    expect(isHiragana("0")).toBe(false);
-    expect(isHiragana("@")).toBe(false);
-    expect(isHiragana("\x7F")).toBe(false);
+    assert.equal(isHiragana("\0"), false);
+    assert.equal(isHiragana("\t"), false);
+    assert.equal(isHiragana("\r"), false);
+    assert.equal(isHiragana("\n"), false);
+    assert.equal(isHiragana(" "), false);
+    assert.equal(isHiragana("a"), false);
+    assert.equal(isHiragana("0"), false);
+    assert.equal(isHiragana("@"), false);
+    assert.equal(isHiragana("\x7F"), false);
   });
 
   test("test fullwidth symbol", () => {
-    expect(isHiragana("　")).toBe(true);
-    expect(isHiragana("゠")).toBe(false);
-    expect(isHiragana("・")).toBe(false);
-    expect(isHiragana("ー")).toBe(false);
-    expect(isHiragana("「")).toBe(false);
-    expect(isHiragana("」")).toBe(false);
-    expect(isHiragana("、")).toBe(false);
-    expect(isHiragana("。")).toBe(false);
-    expect(isHiragana("￠")).toBe(false);
-    expect(isHiragana("￦")).toBe(false);
-    expect(isHiragana("｟")).toBe(false);
-    expect(isHiragana("｠")).toBe(false);
+    assert.equal(isHiragana("　"), true);
+    assert.equal(isHiragana("゠"), false);
+    assert.equal(isHiragana("・"), false);
+    assert.equal(isHiragana("ー"), false);
+    assert.equal(isHiragana("「"), false);
+    assert.equal(isHiragana("」"), false);
+    assert.equal(isHiragana("、"), false);
+    assert.equal(isHiragana("。"), false);
+    assert.equal(isHiragana("￠"), false);
+    assert.equal(isHiragana("￦"), false);
+    assert.equal(isHiragana("｟"), false);
+    assert.equal(isHiragana("｠"), false);
   });
 
   test("test fullwidth hiragana", () => {
-    expect(isHiragana("あ")).toBe(true);
-    expect(isHiragana("ぁ")).toBe(true);
-    expect(isHiragana("が")).toBe(true);
-    expect(isHiragana("ぱ")).toBe(true);
-    expect(isHiragana("ゐ")).toBe(true);
-    expect(isHiragana("ゑ")).toBe(true);
-    expect(isHiragana("ん")).toBe(true);
-    expect(isHiragana("ゔ")).toBe(true);
-    expect(isHiragana("ゕ")).toBe(true);
-    expect(isHiragana("ゖ")).toBe(true);
+    assert.equal(isHiragana("あ"), true);
+    assert.equal(isHiragana("ぁ"), true);
+    assert.equal(isHiragana("が"), true);
+    assert.equal(isHiragana("ぱ"), true);
+    assert.equal(isHiragana("ゐ"), true);
+    assert.equal(isHiragana("ゑ"), true);
+    assert.equal(isHiragana("ん"), true);
+    assert.equal(isHiragana("ゔ"), true);
+    assert.equal(isHiragana("ゕ"), true);
+    assert.equal(isHiragana("ゖ"), true);
   });
 
   test("test fullwidth katakana", () => {
-    expect(isHiragana("ア")).toBe(false);
-    expect(isHiragana("ァ")).toBe(false);
-    expect(isHiragana("ガ")).toBe(false);
-    expect(isHiragana("パ")).toBe(false);
-    expect(isHiragana("ヰ")).toBe(false);
-    expect(isHiragana("ヱ")).toBe(false);
-    expect(isHiragana("ン")).toBe(false);
-    expect(isHiragana("ヷ")).toBe(false);
-    expect(isHiragana("ヸ")).toBe(false);
-    expect(isHiragana("ヴ")).toBe(false);
-    expect(isHiragana("ヺ")).toBe(false);
-    expect(isHiragana("ヹ")).toBe(false);
-    expect(isHiragana("ヵ")).toBe(false);
-    expect(isHiragana("ヶ")).toBe(false);
+    assert.equal(isHiragana("ア"), false);
+    assert.equal(isHiragana("ァ"), false);
+    assert.equal(isHiragana("ガ"), false);
+    assert.equal(isHiragana("パ"), false);
+    assert.equal(isHiragana("ヰ"), false);
+    assert.equal(isHiragana("ヱ"), false);
+    assert.equal(isHiragana("ン"), false);
+    assert.equal(isHiragana("ヷ"), false);
+    assert.equal(isHiragana("ヸ"), false);
+    assert.equal(isHiragana("ヴ"), false);
+    assert.equal(isHiragana("ヺ"), false);
+    assert.equal(isHiragana("ヹ"), false);
+    assert.equal(isHiragana("ヵ"), false);
+    assert.equal(isHiragana("ヶ"), false);
   });
 
   test("test halfwidth symbol", () => {
-    expect(isHiragana("｡")).toBe(false);
-    expect(isHiragana("｢")).toBe(false);
-    expect(isHiragana("｣")).toBe(false);
-    expect(isHiragana("､")).toBe(false);
-    expect(isHiragana("･")).toBe(false);
-    expect(isHiragana("ｰ")).toBe(false);
-    expect(isHiragana("ﾞ")).toBe(false);
-    expect(isHiragana("ﾟ")).toBe(false);
-    expect(isHiragana("¢")).toBe(false);
-    expect(isHiragana("€")).toBe(false);
-    expect(isHiragana("₩")).toBe(false);
+    assert.equal(isHiragana("｡"), false);
+    assert.equal(isHiragana("｢"), false);
+    assert.equal(isHiragana("｣"), false);
+    assert.equal(isHiragana("､"), false);
+    assert.equal(isHiragana("･"), false);
+    assert.equal(isHiragana("ｰ"), false);
+    assert.equal(isHiragana("ﾞ"), false);
+    assert.equal(isHiragana("ﾟ"), false);
+    assert.equal(isHiragana("¢"), false);
+    assert.equal(isHiragana("€"), false);
+    assert.equal(isHiragana("₩"), false);
   });
 
   test("test halfwidth katakana", () => {
-    expect(isHiragana("ｱ")).toBe(false);
-    expect(isHiragana("ｧ")).toBe(false);
-    expect(isHiragana("ｶﾞ")).toBe(false);
-    expect(isHiragana("ﾊﾟ")).toBe(false);
-    expect(isHiragana("ｳﾞ")).toBe(false);
-    expect(isHiragana("ﾝ")).toBe(false);
+    assert.equal(isHiragana("ｱ"), false);
+    assert.equal(isHiragana("ｧ"), false);
+    assert.equal(isHiragana("ｶﾞ"), false);
+    assert.equal(isHiragana("ﾊﾟ"), false);
+    assert.equal(isHiragana("ｳﾞ"), false);
+    assert.equal(isHiragana("ﾝ"), false);
   });
 
   test("test fullwidth kanji", () => {
-    expect(isHiragana("亜")).toBe(false);
-    expect(isHiragana("腕")).toBe(false);
-    expect(isHiragana("黑")).toBe(false);
-    expect(isHiragana("𠮟")).toBe(false);
+    assert.equal(isHiragana("亜"), false);
+    assert.equal(isHiragana("腕"), false);
+    assert.equal(isHiragana("黑"), false);
+    assert.equal(isHiragana("𠮟"), false);
   });
 });

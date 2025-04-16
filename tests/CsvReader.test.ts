@@ -3,6 +3,7 @@ import { Readable } from "node:stream";
 import { describe, expect, test } from "vitest";
 import { CsvReader } from "../src/CsvReader.js";
 import { windows31j } from "../src/charset/windows31j.js";
+import assert from "node:assert/strict";
 
 describe("CsvReader", () => {
   test.each([
@@ -38,7 +39,7 @@ describe("CsvReader", () => {
       for await (const record of reader) {
         list.push(record);
       }
-      expect(list).toStrictEqual(expected);
+      assert.deepEqual(list, expected);
     } finally {
       await reader.close();
     }
@@ -54,7 +55,7 @@ describe("CsvReader", () => {
       while ((record = await reader.read())) {
         list.push(record);
       }
-      expect(list).toStrictEqual([['あい"う'], ["えお"], ["かきく"]]);
+      assert.deepEqual(list, [['あい"う'], ["えお"], ["かきく"]]);
     } finally {
       await reader.close();
     }
@@ -84,7 +85,7 @@ describe("CsvReader", () => {
       while ((record = await reader.read())) {
         list.push(record);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["あいう", "え\nお"],
         ["かきく", "け\nこ"],
         ["", '"', ",", "さ,し", 'す"せ"そ'],
@@ -108,7 +109,7 @@ describe("CsvReader", () => {
       while ((record = await reader.read())) {
         list.push(record);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);
@@ -130,7 +131,7 @@ describe("CsvReader", () => {
       while ((record = await reader.read())) {
         list.push(record);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);
@@ -155,7 +156,7 @@ describe("CsvReader", () => {
       while ((record = await reader.read())) {
         list.push(record);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);
@@ -173,7 +174,7 @@ describe("CsvReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);
@@ -192,7 +193,7 @@ describe("CsvReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);
@@ -213,7 +214,7 @@ describe("CsvReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      expect(list).toStrictEqual([
+      assert.deepEqual(list, [
         ["昔々", "あるところに", "grand father,mother", "桃\r\n太郎"],
         ["住んでいました。"],
       ]);

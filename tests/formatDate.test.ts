@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { formatDate } from "../src/formatDate.js";
 import { enUS, ja, jaJPUCaJapanese } from "../src/locale/index.js";
@@ -5,7 +6,7 @@ import { getTimeZone } from "../src/util/getTimeZone.js";
 
 describe("formatDate", () => {
   test("test format from string to string", () => {
-    expect(formatDate("2000-01-01", "uuuu/M/d")).toBe("2000/1/1");
+    assert.equal(formatDate("2000-01-01", "uuuu/M/d"), "2000/1/1");
   });
 
   test("test format from string with tz to string", () => {
@@ -44,7 +45,7 @@ describe("formatDate", () => {
     expect(
       formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }),
     ).toBe("Anno Domini2000/1/1");
-    expect(formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja })).toBe(
+    assert.equal(formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja }), 
       "西暦2000/1/1",
     );
     expect(

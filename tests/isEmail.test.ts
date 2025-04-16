@@ -1,19 +1,20 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { isEmail } from "../src/isEmail.js";
 
 describe("isEmail", () => {
   test("test empty", () => {
-    expect(isEmail(undefined)).toBe(false);
-    expect(isEmail(null)).toBe(false);
-    expect(isEmail("")).toBe(false);
+    assert.equal(isEmail(undefined), false);
+    assert.equal(isEmail(null), false);
+    assert.equal(isEmail(""), false);
   });
 
   test("test basic", () => {
-    expect(isEmail("test@domain.com")).toBe(true);
-    expect(isEmail("test.sample@domain_domain.co.jp")).toBe(false);
-    expect(isEmail("test.sample@domain-domain.co.jp")).toBe(true);
-    expect(isEmail("test.@domain.ne.fr")).toBe(true);
-    expect(isEmail(".test@example")).toBe(true);
-    expect(isEmail("あいう@example")).toBe(false);
+    assert.equal(isEmail("test@domain.com"), true);
+    assert.equal(isEmail("test.sample@domain_domain.co.jp"), false);
+    assert.equal(isEmail("test.sample@domain-domain.co.jp"), true);
+    assert.equal(isEmail("test.@domain.ne.fr"), true);
+    assert.equal(isEmail(".test@example"), true);
+    assert.equal(isEmail("あいう@example"), false);
   });
 });

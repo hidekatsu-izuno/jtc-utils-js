@@ -1,27 +1,28 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 import { toHiragana } from "../src/toHiragana.js";
 
 describe("toHiragana", () => {
   test("Convert to hiragana", () => {
-    expect(toHiragana("\0")).toBe("\0");
-    expect(toHiragana("!")).toBe("!");
-    expect(toHiragana("0")).toBe("0");
-    expect(toHiragana("A")).toBe("A");
-    expect(toHiragana("a")).toBe("a");
-    expect(toHiragana("~")).toBe("~");
-    expect(toHiragana("亜")).toBe("亜");
-    expect(toHiragana("ｱ")).toBe("あ");
-    expect(toHiragana("ア")).toBe("あ");
-    expect(toHiragana("あ")).toBe("あ");
-    expect(toHiragana("ｶﾞ")).toBe("が");
-    expect(toHiragana("ガ")).toBe("が");
-    expect(toHiragana("が")).toBe("が");
-    expect(toHiragana("ﾊﾟ")).toBe("ぱ");
-    expect(toHiragana("パ")).toBe("ぱ");
-    expect(toHiragana("ぱ")).toBe("ぱ");
+    assert.equal(toHiragana("\0"), "\0");
+    assert.equal(toHiragana("!"), "!");
+    assert.equal(toHiragana("0"), "0");
+    assert.equal(toHiragana("A"), "A");
+    assert.equal(toHiragana("a"), "a");
+    assert.equal(toHiragana("~"), "~");
+    assert.equal(toHiragana("亜"), "亜");
+    assert.equal(toHiragana("ｱ"), "あ");
+    assert.equal(toHiragana("ア"), "あ");
+    assert.equal(toHiragana("あ"), "あ");
+    assert.equal(toHiragana("ｶﾞ"), "が");
+    assert.equal(toHiragana("ガ"), "が");
+    assert.equal(toHiragana("が"), "が");
+    assert.equal(toHiragana("ﾊﾟ"), "ぱ");
+    assert.equal(toHiragana("パ"), "ぱ");
+    assert.equal(toHiragana("ぱ"), "ぱ");
   });
 
   test("test basic sequences", () => {
-    expect(toHiragana("アガサ・ｸﾘｽﾃｨｰ")).toBe("あがさ・くりすてぃー");
+    assert.equal(toHiragana("アガサ・ｸﾘｽﾃｨｰ"), "あがさ・くりすてぃー");
   });
 });
