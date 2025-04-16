@@ -38,7 +38,7 @@ describe("eucjp", () => {
         // no handle
       }
 
-      assert.deepStrictEqual([i.toString(16), c, actual?.toString(16)], [
+      assert.deepEqual([i.toString(16), c, actual?.toString(16)], [
         i.toString(16),
         c,
         expected?.toString(16),

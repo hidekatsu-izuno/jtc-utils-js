@@ -19,7 +19,7 @@ describe("CsvWriter", () => {
       await writer.close();
     }
 
-    assert.strictEqual(buf.toString("utf-8"), 
+    assert.equal(buf.toString("utf-8"), 
       '\uFEFFaaa,"b""b\nb",ccc\r\nあいう\r\n',
     );
   });
@@ -37,7 +37,7 @@ describe("CsvWriter", () => {
       await writer.close();
     }
 
-    assert.strictEqual(buf.toString("utf-8"), 
+    assert.equal(buf.toString("utf-8"), 
       'aaa,"b""b\nb",ccc\r\nあいう\r\n',
     );
   });
@@ -60,7 +60,7 @@ describe("CsvWriter", () => {
       await writer.close();
     }
 
-    assert.strictEqual(buf.toString("windows-31j"), 
+    assert.equal(buf.toString("windows-31j"), 
       `aaa,"b""b\nb",ccc\r\nΑΡΣΩαρσωАЯанояぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n${userDefined}\r\n`,
     );
   });
@@ -83,7 +83,7 @@ describe("CsvWriter", () => {
       await writer.close();
     }
 
-    assert.strictEqual(buf.toString("utf-16le"), 
+    assert.equal(buf.toString("utf-16le"), 
       `\uFEFFaaa,"b""b\nb",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n${userDefined}\r\n`,
     );
   });
@@ -106,7 +106,7 @@ describe("CsvWriter", () => {
       await writer.close();
     }
 
-    assert.strictEqual(buf.toString("utf-16be"), 
+    assert.equal(buf.toString("utf-16be"), 
       `\uFEFFaaa,"b""b\nb",ccc\r\nΑΡΣΩαρσωぁあんァヶ亜滌漾鵈０９ＡＺｧﾝｶﾞﾊﾟ\r\n${userDefined}\r\n`,
     );
   });
@@ -126,7 +126,7 @@ describe("CsvWriter", () => {
     }
 
     const buf = await fs.promises.readFile(filename);
-    assert.strictEqual(buf.toString("utf-8"), 
+    assert.equal(buf.toString("utf-8"), 
       'aaa,"b""b\nb",ccc\r\nあいう\r\n',
     );
 

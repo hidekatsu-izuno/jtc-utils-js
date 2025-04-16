@@ -11,6 +11,6 @@ describe("MemoryWritableStream", () => {
     await out.write(Buffer.from("def"));
     await out.close();
 
-    assert.strictEqual(stream.toString("utf-8"), "abcdef");
+    assert.equal(stream.toString("utf-8"), "abcdef");
   });
 });
