@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { de, enUS, fr } from "../src/locale/index.js";
-import { parseNumber } from "../src/parseNumber.js";
+import { suite, test } from "node:test";
+import { de, enUS, fr } from "../src/locale/index.ts";
+import { parseNumber } from "../src/parseNumber.ts";
 
-describe("parseNumber", () => {
+suite("parseNumber", () => {
   test("test parsing no formats", () => {
     assert.equal(parseNumber("1,000.01"), 1000.01);
     assert.equal(parseNumber("01,000.01"), 1000.01);
@@ -31,16 +31,24 @@ describe("parseNumber", () => {
   });
 
   test("test parsing special formats", () => {
-    assert.equal(parseNumber("(1,000.01)", "###,###.##;(###,###.##)"), -1000.01);
+    assert.equal(
+      parseNumber("(1,000.01)", "###,###.##;(###,###.##)"),
+      -1000.01,
+    );
   });
 
   test("test localized format from number to string", () => {
-    assert.equal(parseNumber("1,000.01", "###,###.##", { locale: enUS }), 
+    assert.equal(
+      parseNumber("1,000.01", "###,###.##", { locale: enUS }),
       1000.01,
     );
-    assert.equal(parseNumber("1\u202f000,01", "###,###.##", { locale: fr }), 
+    assert.equal(
+      parseNumber("1\u202f000,01", "###,###.##", { locale: fr }),
       1000.01,
     );
-    assert.equal(parseNumber("1.000,01", "###,###.##", { locale: de }), 1000.01);
+    assert.equal(
+      parseNumber("1.000,01", "###,###.##", { locale: de }),
+      1000.01,
+    );
   });
 });

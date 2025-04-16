@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isUnicodeBMP } from "../src/isUnicodeBMP.js";
+import { suite, test } from "node:test";
+import { isUnicodeBMP } from "../src/isUnicodeBMP.ts";
 
-describe("isUnicodeBMP", () => {
+suite("isUnicodeBMP", () => {
   test("test no string", () => {
     assert.equal(isUnicodeBMP(undefined), false);
     assert.equal(isUnicodeBMP(null), false);

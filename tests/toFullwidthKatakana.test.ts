@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toFullwidthKatakana } from "../src/toFullwidthKatakana.js";
+import { suite, test } from "node:test";
+import { toFullwidthKatakana } from "../src/toFullwidthKatakana.ts";
 
-describe("toFullwidthKatakana", () => {
+suite("toFullwidthKatakana", () => {
   test("Convert to katakana", () => {
     assert.equal(toFullwidthKatakana("\0"), "\0");
     assert.equal(toFullwidthKatakana("!"), "!");

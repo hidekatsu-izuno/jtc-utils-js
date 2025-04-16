@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toHalfwidth } from "../src/toHalfwidth.js";
+import { suite, test } from "node:test";
+import { toHalfwidth } from "../src/toHalfwidth.ts";
 
-describe("toHalfwidth", () => {
+suite("toHalfwidth", () => {
   test("test converting to half width", () => {
     assert.equal(toHalfwidth("\0"), "\0");
     assert.equal(toHalfwidth("　"), " ");

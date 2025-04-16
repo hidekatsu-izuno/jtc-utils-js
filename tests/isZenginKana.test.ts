@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isZenginKana } from "../src/isZenginKana.js";
+import { suite, test } from "node:test";
+import { isZenginKana } from "../src/isZenginKana.ts";
 
-describe("isZenginKana", () => {
+suite("isZenginKana", () => {
   test("test empty", () => {
     assert.equal(isZenginKana(undefined), false);
     assert.equal(isZenginKana(null), false);

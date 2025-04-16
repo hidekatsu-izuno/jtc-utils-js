@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toNormalizedString } from "../src/toNormalizedString.js";
+import { suite, test } from "node:test";
+import { toNormalizedString } from "../src/toNormalizedString.ts";
 
-describe("toNormalizedString", () => {
+suite("toNormalizedString", () => {
   test("test safe unicode", () => {
     assert.equal(toNormalizedString("\0"), "\0");
     assert.equal(toNormalizedString("\t"), "\t");
@@ -49,7 +49,8 @@ describe("toNormalizedString", () => {
   });
 
   test("test basic sequences", () => {
-    assert.equal(toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n"), 
+    assert.equal(
+      toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n"),
       "Aあｱ亜欄\u304C\n",
     );
   });

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isWindows31j } from "../src/isWindows31j.js";
+import { suite, test } from "node:test";
+import { isWindows31j } from "../src/isWindows31j.ts";
 
-describe("isWindows31j", () => {
+suite("isWindows31j", () => {
   test("test no string", () => {
     assert.equal(isWindows31j(undefined), false);
     assert.equal(isWindows31j(null), false);

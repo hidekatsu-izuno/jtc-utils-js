@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { describe, expect, test } from "vitest";
-import { FixlenReader } from "../src/FixlenReader";
-import { windows31j } from "../src/charset/windows31j";
+import path from "node:path";
+import { suite, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { FixlenReader } from "../src/FixlenReader.ts";
+import { windows31j } from "../src/charset/windows31j.ts";
 
-describe("FixlenReader", () => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+suite("FixlenReader", () => {
   test("test read string", async () => {
     const reader = new FixlenReader("01234567890123456789", {
       lineLength: 10,

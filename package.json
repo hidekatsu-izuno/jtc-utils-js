@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
-    "test": "vitest run --config vitest.config.ts",
+    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
     "format": "biome check --write",
     "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
@@ -84,8 +84,7 @@
     "@biomejs/biome": "1.9.4",
     "@tsconfig/recommended": "^1.0.8",
     "@types/node": "^20.17.30",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "date-fns": "^4.1.0"

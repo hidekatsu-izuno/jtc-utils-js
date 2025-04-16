@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isFullwidthKatakana } from "../src/isFullwidthKatakana.js";
+import { suite, test } from "node:test";
+import { isFullwidthKatakana } from "../src/isFullwidthKatakana.ts";
 
-describe("isFullwidthKatakana", () => {
+suite("isFullwidthKatakana", () => {
   test("test empty", () => {
     assert.equal(isFullwidthKatakana(undefined), false);
     assert.equal(isFullwidthKatakana(null), false);

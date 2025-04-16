@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toZenginKana } from "../src/toZenginKana.js";
+import { suite, test } from "node:test";
+import { toZenginKana } from "../src/toZenginKana.ts";
 
-describe("toZenginKana", () => {
+suite("toZenginKana", () => {
   test("test characters", () => {
     assert.equal(toZenginKana("\0"), "\0");
     assert.equal(toZenginKana("¥"), "\\");

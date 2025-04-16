@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { formatNumber } from "../src/formatNumber.js";
-import { de, enUS, fr } from "../src/locale/index.js";
+import { suite, test } from "node:test";
+import { formatNumber } from "../src/formatNumber.ts";
+import { de, enUS, fr } from "../src/locale/index.ts";
 
-describe("formatNumber", () => {
+suite("formatNumber", () => {
   test("test format from number to string", () => {
     assert.equal(formatNumber(0, "######"), "0");
     assert.equal(formatNumber(0, "###,###"), "0");
@@ -31,13 +31,16 @@ describe("formatNumber", () => {
   });
 
   test("test localized format from number to string", () => {
-    assert.equal(formatNumber(1000.01, "###,###.##", { locale: enUS }), 
+    assert.equal(
+      formatNumber(1000.01, "###,###.##", { locale: enUS }),
       "1,000.01",
     );
-    assert.equal(formatNumber(1000.01, "###,###.##", { locale: fr }), 
+    assert.equal(
+      formatNumber(1000.01, "###,###.##", { locale: fr }),
       "1\u202f000,01",
     );
-    assert.equal(formatNumber(1000.01, "###,###.##", { locale: de }), 
+    assert.equal(
+      formatNumber(1000.01, "###,###.##", { locale: de }),
       "1.000,01",
     );
   });

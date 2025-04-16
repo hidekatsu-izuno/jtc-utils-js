@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toFullwidth } from "../src/toFullwidth.js";
+import { suite, test } from "node:test";
+import { toFullwidth } from "../src/toFullwidth.ts";
 
-describe("toFullwidth", () => {
+suite("toFullwidth", () => {
   test("test converting to full width", () => {
     assert.equal(toFullwidth("\0"), "\0");
     assert.equal(toFullwidth("!"), "！");

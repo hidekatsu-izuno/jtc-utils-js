@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { MemoryWritableStream } from "../src/MemoryWritableStream";
+import { suite, test } from "node:test";
+import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 
-describe("MemoryWritableStream", () => {
+suite("MemoryWritableStream", () => {
   test("test writable stream", async () => {
     const stream = new MemoryWritableStream();
 

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isHttpURL } from "../src/isHttpURL.js";
+import { suite, test } from "node:test";
+import { isHttpURL } from "../src/isHttpURL.ts";
 
-describe("isHttpURL", () => {
+suite("isHttpURL", () => {
   test("test empty", () => {
     assert.equal(isHttpURL(undefined), false);
     assert.equal(isHttpURL(null), false);
@@ -12,19 +12,22 @@ describe("isHttpURL", () => {
   test("test basic", () => {
     assert.equal(isHttpURL("http://example.com"), true);
     assert.equal(isHttpURL("https://test.example.co.jp"), true);
-    assert.equal(isHttpURL("https://test.example.co.jp/foo/bar/test.html"), 
+    assert.equal(
+      isHttpURL("https://test.example.co.jp/foo/bar/test.html"),
       true,
     );
-    expect(
+    assert.equal(
       isHttpURL(
         "https://test.example.co.jp/foo/bar/test.html?a=1&bb=22&ccc=333",
       ),
-    ).toBe(true);
-    expect(
+      true,
+    );
+    assert.equal(
       isHttpURL(
         "https://test.example.co.jp/foo/bar/test.html?a=1&bb=22&ccc=333#anchor",
       ),
-    ).toBe(true);
+      true,
+    );
     assert.equal(isHttpURL("mailto:test@domain.com"), false);
     assert.equal(isHttpURL("ftp://test.example.co.jp"), false);
     assert.equal(isHttpURL("file:///test.example.co.jp"), false);

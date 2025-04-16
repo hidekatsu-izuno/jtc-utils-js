@@ -1,12 +1,17 @@
-import { describe, test } from "vitest";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { FixlenWriter } from "../src/FixlenWriter";
-import { MemoryWritableStream } from "../src/MemoryWritableStream";
-import { cp939 } from "../src/charset/cp939";
-import { windows31j } from "../src/charset/windows31j";
+import path from "node:path";
+import { suite, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { FixlenWriter } from "../src/FixlenWriter.ts";
+import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
+import { cp939 } from "../src/charset/cp939.ts";
+import { windows31j } from "../src/charset/windows31j.ts";
 
-describe("FixlenWriter", () => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+suite("FixlenWriter", () => {
   test("test write utf-8 fixlen without bom", async () => {
     const buf = new MemoryWritableStream();
     const writer = new FixlenWriter(buf, {
@@ -55,7 +60,8 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    assert.equal(buf.toString("windows-31j"), 
+    assert.equal(
+      buf.toString("windows-31j"),
       "aaaあいｶｶﾞﾊﾟ \r\ndd あ　ｱｲｳ   \r\n",
     );
   });
@@ -79,7 +85,8 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    assert.deepEqual(buf.toUint8Array(), 
+    assert.deepEqual(
+      buf.toUint8Array(),
       Uint8Array.of(
         0x81,
         0x81,
@@ -140,7 +147,8 @@ describe("FixlenWriter", () => {
       await writer.close();
     }
 
-    assert.deepEqual(buf.toUint8Array(), 
+    assert.deepEqual(
+      buf.toUint8Array(),
       Uint8Array.of(
         // line 1
         0x40,
@@ -264,7 +272,8 @@ describe("FixlenWriter", () => {
     }
 
     const buf = await fs.promises.readFile(filename);
-    assert.equal(new TextDecoder("windows-31j").decode(buf), 
+    assert.equal(
+      new TextDecoder("windows-31j").decode(buf),
       "aaaあいｶｶﾞﾊﾟ \r\ndd あ　ｱｲｳ   \r\n",
     );
 

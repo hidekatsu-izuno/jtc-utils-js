@@ -1,57 +1,67 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { formatDate } from "../src/formatDate.js";
-import { enUS, ja, jaJPUCaJapanese } from "../src/locale/index.js";
-import { getTimeZone } from "../src/util/getTimeZone.js";
+import { suite, test } from "node:test";
+import { formatDate } from "../src/formatDate.ts";
+import { enUS, ja, jaJPUCaJapanese } from "../src/locale/index.ts";
+import { getTimeZone } from "../src/util/getTimeZone.ts";
 
-describe("formatDate", () => {
+suite("formatDate", () => {
   test("test format from string to string", () => {
     assert.equal(formatDate("2000-01-01", "uuuu/M/d"), "2000/1/1");
   });
 
   test("test format from string with tz to string", () => {
     const current = getTimeZone();
-    expect(
+    assert.equal(
       formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", {
         timeZone: current,
       }),
-    ).toBe("2000/1/1 0:0:0");
-    expect(
+      "2000/1/1 0:0:0",
+    );
+    assert.equal(
       formatDate("2000-01-01 00:00:00", "uuuu/M/d H:m:s", { timeZone: "UTC" }),
-    ).toBe("1999/12/31 15:0:0");
-    expect(
+      "1999/12/31 15:0:0",
+    );
+    assert.equal(
       formatDate("2000-01-01 00:00:00Z", "uuuu/M/d H:m:s", {
         timeZone: current,
       }),
-    ).toBe("2000/1/1 9:0:0");
-    expect(
+      "2000/1/1 9:0:0",
+    );
+    assert.equal(
       formatDate("2000-01-01 00:00:00Z", "uuuu/M/d H:m:s", { timeZone: "UTC" }),
-    ).toBe("2000/1/1 0:0:0");
+      "2000/1/1 0:0:0",
+    );
   });
 
   test("test format japanese calendar", () => {
-    expect(
+    assert.equal(
       formatDate("2000-01-01", "Gy/M/d", { locale: jaJPUCaJapanese }),
-    ).toBe("平12/1/1");
-    expect(
+      "平12/1/1",
+    );
+    assert.equal(
       formatDate("2000-01-01", "GGGGyyy/M/d", { locale: jaJPUCaJapanese }),
-    ).toBe("平成012/1/1");
-    expect(
+      "平成012/1/1",
+    );
+    assert.equal(
       formatDate("2000-01-01", "GGGGGyyy/M/d", { locale: jaJPUCaJapanese }),
-    ).toBe("H012/1/1");
+      "H012/1/1",
+    );
   });
 
   test("test localalized format", () => {
-    expect(
+    assert.equal(
       formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }),
-    ).toBe("Anno Domini2000/1/1");
-    assert.equal(formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja }), 
+      "Anno Domini2000/1/1",
+    );
+    assert.equal(
+      formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja }),
       "西暦2000/1/1",
     );
-    expect(
+    assert.equal(
       formatDate(new Date(2000, 0, 1), "GGGGy/M/d", {
         locale: jaJPUCaJapanese,
       }),
-    ).toBe("平成12/1/1");
+      "平成12/1/1",
+    );
   });
 });

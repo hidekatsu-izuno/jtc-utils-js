@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isWebSafeString } from "../src/isWebSafeString.js";
+import { suite, test } from "node:test";
+import { isWebSafeString } from "../src/isWebSafeString.ts";
 
-describe("isWebSafeString", () => {
+suite("isWebSafeString", () => {
   test("test no string", () => {
     assert.equal(isWebSafeString(undefined), false);
     assert.equal(isWebSafeString(null), false);

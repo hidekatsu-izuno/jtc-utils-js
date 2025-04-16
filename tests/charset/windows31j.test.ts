@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { describe, expect, test } from "vitest";
-import { CsvReader } from "../../src/CsvReader";
-import { windows31j } from "../../src/charset/windows31j.js";
+import path from "node:path";
+import { suite, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { CsvReader } from "../../src/CsvReader.ts";
+import { windows31j } from "../../src/charset/windows31j.ts";
 
-describe("windows31j", () => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+suite("windows31j", () => {
   test("compare windows-31j encoder output", async () => {
     const map = new Map();
     const reader = new CsvReader(
@@ -38,11 +43,10 @@ describe("windows31j", () => {
         // no handle
       }
 
-      assert.deepEqual([i.toString(16), c, actual?.toString(16)], [
-        i.toString(16),
-        c,
-        expected?.toString(16),
-      ]);
+      assert.deepEqual(
+        [i.toString(16), c, actual?.toString(16)],
+        [i.toString(16), c, expected?.toString(16)],
+      );
     }
   });
 });

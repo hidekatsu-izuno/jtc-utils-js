@@ -1,12 +1,17 @@
-import fs from "node:fs";
-import { Readable } from "node:stream";
-import { describe, expect, test } from "vitest";
-import { CsvReader } from "../src/CsvReader.js";
-import { windows31j } from "../src/charset/windows31j.js";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { Readable } from "node:stream";
+import { suite, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { CsvReader } from "../src/CsvReader.ts";
+import { windows31j } from "../src/charset/windows31j.ts";
 
-describe("CsvReader", () => {
-  test.each([
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+suite("CsvReader", () => {
+  for (const target of new Array<[string, string[][]]>(
     ["", []],
     ['""', [[""]]],
     ["あいう", [["あいう"]]],
@@ -32,18 +37,20 @@ describe("CsvReader", () => {
         ['かき"く', "けこ"],
       ],
     ],
-  ])("test read string %j", async (input, expected) => {
-    const reader = new CsvReader(input);
-    try {
-      const list = new Array<string[]>();
-      for await (const record of reader) {
-        list.push(record);
+  )) {
+    test(`test read string for ${target}`, async () => {
+      const reader = new CsvReader(target[0]);
+      try {
+        const list = new Array<string[]>();
+        for await (const record of reader) {
+          list.push(record);
+        }
+        assert.deepEqual(list, target[1]);
+      } finally {
+        await reader.close();
       }
-      assert.deepEqual(list, expected);
-    } finally {
-      await reader.close();
-    }
-  });
+    });
+  }
 
   test("test empty line exists", async () => {
     const reader = new CsvReader('"あい""う"\n\nえお\r\n\r\n"かきく"', {

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isHiragana } from "../src/isHiragana.js";
+import { suite, test } from "node:test";
+import { isHiragana } from "../src/isHiragana.ts";
 
-describe("isHiragana", () => {
+suite("isHiragana", () => {
   test("test empty", () => {
     assert.equal(isHiragana(undefined), false);
     assert.equal(isHiragana(null), false);

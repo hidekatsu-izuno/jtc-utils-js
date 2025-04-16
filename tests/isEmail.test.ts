@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isEmail } from "../src/isEmail.js";
+import { suite, test } from "node:test";
+import { isEmail } from "../src/isEmail.ts";
 
-describe("isEmail", () => {
+suite("isEmail", () => {
   test("test empty", () => {
     assert.equal(isEmail(undefined), false);
     assert.equal(isEmail(null), false);

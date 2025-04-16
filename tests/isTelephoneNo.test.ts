@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { isTelephoneNo } from "../src/isTelephoneNo.js";
+import { suite, test } from "node:test";
+import { isTelephoneNo } from "../src/isTelephoneNo.ts";
 
-describe("isTelephoneNo", () => {
+suite("isTelephoneNo", () => {
   test("test empty", () => {
     assert.equal(isTelephoneNo(undefined), false);
     assert.equal(isTelephoneNo(null), false);

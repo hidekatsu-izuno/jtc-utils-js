@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { describe, expect, test } from "vitest";
-import { CsvReader } from "../../src/CsvReader.js";
-import { cp939 } from "../../src/charset/cp939.js";
+import path from "node:path";
+import { suite, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { CsvReader } from "../../src/CsvReader.ts";
+import { cp939 } from "../../src/charset/cp939.ts";
 
-describe("cp939", () => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+suite("cp939", () => {
   test("compare cp939 decoder output", async () => {
     const map = new Map<number, number>();
     const reader = new CsvReader(
@@ -29,10 +34,10 @@ describe("cp939", () => {
       } catch (err) {
         // no handle
       }
-      assert.deepEqual([i.toString(16), actual?.toString(16)], [
-        i.toString(16),
-        expected?.toString(16),
-      ]);
+      assert.deepEqual(
+        [i.toString(16), actual?.toString(16)],
+        [i.toString(16), expected?.toString(16)],
+      );
     }
 
     for (let i = 0x4040; i <= 0xffff; i++) {
@@ -47,10 +52,10 @@ describe("cp939", () => {
       } catch (err) {
         // no handle
       }
-      assert.deepEqual([i.toString(16), actual?.toString(16)], [
-        i.toString(16),
-        expected?.toString(16),
-      ]);
+      assert.deepEqual(
+        [i.toString(16), actual?.toString(16)],
+        [i.toString(16), expected?.toString(16)],
+      );
     }
   });
 
@@ -86,11 +91,10 @@ describe("cp939", () => {
         // no handle
       }
 
-      assert.deepEqual([i.toString(16), c, actual?.toString(16)], [
-        i.toString(16),
-        c,
-        expected?.toString(16),
-      ]);
+      assert.deepEqual(
+        [i.toString(16), c, actual?.toString(16)],
+        [i.toString(16), c, expected?.toString(16)],
+      );
     }
   });
 });

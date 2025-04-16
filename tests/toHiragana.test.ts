@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, expect, test } from "vitest";
-import { toHiragana } from "../src/toHiragana.js";
+import { suite, test } from "node:test";
+import { toHiragana } from "../src/toHiragana.ts";
 
-describe("toHiragana", () => {
+suite("toHiragana", () => {
   test("Convert to hiragana", () => {
     assert.equal(toHiragana("\0"), "\0");
     assert.equal(toHiragana("!"), "!");
