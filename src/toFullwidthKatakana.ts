@@ -198,7 +198,12 @@ export function toFullwidthKatakana(value: string | null | undefined) {
     const c = value.charAt(i);
     if (i + 1 < value.length) {
       const c2 = value.charAt(i + 1);
-      if (c2 === "\u3099" || c2 === "\u309A" || c2 === "\uFF9E" || c2 === "\uFF9F") {
+      if (
+        c2 === "\u3099" || 
+        c2 === "\u309A" || 
+        c2 === "\uFF9E" || 
+        c2 === "\uFF9F"
+      ) {
         const m = M.get(c + c2);
         if (m != null) {
           if (start < i) {
