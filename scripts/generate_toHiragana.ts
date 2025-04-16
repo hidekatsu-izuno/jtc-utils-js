@@ -15,7 +15,7 @@ try {
       }
       const from = line[0].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
       const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
-      await output.write(`\t["${from}", "${to}"],\n`);
+      await output.write(`  ["${from}", "${to}"],\n`);
     }
     await output.write(`]);
 

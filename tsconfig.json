@@ -1,22 +1,22 @@
 {
-	"compilerOptions": {
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"newLine": "LF",
-		"target": "es2021",
-		"strict": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"declaration": true,
-		"declarationMap": true,
-		"emitDeclarationOnly": true,
-		"erasableSyntaxOnly": true,
-		"allowImportingTsExtensions": true,
-		"rewriteRelativeImportExtensions": true,
-		"verbatimModuleSyntax": true,
-		"paths": {
-			"@/*": ["./src/*"]
-		}
-	},
-	"include": ["./src/**/*"]
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "newLine": "LF",
+    "target": "es2021",
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["./src/**/*"]
 }

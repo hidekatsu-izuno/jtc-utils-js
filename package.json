@@ -23,9 +23,9 @@
     "url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
   },
   "scripts": {
-    "check": "biome check --write",
     "build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest run --config vitest.config.ts",
+    "format": "biome check --write",
     "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidthKatakana.ts",
@@ -34,7 +34,7 @@
     "generate:toZenginKana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "type": "module",
   "sideEffects": false,
