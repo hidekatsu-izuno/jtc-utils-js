@@ -134,14 +134,28 @@ export class NumberFormat {
     return dformat;
   }
 
+  public positive: NumberFormatPattern;
+  public negative: NumberFormatPattern;
+  public zero: NumberFormatPattern;
+  public decimalSeparator: string;
+  public groupingSeparator: string;
+  public map: Map<string, string>;
+
   private constructor(
-    public positive: NumberFormatPattern,
-    public negative: NumberFormatPattern,
-    public zero: NumberFormatPattern,
-    public decimalSeparator: string,
-    public groupingSeparator: string,
-    public map: Map<string, string>,
-  ) {}
+    positive: NumberFormatPattern,
+    negative: NumberFormatPattern,
+    zero: NumberFormatPattern,
+    decimalSeparator: string,
+    groupingSeparator: string,
+    map: Map<string, string>,
+  ) {
+    this.positive = positive;
+    this.negative = negative;
+    this.zero = zero;
+    this.decimalSeparator = decimalSeparator;
+    this.groupingSeparator = groupingSeparator;
+    this.map = map;
+  }
 
   format(value: number) {
     if (Number.isNaN(value)) {

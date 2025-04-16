@@ -38,7 +38,11 @@ export class DateFormat {
     return dformat;
   }
 
-  constructor(public parts: Array<DateFormatPart>) {}
+  public parts: Array<DateFormatPart>;
+
+  constructor(parts: Array<DateFormatPart>) {
+    this.parts = parts;
+  }
 
   toString() {
     let str = "";

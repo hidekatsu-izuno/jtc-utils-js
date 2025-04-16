@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { CsvReader } from "../src/CsvReader.js";
+import { CsvReader } from "../src/CsvReader.ts";
 
 const input = await fs.open("./data/map.hiragana.csv");
 const reader = new CsvReader(input, {
@@ -17,49 +17,49 @@ try {
       const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
       await output.write(`\t["${from}", "${to}"],\n`);
     }
-    await output.write(`])
+    await output.write(`]);
 
 export function toHiragana(str: string): string;
 export function toHiragana(str: null): null;
 export function toHiragana(str: undefined): undefined;
 export function toHiragana(value: string | null | undefined) {
   if (!value) {
-    return value
+    return value;
   }
 
-  const array = []
-  let start = 0
+  const array = [];
+  let start = 0;
   for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
+    const c = value.charAt(i);
     if (i + 1 < value.length) {
-      const c2 = value.charAt(i + 1)
-      if (c2 == "\\uFF9E" || c2 == "\\uFF9F") {
-        const m = M.get(c + c2)
+      const c2 = value.charAt(i + 1);
+      if (c2 === "\\uFF9E" || c2 === "\\uFF9F") {
+        const m = M.get(c + c2);
         if (m != null) {
           if (start < i) {
-            array.push(value.substring(start, i))
+            array.push(value.substring(start, i));
           }
-          array.push(m)
-          i++
-          start = i + 1
-          continue
+          array.push(m);
+          i++;
+          start = i + 1;
+          continue;
         }
       }
     }
 
-    const m = M.get(c)
+    const m = M.get(c);
     if (m != null) {
       if (start < i) {
-        array.push(value.substring(start, i))
+        array.push(value.substring(start, i));
       }
-      array.push(m)
-      start = i + 1
+      array.push(m);
+      start = i + 1;
     }
   }
   if (start < value.length) {
-    array.push(value.substring(start))
+    array.push(value.substring(start));
   }
-  return array.join("")
+  return array.join("");
 }
 `);
   } finally {

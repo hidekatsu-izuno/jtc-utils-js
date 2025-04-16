@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { CsvReader } from "../src/CsvReader.js";
+import { CsvReader } from "../src/CsvReader.ts";
 
 const input = await fs.open("./data/map.halfwidth.csv");
 const reader = new CsvReader(input, {
@@ -17,33 +17,33 @@ try {
       const to = line[1].padStart(4, "0").replace(/(.{4})/g, "\\u$1");
       await output.write(`\t["${from}", "${to}"],\n`);
     }
-    await output.write(`])
+    await output.write(`]);
 
 export function toHalfwidth(str: string): string;
 export function toHalfwidth(str: null): null;
 export function toHalfwidth(str: undefined): undefined;
 export function toHalfwidth(value: string | null | undefined) {
   if (!value) {
-    return value
+    return value;
   }
 
-  const array = []
-  let start = 0
+  const array = [];
+  let start = 0;
   for (let i = 0; i < value.length; i++) {
-    const c = value.charAt(i)
-    const m = M.get(c)
+    const c = value.charAt(i);
+    const m = M.get(c);
     if (m != null) {
       if (start < i) {
-        array.push(value.substring(start, i))
+        array.push(value.substring(start, i));
       }
-      array.push(m)
-      start = i + 1
+      array.push(m);
+      start = i + 1;
     }
   }
   if (start < value.length) {
-    array.push(value.substring(start))
+    array.push(value.substring(start));
   }
-  return array.join("")
+  return array.join("");
 }
 `);
   } finally {

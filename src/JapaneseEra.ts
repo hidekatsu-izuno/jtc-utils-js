@@ -82,12 +82,22 @@ export class JapaneseEra {
     }
   }
 
+  readonly name: string;
+  readonly localeNames: Record<string, Record<string, string>>;
+  readonly start: Date;
+  readonly end?: Date;
+
   constructor(
-    public readonly name: string,
-    public readonly localeNames: Record<string, Record<string, string>>,
-    public readonly start: Date,
-    public readonly end?: Date,
-  ) {}
+    name: string,
+    localeNames: Record<string, Record<string, string>>,
+    start: Date,
+    end?: Date,
+  ) {
+    this.name = name;
+    this.localeNames = localeNames;
+    this.start = start;
+    this.end = end;
+  }
 
   includes(date: Date) {
     return this.start <= date && (this.end == null || this.end > date);

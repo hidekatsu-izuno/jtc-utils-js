@@ -52,7 +52,7 @@ export function parseDate(
       const parseOptions: Parameters<typeof parse>[3] = { locale };
       let era: JapaneseEra | undefined;
       if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
-        parseOptions.locale = <Locale>{
+        parseOptions.locale = {
           ...locale,
           match: {
             ...locale.match,
@@ -73,7 +73,7 @@ export function parseDate(
               }
             },
           },
-        };
+        } as Locale;
       }
       dDate = parse(str, format, new Date(), parseOptions);
       if (!isValid(dDate)) {

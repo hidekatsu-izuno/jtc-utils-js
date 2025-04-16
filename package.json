@@ -24,14 +24,14 @@
   },
   "scripts": {
     "check": "biome check --write",
-    "build": "tsx ./scripts/build_ts.ts",
+    "build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
     "test": "vitest run --config vitest.config.ts",
-    "generate:IBMKanjiDecodeMap": "tsx ./scripts/generate_IBMKanjiDecodeMap.ts",
-    "generate:toFullwidth": "tsx ./scripts/generate_toFullwidth.ts",
-    "generate:toFullwidthKatakana": "tsx ./scripts/generate_toFullwidthKatakana.ts",
-    "generate:toHalfwidth": "tsx ./scripts/generate_toHalfwidth.ts",
-    "generate:toHiragana": "tsx ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "tsx ./scripts/generate_toZenginKana.ts"
+    "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
+    "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
+    "generate:toFullwidthKatakana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidthKatakana.ts",
+    "generate:toHalfwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toHalfwidth.ts",
+    "generate:toHiragana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toHiragana.ts",
+    "generate:toZenginKana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
     "node": ">=18"
@@ -84,7 +84,6 @@
     "@biomejs/biome": "1.9.4",
     "@tsconfig/recommended": "^1.0.8",
     "@types/node": "^20.17.30",
-    "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
@@ -92,6 +91,6 @@
     "date-fns": "^4.1.0"
   },
   "volta": {
-    "node": "20.10.0"
+    "node": "22.14.0"
   }
 }

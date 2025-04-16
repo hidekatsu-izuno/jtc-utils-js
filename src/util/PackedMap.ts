@@ -26,7 +26,7 @@ export class PackedMap {
 
     const map = new Map<number, number[]>();
 
-    this.init(<PackedMapSetter>{
+    this.init({
       set(key: number, value: number) {
         const key1 = key >>> 5;
         const key2 = key & 0b11111;

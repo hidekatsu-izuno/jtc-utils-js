@@ -1,16 +1,22 @@
 {
-  "extends": "@tsconfig/recommended/tsconfig.json",
-  "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "target": "ES2022",
-    "newLine": "LF",
-    "declaration": true,
-    "declarationDir": "./types/",
-    "declarationMap": true,
-    "erasableSyntaxOnly": true
-  },
-  "include": ["./src"]
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"newLine": "LF",
+		"target": "es2021",
+		"strict": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+		"emitDeclarationOnly": true,
+		"erasableSyntaxOnly": true,
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+		"verbatimModuleSyntax": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["./src/**/*"]
 }
