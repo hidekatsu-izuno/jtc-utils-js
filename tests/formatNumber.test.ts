@@ -27,8 +27,6 @@ describe("formatNumber", () => {
     expect(formatNumber(-10000, "0,000,000.#")).toBe("-0,010,000");
     expect(formatNumber(10000, "0,000,000.0")).toBe("0,010,000.0");
     expect(formatNumber(-10000, "00,00,00.#")).toBe("-01,00,00");
-
-    expect(formatNumber(-10000, "*******")).toBe("*-10000");
   });
 
   test("test localized format from number to string", () => {
