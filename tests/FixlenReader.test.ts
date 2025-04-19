@@ -4,8 +4,8 @@ import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { FixlenReader } from "../src/FixlenReader.ts";
+import { cp939 } from "../src/charset/cp939.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
-import { cp939 } from "../src/charset/cp939.ts"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
