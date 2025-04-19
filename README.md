@@ -96,6 +96,13 @@ import { parseDate } from "jtc-utils"
 parseDate("2000/01/01", "uuuu/MM/dd") // -> new Date(2000, 0, 1)
 ```
 
+```typescript
+import { parseDate } from "jtc-utils"
+import { jaJPUCaJapanese } from "jtc-utils/locale";
+
+parseDate("平成12/1/1", "Gyyyy/M/d", { locale: jaJPUCaJapanese }) // -> new Date(2000, 0, 1)
+```
+
 #### formatDate - 日付を書式に従い文字列に変換する
 
 指定した日付を書式に従い文字列に変換します。
@@ -132,6 +139,13 @@ function formatDate(
 import { formatDate } from "jtc-utils"
 
 formatDate(new Date(2023, 1, 1), "uuuu/MM/dd") // -> "2023/01/01"
+```
+
+```typescript
+import { formatDate } from "jtc-utils"
+import { jaJPUCaJapanese } from "jtc-utils/locale";
+
+formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // -> "平成12/1/1"
 ```
 
 #### parseNumber - 文字列を書式に従い Number に変換する
@@ -915,8 +929,10 @@ declare type FixlenReaderColumn = {
     | "int-be" // 符号あり整数（ビッグエンディアン）
     | "uint-le" // 符号なし整数（リトルエンディアン）
     | "uint-be" // 符号なし整数（ビッグエンディアン）
-    | "zoned" // ゾーン10進数
-    | "packed", // パック10進数
+    | "zoned" // ゾーン10進数（符号あり）
+    | "uzoned" // ゾーン10進数（符号なし）
+    | "packed" // パック10進数（符号あり）
+    | "upacked", // パック10進数（符号なし）
 }
 ```
 

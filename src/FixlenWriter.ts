@@ -15,7 +15,9 @@ export declare type FixlenWriterColumn = {
     | "uint-le"
     | "uint-be"
     | "zoned"
-    | "packed";
+    | "uzoned"
+    | "packed"
+    | "upacked";
 };
 
 export class FixlenWriter {
@@ -281,12 +283,15 @@ export class FixlenWriter {
         } else {
           buf.fill(0, start, start + col.length);
         }
-      } else if (type === "zoned") {
+      } else if (type === "zoned" || type === "uzoned") {
         const num = value as number;
         const sign = Math.sign(num) < 0;
         const text = Math.abs(num).toFixed();
         if (this.fatal && col.length < text.length) {
           throw new RangeError(`length is too short: ${col.length}`);
+        }
+        if (this.fatal && sign && type === "uzoned") {
+          throw new RangeError(`value must be positive: ${value}`);
         }
 
         for (let i = 0; i < col.length; i++) {
@@ -301,21 +306,28 @@ export class FixlenWriter {
               n = 0;
             }
           }
-          if (i === col.length - 1) {
+          if (type === "zoned" && i === col.length - 1) {
             buf[start + i] = (sign ? 0xd0 : 0xc0) | n;
           } else {
             buf[start + i] = (this.ebcdic ? 0xf0 : 0x30) | n;
           }
         }
-      } else if (type === "packed") {
+      } else if (type === "packed" || type === "upacked") {
         const num = value as number;
         const sign = Math.sign(num) < 0;
         const text = Math.abs(num).toFixed();
         if (this.fatal && col.length < Math.ceil((text.length + 1) / 2)) {
           throw new RangeError(`length is too short: ${col.length}`);
         }
+        if (this.fatal && sign && type === "upacked") {
+          throw new RangeError(`value must be positive: ${value}`);
+        }
 
-        buf[start + col.length - 1] = sign ? 0x0d : 0x0c;
+        let base = 0;
+        if (type === "packed") {
+          buf[start + col.length - 1] = sign ? 0x0d : 0x0c;
+          base = 1;
+        }
         for (let i = 0; i < text.length; i++) {
           let n = text.charCodeAt(text.length - 1 - i) - 0x30;
           if (n > 0xa) {
@@ -325,7 +337,7 @@ export class FixlenWriter {
               n = 0;
             }
           }
-          if (i % 2 === 1) {
+          if (i % 2 === base) {
             buf[start + col.length - 1 - ((i + 1) >>> 1)] = n;
           } else {
             buf[start + col.length - 1 - (i >>> 1)] |= n << 4;

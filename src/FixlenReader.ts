@@ -15,7 +15,9 @@ export declare type FixlenReaderColumn = {
     | "uint-le"
     | "uint-be"
     | "zoned"
-    | "packed";
+    | "uzoned"
+    | "packed"
+    | "upacked";
 };
 
 export interface FixlenLineDecoder {
@@ -272,7 +274,7 @@ export class FixlenReader {
         return view.getInt8(col.start);
       } else {
         if (this.fatal) {
-          throw new RangeError("byte length must be 1, 2 or 4.");
+          throw new RangeError(`byte length of ${col.type} type must be 1, 2 or 4.`);
         }
         return Number.NaN;
       }
@@ -288,28 +290,31 @@ export class FixlenReader {
         return view.getUint8(col.start);
       } else {
         if (this.fatal) {
-          throw new RangeError("byte length must be 1, 2 or 4.");
+          throw new RangeError(`byte length of ${col.type} type must be 1, 2 or 4.`);
         }
         return Number.NaN;
       }
-    } else if (col.type === "zoned") {
+    } else if (col.type === "zoned" || col.type === "uzoned") {
       try {
         let num = 0;
         for (let i = col.start; i < col.end; i++) {
-          if (i + 1 === col.end) {
-            const h4 = (line[i] >>> 4) & 0xf;
-            if (h4 > 0x9) {
-              throw new RangeError("high 4 bit at last must be A-F.");
-            }
-            if (h4 === 0xb || h4 === 0xd) {
-              num = -1 * num;
-            }
-          }
           const l4 = line[i] & 0xf;
           if (l4 > 0x9) {
-            throw new RangeError("low 4 bit must be decimal.");
+            throw new RangeError(`low 4 bits of ${col.type} type must be 0-9: 0x${l4.toString(16).padStart(2, "0")}`);
           }
           num = num * 10 + l4;
+
+          const h4 = (line[i] >>> 4) & 0xf;
+          if (col.type === "zoned" && i + 1 === col.end) {
+            if (h4 <= 0x9) {
+              throw new RangeError(`last high 4 bits of ${col.type} type must be A-F: 0x${h4.toString(16).padStart(2, "0")}`);
+            }
+            if (h4 === 0xb || h4 === 0xd) {
+              num *= -1;
+            }
+          } else if (h4 !== 0x0f) {
+            throw new RangeError(`high 4 bits of ${col.type} type must be F: 0x${h4.toString(16).padStart(2, "0")}`);
+          }
         }
         return num;
       } catch (err) {
@@ -318,27 +323,27 @@ export class FixlenReader {
         }
         return Number.NaN;
       }
-    } else if (col.type === "packed") {
+    } else if (col.type === "packed" || col.type === "upacked") {
       try {
         let num = 0;
         for (let i = col.start; i < col.end; i++) {
-          const h4 = (line[i] >> 8) & 0xf;
+          const h4 = (line[i] >> 4) & 0xf;
           if (h4 > 0x9) {
-            throw new RangeError("high 4 bit must be decimal.");
+            throw new RangeError(`high 4 bits of ${col.type} type must be 0-9: 0x${h4.toString(16).padStart(2, "0")}`);
           }
           num = num * 10 + h4;
 
           const l4 = line[i] & 0xf;
-          if (i + 1 === col.end) {
-            if (l4 > 0x9) {
-              throw new RangeError("low 4 bit at last must be A-F.");
+          if (col.type === "packed" && i + 1 === col.end) {
+            if (l4 <= 0x9) {
+              throw new RangeError(`last low 4 bits of ${col.type} type must be A-F: 0x${l4.toString(16).padStart(2, "0")}`);
             }
             if (l4 === 0xb || l4 === 0xd) {
-              num = -1 * num;
+              num *= -1;
             }
           } else {
             if (l4 > 0x9) {
-              throw new RangeError("low 4 bit must be decimal.");
+              throw new RangeError(`low 4 bits of ${col.type} type must be 0-9: 0x${l4.toString(16).padStart(2, "0")}`);
             }
             num = num * 10 + l4;
           }

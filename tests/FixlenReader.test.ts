@@ -5,6 +5,7 @@ import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { FixlenReader } from "../src/FixlenReader.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
+import { cp939 } from "../src/charset/cp939.ts"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,6 +97,44 @@ suite("FixlenReader", () => {
         list.push(item);
       }
       assert.deepEqual(list, [["あいうえお"], ["ABCDE", "abcde", "01234"]]);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test read cp938 old format with linebreak", async () => {
+    const fd = await fs.promises.open(
+      `${__dirname}/data/FixlenReader.cp939.txt`,
+    );
+    const reader = new FixlenReader(fd, {
+      lineLength: 41,
+      columns: [
+        { start: 0, type: "decimal" },
+        { start: 4, type: "decimal" },
+        { start: 8, type: "int-le" },
+        { start: 12, type: "int-be" },
+        { start: 16, type: "uint-le" },
+        { start: 20, type: "uint-be" },
+        { start: 24, type: "zoned" },
+        { start: 28, type: "uzoned" },
+        { start: 32, type: "packed" },
+        { start: 36, length: 4, type: "upacked" },
+      ],
+      charset: cp939,
+    });
+    try {
+      const list = new Array<(string | number)[]>();
+      for await (const item of reader) {
+        list.push(item);
+      }
+      // biome-ignore format: data lines
+      assert.deepEqual(list, [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [-2, -2, -2, -2, 4294967294, 4294967294, -2, 2, -2, 2],
+        [341, 341, 341, 341, 341, 341, 341, 341, 341, 341],
+        [-341, -341, -341, -341, 4294966955, 4294966955, -341, 341, -341, 341],
+      ]);
     } finally {
       await reader.close();
     }
