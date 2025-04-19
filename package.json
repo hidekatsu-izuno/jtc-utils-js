@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Utilities for Japanese Traditional Companies",
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -41,48 +41,47 @@
   "exports": {
     "./locale": {
       "require": {
-        "types": "./cjs/lib/locale/index.d.cts",
-        "default": "./cjs/lib/locale/index.cjs"
+        "types": "./cjs/locale/index.d.ts",
+        "default": "./cjs/locale/index.js"
       },
       "default": {
-        "types": "./mjs/lib/locale/index.d.mts",
-        "default": "./mjs/lib/locale/index.mjs"
+        "types": "./mjs/locale/index.d.ts",
+        "default": "./mjs/locale/index.js"
       }
     },
     "./charset": {
       "require": {
-        "types": "./cjs/lib/charset/index.d.cts",
-        "default": "./cjs/lib/charset/index.cjs"
+        "types": "./cjs/charset/index.d.ts",
+        "default": "./cjs/charset/index.js"
       },
       "default": {
-        "types": "./mjs/lib/charset/index.d.mts",
-        "default": "./mjs/lib/charset/index.mjs"
+        "types": "./mjs/charset/index.d.ts",
+        "default": "./mjs/charset/index.js"
       }
     },
     ".": {
       "require": {
-        "types": "./cjs/lib/index.d.cts",
-        "default": "./cjs/lib/index.cjs"
+        "types": "./cjs/index.d.ts",
+        "default": "./cjs/index.js"
       },
       "default": {
-        "types": "./mjs/lib/index.d.mts",
-        "default": "./mjs/lib/index.mjs"
+        "types": "./mjs/index.d.ts",
+        "default": "./mjs/index.js"
       }
     },
     "./package.json": "./package.json"
   },
-  "main": "./cjs/lib/index.cjs",
+  "main": "./cjs/index.js",
   "typesVersions": {
     "*": {
-      "charset": ["./cjs/lib/charset/index.d.cts"],
-      "locale": ["./cjs/lib/locale/index.d.cts"],
-      "*": ["./cjs/lib/index.d.cts"]
+      "charset": ["./cjs/charset/index.d.ts"],
+      "locale": ["./cjs/locale/index.d.ts"],
+      "*": ["./cjs/index.d.ts"]
     }
   },
   "files": ["cjs/", "mjs/", "LICENSE", "package.json", "README.md"],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@tsconfig/recommended": "^1.0.8",
     "@types/node": "^20.17.30",
     "typescript": "^5.8.3"
   },
