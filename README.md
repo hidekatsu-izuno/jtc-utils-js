@@ -1,7 +1,7 @@
 # JTC-utils (Utilities for Japanese Traditional Companies)
 
 <!--
-npm run check
+npm run format
 npm run build
 npm run test
 git tag vX.X.X && git push origin --tags
