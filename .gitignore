@@ -1,5 +1,6 @@
 build/
-cjs/
+cjs/*
+!cjs/package.json
 mjs/
 types/
 
