@@ -79,7 +79,7 @@
       "*": ["./cjs/index.d.ts"]
     }
   },
-  "files": ["cjs/", "mjs/", "LICENSE", "package.json", "README.md"],
+  "files": ["cjs/", "mjs/", "src/", "LICENSE", "package.json", "README.md"],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/node": "^20.17.30",
