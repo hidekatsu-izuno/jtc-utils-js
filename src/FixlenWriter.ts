@@ -307,7 +307,8 @@ export class FixlenWriter {
             }
           }
           if (type === "zoned" && i === col.length - 1) {
-            buf[start + i] = (this.ebcdic ? (sign ? 0xd0 : 0xc0) : (sign ? 0x70 : 0x30)) | n;
+            buf[start + i] =
+              (this.ebcdic ? (sign ? 0xd0 : 0xc0) : sign ? 0x70 : 0x30) | n;
           } else {
             buf[start + i] = (this.ebcdic ? 0xf0 : 0x30) | n;
           }
