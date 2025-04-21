@@ -310,20 +310,11 @@ export class FixlenReader {
           }
           num = num * 10 + l4;
 
-          const h4 = (line[i] >>> 4) & 0xf;
           if (col.type === "zoned" && i + 1 === col.end) {
-            if (h4 <= 0x9) {
-              throw new RangeError(
-                `last high 4 bits of ${col.type} type must be A-F: 0x${h4.toString(16).padStart(2, "0")}`,
-              );
-            }
-            if (h4 === 0xb || h4 === 0xd) {
+            const h4 = (line[i] >>> 4) & 0xf;
+            if (h4 === 0xb || h4 === 0xd || h4 === 0x7) {
               num *= -1;
             }
-          } else if (h4 !== 0x0f) {
-            throw new RangeError(
-              `high 4 bits of ${col.type} type must be F: 0x${h4.toString(16).padStart(2, "0")}`,
-            );
           }
         }
         return num;
