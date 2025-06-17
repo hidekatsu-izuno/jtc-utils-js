@@ -4,10 +4,10 @@ import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { CsvWriter } from "../src/CsvWriter.ts";
-import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 import { utf16be } from "../src/charset/utf16be.ts";
 import { utf16le } from "../src/charset/utf16le.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
+import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

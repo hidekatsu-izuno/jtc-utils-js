@@ -25,7 +25,7 @@ export class NumberFormat {
       throw new TypeError(`Invalid format: ${format}`);
     }
 
-    const patterns = new Array<NumberFormatPattern>();
+    const patterns: NumberFormatPattern[] = [];
     for (let i = 0; i < 3; i++) {
       let iFormat = m[i * 4 + 2] || "";
       const fFormat = m[i * 4 + 3] || "";

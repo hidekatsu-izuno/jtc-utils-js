@@ -16,7 +16,7 @@ class Utf16beCharset implements Charset {
     return new StandardDecoder("utf-16be", options);
   }
 
-  createEncoder(options?: CharsetEncoderOptions) {
+  createEncoder(_options?: CharsetEncoderOptions) {
     return new Utf16beEncoder();
   }
 
@@ -30,7 +30,7 @@ class Utf16beCharset implements Charset {
 }
 
 class Utf16beEncoder implements CharsetEncoder {
-  canEncode(str: string) {
+  canEncode(_str: string) {
     return true;
   }
 

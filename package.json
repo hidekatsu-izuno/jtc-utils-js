@@ -74,14 +74,27 @@
   "main": "./cjs/index.js",
   "typesVersions": {
     "*": {
-      "charset": ["./cjs/charset/index.d.ts"],
-      "locale": ["./cjs/locale/index.d.ts"],
-      "*": ["./cjs/index.d.ts"]
+      "charset": [
+        "./cjs/charset/index.d.ts"
+      ],
+      "locale": [
+        "./cjs/locale/index.d.ts"
+      ],
+      "*": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
-  "files": ["cjs/", "mjs/", "src/", "LICENSE", "package.json", "README.md"],
+  "files": [
+    "cjs/",
+    "mjs/",
+    "src/",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.0.0",
     "@types/node": "^20.17.30",
     "typescript": "^5.8.3"
   },

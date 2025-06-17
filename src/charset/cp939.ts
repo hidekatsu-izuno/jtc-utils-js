@@ -1,6 +1,4 @@
 import { PackedMap } from "../util/PackedMap.ts";
-import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.ts";
-import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.ts";
 import type {
   Charset,
   CharsetDecodeOptions,
@@ -10,6 +8,8 @@ import type {
   CharsetEncoder,
   CharsetEncoderOptions,
 } from "./charset.ts";
+import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.ts";
+import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.ts";
 
 class Cp939Charset implements Charset {
   get name() {
@@ -305,7 +305,7 @@ class Cp939Decoder implements CharsetDecoder {
 
   decode(input: Uint8Array, options?: CharsetDecodeOptions): string {
     let shift = options?.shift ?? false;
-    const array = new Array<number>();
+    const array: number[] = [];
 
     if (options?.stream && this.state) {
       shift = this.state.shift;
@@ -398,7 +398,7 @@ class Cp939Encoder implements CharsetEncoder {
   }
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = new Array<number>();
+    const out: number[] = [];
     const limit = options?.limit ?? Number.POSITIVE_INFINITY;
     let shift = options?.shift ?? false;
     let prev = 0;

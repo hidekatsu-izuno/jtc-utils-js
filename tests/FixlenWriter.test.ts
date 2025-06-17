@@ -3,10 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { FixlenWriter } from "../src/FixlenWriter.ts";
-import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 import { cp939 } from "../src/charset/cp939.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
+import { FixlenWriter } from "../src/FixlenWriter.ts";
+import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

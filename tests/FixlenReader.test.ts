@@ -3,9 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { FixlenReader } from "../src/FixlenReader.ts";
 import { cp939 } from "../src/charset/cp939.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
+import { FixlenReader } from "../src/FixlenReader.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,7 +18,7 @@ suite("FixlenReader", () => {
     });
 
     try {
-      const list = new Array<(string | number)[]>();
+      const list: (string | number)[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -38,7 +38,7 @@ suite("FixlenReader", () => {
     });
 
     try {
-      const list = new Array<(string | number)[]>();
+      const list: (string | number)[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -63,7 +63,7 @@ suite("FixlenReader", () => {
     });
 
     try {
-      const list = new Array<(string | number)[]>();
+      const list: (string | number)[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -92,7 +92,7 @@ suite("FixlenReader", () => {
       charset: windows31j,
     });
     try {
-      const list = new Array<(string | number)[]>();
+      const list: (string | number)[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -123,7 +123,7 @@ suite("FixlenReader", () => {
       charset: cp939,
     });
     try {
-      const list = new Array<(string | number)[]>();
+      const list: (string | number)[][] = [];
       for await (const item of reader) {
         list.push(item);
       }

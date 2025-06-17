@@ -1,7 +1,7 @@
-import { type Locale, enUS, ja } from "./locale/index.ts";
+import { enUS, ja, type Locale } from "./locale/index.ts";
 import { toHalfwidthAscii } from "./toHalfwidthAscii.ts";
-import { NumberFormat } from "./util/NumberFormat.ts";
 import { getLocale } from "./util/getLocale.ts";
+import { NumberFormat } from "./util/NumberFormat.ts";
 
 declare type ParseNumberOptions = {
   locale?: Locale;

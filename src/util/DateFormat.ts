@@ -14,7 +14,7 @@ export class DateFormat {
 
     const re =
       /('(?:''|[^'])*')|(P+p+|(?:G+|y+|Y+|R+|u+|Q+|q+|M+|L+|w+|I+|d+|E+|i+|e+|c+|a+|b+|B+|h+|H+|K+|k+|m+|s+|S+|X+|x+|O+|z+|t+|T+|P+|p+)o?)|(.+?)/y;
-    const parts = new Array<DateFormatPart>();
+    const parts: DateFormatPart[] = [];
     let m: RegExpMatchArray | null;
     while ((m = re.exec(format)) != null) {
       if (m[1]) {

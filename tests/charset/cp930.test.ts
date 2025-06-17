@@ -31,7 +31,7 @@ suite("cp930", () => {
       try {
         const enc = decoder.decode(Uint8Array.of(i));
         actual = enc.length === 1 ? enc.charCodeAt(0) : undefined;
-      } catch (err) {
+      } catch (_err) {
         // no handle
       }
       assert.deepEqual(
@@ -49,7 +49,7 @@ suite("cp930", () => {
           Uint8Array.of(0x0e, (i >>> 8) & 0xff, i & 0xff, 0x0f),
         );
         actual = enc.length === 1 ? enc.charCodeAt(0) : undefined;
-      } catch (err) {
+      } catch (_err) {
         // no handle
       }
       assert.deepEqual(
@@ -77,7 +77,7 @@ suite("cp930", () => {
       const c = String.fromCharCode(i);
       const expected = map.get(i);
 
-      let actual: number | undefined = undefined;
+      let actual: number | undefined;
       try {
         const enc = encoder.encode(c);
         if (enc.length === 4 && enc[0] === 0x0e && enc[3] === 0x0f) {
@@ -87,7 +87,7 @@ suite("cp930", () => {
         } else if (enc.length > 0) {
           actual = enc.length === 2 ? (enc[0] << 8) | enc[1] : enc[0];
         }
-      } catch (err) {
+      } catch (_err) {
         // no handle
       }
 

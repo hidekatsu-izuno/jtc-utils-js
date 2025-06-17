@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 suite("CsvReader", () => {
-  for (const target of new Array<[string, string[][]]>(
+  for (const target of [
     ["", []],
     ['""', [[""]]],
     ["あいう", [["あいう"]]],
@@ -37,11 +37,11 @@ suite("CsvReader", () => {
         ['かき"く', "けこ"],
       ],
     ],
-  )) {
+  ] satisfies [string, string[][]][] as [string, string[][]][]) {
     test(`test read string for ${target}`, async () => {
       const reader = new CsvReader(target[0]);
       try {
-        const list = new Array<string[]>();
+        const list: string[][] = [];
         for await (const record of reader) {
           list.push(record);
         }
@@ -57,7 +57,7 @@ suite("CsvReader", () => {
       skipEmptyLine: true,
     });
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       let record: string[] | undefined;
       while ((record = await reader.read())) {
         list.push(record);
@@ -87,7 +87,7 @@ suite("CsvReader", () => {
       }),
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       let record: string[] | undefined;
       while ((record = await reader.read())) {
         list.push(record);
@@ -111,7 +111,7 @@ suite("CsvReader", () => {
       Readable.toWeb(stream) as ReadableStream<Uint8Array>,
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       let record: string[] | undefined;
       while ((record = await reader.read())) {
         list.push(record);
@@ -133,7 +133,7 @@ suite("CsvReader", () => {
       Readable.toWeb(stream) as ReadableStream<Uint8Array>,
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       let record: string[] | undefined;
       while ((record = await reader.read())) {
         list.push(record);
@@ -158,7 +158,7 @@ suite("CsvReader", () => {
       },
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       let record: string[] | undefined;
       while ((record = await reader.read())) {
         list.push(record);
@@ -177,7 +177,7 @@ suite("CsvReader", () => {
       fs.createReadStream(`${__dirname}/data/CsvReader.utf-8.bom.csv`),
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -196,7 +196,7 @@ suite("CsvReader", () => {
     );
     const reader = new CsvReader(fd);
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       for await (const item of reader) {
         list.push(item);
       }
@@ -217,7 +217,7 @@ suite("CsvReader", () => {
       },
     );
     try {
-      const list = new Array<string[]>();
+      const list: string[][] = [];
       for await (const item of reader) {
         list.push(item);
       }

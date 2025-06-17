@@ -6,7 +6,7 @@ export function isHttpURL(value: string | null | undefined) {
   try {
     const url = new URL(value);
     return /^https?:$/.test(url.protocol);
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }

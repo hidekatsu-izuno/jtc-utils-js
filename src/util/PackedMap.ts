@@ -33,7 +33,7 @@ export class PackedMap {
 
         let array = map.get(key1);
         if (!array) {
-          array = new Array<number>();
+          array = [] as number[];
           map.set(key1, array);
         }
         if (!array[key2]) {

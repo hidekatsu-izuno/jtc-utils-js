@@ -1,5 +1,4 @@
 import { PackedMap } from "../util/PackedMap.ts";
-import { JISEncodeMap } from "./JISEncodeMap.ts";
 import {
   type Charset,
   type CharsetDecoderOptions,
@@ -8,13 +7,14 @@ import {
   type CharsetEncoderOptions,
   StandardDecoder,
 } from "./charset.ts";
+import { JISEncodeMap } from "./JISEncodeMap.ts";
 
 class Windows31jCharset implements Charset {
   get name() {
     return "windows-31j";
   }
 
-  createDecoder(options?: CharsetDecoderOptions) {
+  createDecoder(_options?: CharsetDecoderOptions) {
     return new StandardDecoder("windows-31j");
   }
 
@@ -106,7 +106,7 @@ class Windows31jEncoder implements CharsetEncoder {
   }
 
   encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = new Array<number>();
+    const out: number[] = [];
     const limit = options?.limit ?? Number.POSITIVE_INFINITY;
     let prev = 0;
     for (let i = 0; i < str.length; i++) {

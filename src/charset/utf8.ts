@@ -16,7 +16,7 @@ class Utf8Charset implements Charset {
     return new StandardDecoder("utf-8", options);
   }
 
-  createEncoder(options?: CharsetEncoderOptions) {
+  createEncoder(_options?: CharsetEncoderOptions) {
     return new Utf8Encoder();
   }
 
@@ -32,7 +32,7 @@ class Utf8Charset implements Charset {
 class Utf8Encoder implements CharsetEncoder {
   private encoder = new TextEncoder();
 
-  canEncode(str: string) {
+  canEncode(_str: string) {
     return true;
   }
 

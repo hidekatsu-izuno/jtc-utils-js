@@ -1,6 +1,6 @@
 import { isValid, parse, parseISO } from "date-fns";
 import { JapaneseEra } from "./JapaneseEra.ts";
-import { type Locale, enUS, ja } from "./locale/index.ts";
+import { enUS, ja, type Locale } from "./locale/index.ts";
 import { DateFormat } from "./util/DateFormat.ts";
 import { getLocale } from "./util/getLocale.ts";
 import { getTimeZone } from "./util/getTimeZone.ts";

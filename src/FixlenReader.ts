@@ -116,7 +116,7 @@ export class FixlenReader {
       | ((line: FixlenLineDecoder) => FixlenReaderColumn[]);
     shift?: boolean;
   }): Promise<(string | number)[] | undefined> {
-    const items = new Array<string | number>();
+    const items: (string | number)[] = [];
 
     const lineLength = options?.lineLength ?? this.lineLength;
     const shift = options?.shift ?? this.shift;

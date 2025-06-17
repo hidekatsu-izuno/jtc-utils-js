@@ -28,7 +28,7 @@ suite("eucjp", () => {
       const c = String.fromCharCode(i);
       const expected = map.get(i);
 
-      let actual: number | undefined = undefined;
+      let actual: number | undefined;
       try {
         const oc = encoder.encode(String.fromCharCode(i));
         actual =
@@ -39,7 +39,7 @@ suite("eucjp", () => {
               : oc.length === 2
                 ? (oc[0] << 8) | oc[1]
                 : oc[0];
-      } catch (err) {
+      } catch (_err) {
         // no handle
       }
 

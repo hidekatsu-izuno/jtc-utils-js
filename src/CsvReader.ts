@@ -99,7 +99,7 @@ export class CsvReader {
   }
 
   async read(): Promise<string[] | undefined> {
-    const items = new Array<string>();
+    const items: string[] = [];
 
     let buf = this.buf;
     let pos = 0;

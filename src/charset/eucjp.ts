@@ -1,5 +1,4 @@
 import { PackedMap } from "../util/PackedMap.ts";
-import { JISEncodeMap } from "./JISEncodeMap.ts";
 import {
   type Charset,
   type CharsetDecoderOptions,
@@ -8,13 +7,14 @@ import {
   type CharsetEncoderOptions,
   StandardDecoder,
 } from "./charset.ts";
+import { JISEncodeMap } from "./JISEncodeMap.ts";
 
 class EucjpCharset implements Charset {
   get name() {
     return "euc-jp";
   }
 
-  createDecoder(options?: CharsetDecoderOptions) {
+  createDecoder(_options?: CharsetDecoderOptions) {
     return new StandardDecoder("euc-jp");
   }
 
@@ -80,7 +80,7 @@ class EucjpEncoder implements CharsetEncoder {
     EucjpEncodeMap.initialize();
   }
 
-  canEncode(str: string, options?: CharsetEncodeOptions) {
+  canEncode(str: string, _options?: CharsetEncodeOptions) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i);
       if (cp <= 0x7f) {
@@ -103,8 +103,8 @@ class EucjpEncoder implements CharsetEncoder {
     return true;
   }
 
-  encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
-    const out = new Array<number>();
+  encode(str: string, _options?: CharsetEncodeOptions): Uint8Array {
+    const out: number[] = [];
     for (let i = 0; i < str.length; i++) {
       const cp = str.charCodeAt(i);
       if (cp <= 0x7f) {
