@@ -8,6 +8,10 @@ update version in README.md
 git tag vX.X.X && git push origin --tags
 npm publish --tag beta
 npm publish
+
+## tag remove
+git tag -d vX.X.X
+git push origin --delete vX.X.X
 -->
 
 JTC-utils は、伝統的な日本企業では必要とされるにも関わらず、他国ではさほど必要されないため、あまり提供されない次のような日本環境特有の関数/クラス群を提供します。
