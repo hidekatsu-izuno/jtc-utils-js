@@ -2,6 +2,7 @@ export declare type PlatformInfo = {
   server: boolean;
   node: boolean;
   deno: boolean;
+  bun: boolean;
   cloudflareWorkers: boolean;
   awsLambda: boolean;
 
@@ -48,6 +49,7 @@ export function detectPlatform(userAgent?: string) {
     // server platform bland
     node: false,
     deno: false,
+    bun: false,
     cloudflareWorkers: false,
     awsLambda: false,
 
@@ -90,16 +92,14 @@ export function detectPlatform(userAgent?: string) {
 
   if (userAgent === "Cloudflare-Workers") {
     info.cloudflareWorkers = true;
-  } else if (typeof process !== "undefined" && process.versions?.node != null) {
+  } else if (process?.versions?.node != null) {
     info.node = true;
-  } else if (
-    typeof process !== "undefined" &&
-    process.env?.LAMBDA_TASK_ROOT &&
-    process.env?.AWS_EXECUTION_ENV
-  ) {
+  } else if (process?.env?.LAMBDA_TASK_ROOT && process.env?.AWS_EXECUTION_ENV) {
     info.awsLambda = true;
   } else if (typeof window !== "undefined" && "Deno" in window) {
     info.deno = true;
+  } else if (process?.versions?.bun) {
+    info.bun = true;
   } else if (typeof window !== "undefined") {
     info.browser = true;
 

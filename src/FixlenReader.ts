@@ -34,7 +34,7 @@ export class FixlenReader {
   private shift: boolean;
   private fatal: boolean;
 
-  private buf = new Uint8Array();
+  private buf: Uint8Array<ArrayBufferLike> = new Uint8Array();
 
   private index = 0;
 
@@ -122,7 +122,7 @@ export class FixlenReader {
     const shift = options?.shift ?? this.shift;
 
     let done = false;
-    let buf = this.buf;
+    let buf: Uint8Array<ArrayBufferLike> = this.buf;
     const reader = await this.reader;
     do {
       const readed = await reader.read();
