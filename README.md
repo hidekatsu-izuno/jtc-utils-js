@@ -4,6 +4,7 @@
 npm run format
 npm run build
 npm run test
+update version in README.md
 git tag vX.X.X && git push origin --tags
 npm publish --tag beta
 npm publish
