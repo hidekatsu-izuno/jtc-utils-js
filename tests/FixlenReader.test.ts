@@ -118,7 +118,7 @@ suite("FixlenReader", () => {
         { start: 24, type: "zoned" },
         { start: 28, type: "uzoned" },
         { start: 32, type: "packed" },
-        { start: 36, length: 4, type: "upacked" },
+        { start: 36, length: 4, type: "npacked" },
       ],
       charset: cp939,
     });
@@ -135,6 +135,154 @@ suite("FixlenReader", () => {
         [341, 341, 341, 341, 341, 341, 341, 341, 341, 341],
         [-341, -341, -341, -341, 4294966955, 4294966955, -341, 341, -341, 341],
       ]);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test read packed decimal variants", async () => {
+    const reader = new FixlenReader(
+      Uint8Array.of(
+        0x00,
+        0x00,
+        0x34,
+        0x1c,
+        0x00,
+        0x00,
+        0x34,
+        0x1f,
+        0x12,
+        0x34,
+        0x56,
+        0x78,
+        0x00,
+        0x00,
+        0x34,
+        0x1d,
+        0x00,
+        0x00,
+        0x34,
+        0x1f,
+        0x12,
+        0x34,
+        0x56,
+        0x78,
+      ),
+      {
+        lineLength: 12,
+        columns: [
+          { start: 0, length: 4, type: "packed" },
+          { start: 4, length: 4, type: "upacked" },
+          { start: 8, length: 4, type: "npacked" },
+        ],
+      },
+    );
+
+    try {
+      const list: (string | number)[][] = [];
+      for await (const item of reader) {
+        list.push(item);
+      }
+      assert.deepEqual(list, [
+        [341, 341, 12345678],
+        [-341, 341, 12345678],
+      ]);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test read separated zoned decimal variants", async () => {
+    const reader = new FixlenReader(
+      // biome-ignore format: data fields
+      Uint8Array.of(
+        0x4e, 0xf3, 0xf4, 0xf1,
+        0xf3, 0xf4, 0xf1, 0x4e,
+        0x60, 0xf3, 0xf4, 0xf1,
+        0xf3, 0xf4, 0xf1, 0x60,
+      ),
+      {
+        lineLength: 16,
+        columns: [
+          { start: 0, length: 4, type: "lzoned" },
+          { start: 4, length: 4, type: "tzoned" },
+          { start: 8, length: 4, type: "lzoned" },
+          { start: 12, length: 4, type: "tzoned" },
+        ],
+        charset: cp939,
+      },
+    );
+
+    try {
+      assert.deepEqual(await reader.read(), [341, 341, -341, -341]);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test read IEEE 754 floating-point variants", async () => {
+    const reader = new FixlenReader(
+      // biome-ignore format: data fields
+      Uint8Array.of(
+        0x3f, 0xc0, 0x00, 0x00,
+        0x00, 0x00, 0xc0, 0x3f,
+        0x3f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0x3f,
+      ),
+      {
+        lineLength: 24,
+        columns: [
+          { start: 0, length: 4, type: "float-be" },
+          { start: 4, length: 4, type: "float-le" },
+          { start: 8, length: 8, type: "float-be" },
+          { start: 16, length: 8, type: "float-le" },
+        ],
+      },
+    );
+
+    try {
+      assert.deepEqual(await reader.read(), [1.5, 1.5, 1.5, 1.5]);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test reject unsupported floating-point length", async () => {
+    const reader = new FixlenReader(Uint8Array.of(0x00, 0x00), {
+      lineLength: 2,
+      columns: [{ start: 0, type: "float-be" }],
+      fatal: false,
+    });
+
+    try {
+      await assert.rejects(reader.read(), /must be 4 or 8/);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test reject invalid separated zoned sign", async () => {
+    const reader = new FixlenReader(Uint8Array.of(0x40, 0xf1), {
+      lineLength: 2,
+      columns: [{ start: 0, type: "lzoned" }],
+      charset: cp939,
+    });
+
+    try {
+      await assert.rejects(reader.read(), /must be \+ or -/);
+    } finally {
+      await reader.close();
+    }
+  });
+
+  test("test reject signed nibble for upacked", async () => {
+    const reader = new FixlenReader(Uint8Array.of(0x1c), {
+      lineLength: 1,
+      columns: [{ start: 0, type: "upacked" }],
+    });
+
+    try {
+      await assert.rejects(reader.read(), /upacked type must be F/);
     } finally {
       await reader.close();
     }

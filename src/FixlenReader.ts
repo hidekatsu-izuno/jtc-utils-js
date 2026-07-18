@@ -14,10 +14,15 @@ export declare type FixlenReaderColumn = {
     | "int-be"
     | "uint-le"
     | "uint-be"
+    | "float-le"
+    | "float-be"
     | "zoned"
+    | "lzoned"
+    | "tzoned"
     | "uzoned"
     | "packed"
-    | "upacked";
+    | "upacked"
+    | "npacked";
 };
 
 export interface FixlenLineDecoder {
@@ -298,10 +303,49 @@ export class FixlenReader {
         }
         return Number.NaN;
       }
-    } else if (col.type === "zoned" || col.type === "uzoned") {
+    } else if (col.type.startsWith("float-")) {
+      const view = new DataView(line.buffer, line.byteOffset, line.byteLength);
+      const littleEndien = col.type === "float-le";
+      const len = col.end - col.start;
+      if (len === 4) {
+        return view.getFloat32(col.start, littleEndien);
+      } else if (len === 8) {
+        return view.getFloat64(col.start, littleEndien);
+      } else {
+        throw new RangeError(`byte length of ${col.type} type must be 4 or 8.`);
+      }
+    } else if (
+      col.type === "zoned" ||
+      col.type === "lzoned" ||
+      col.type === "tzoned" ||
+      col.type === "uzoned"
+    ) {
       try {
         let num = 0;
-        for (let i = col.start; i < col.end; i++) {
+        const separate = col.type === "lzoned" || col.type === "tzoned";
+        const digitStart = col.type === "lzoned" ? col.start + 1 : col.start;
+        const digitEnd = col.type === "tzoned" ? col.end - 1 : col.end;
+        let negative = false;
+
+        if (digitStart >= digitEnd) {
+          throw new RangeError(`length is too short for ${col.type} type.`);
+        }
+
+        if (separate) {
+          const signIndex = col.type === "lzoned" ? col.start : col.end - 1;
+          const sign = this.decoder.decode(
+            line.subarray(signIndex, signIndex + 1),
+            { shift: col.shift },
+          );
+          if (sign !== "+" && sign !== "-") {
+            throw new RangeError(
+              `separate sign of ${col.type} type must be + or -: ${sign}`,
+            );
+          }
+          negative = sign === "-";
+        }
+
+        for (let i = digitStart; i < digitEnd; i++) {
           const l4 = line[i] & 0xf;
           if (l4 > 0x9) {
             throw new RangeError(
@@ -317,6 +361,9 @@ export class FixlenReader {
             }
           }
         }
+        if (negative) {
+          num *= -1;
+        }
         return num;
       } catch (err) {
         if (this.fatal) {
@@ -324,7 +371,11 @@ export class FixlenReader {
         }
         return Number.NaN;
       }
-    } else if (col.type === "packed" || col.type === "upacked") {
+    } else if (
+      col.type === "packed" ||
+      col.type === "upacked" ||
+      col.type === "npacked"
+    ) {
       try {
         let num = 0;
         for (let i = col.start; i < col.end; i++) {
@@ -337,13 +388,17 @@ export class FixlenReader {
           num = num * 10 + h4;
 
           const l4 = line[i] & 0xf;
-          if (col.type === "packed" && i + 1 === col.end) {
+          if (col.type !== "npacked" && i + 1 === col.end) {
             if (l4 <= 0x9) {
               throw new RangeError(
                 `last low 4 bits of ${col.type} type must be A-F: 0x${l4.toString(16).padStart(2, "0")}`,
               );
             }
-            if (l4 === 0xb || l4 === 0xd) {
+            if (col.type === "upacked" && l4 !== 0xf) {
+              throw new RangeError(
+                `last low 4 bits of ${col.type} type must be F: 0x${l4.toString(16).padStart(2, "0")}`,
+              );
+            } else if (l4 === 0xb || l4 === 0xd) {
               num *= -1;
             }
           } else {

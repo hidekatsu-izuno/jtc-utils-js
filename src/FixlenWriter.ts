@@ -14,10 +14,15 @@ export declare type FixlenWriterColumn = {
     | "int-be"
     | "uint-le"
     | "uint-be"
+    | "float-le"
+    | "float-be"
     | "zoned"
+    | "lzoned"
+    | "tzoned"
     | "uzoned"
     | "packed"
-    | "upacked";
+    | "upacked"
+    | "npacked";
 };
 
 export class FixlenWriter {
@@ -175,7 +180,11 @@ export class FixlenWriter {
       const value = record[pos];
 
       const isNumber = typeof value === "number" && Number.isFinite(value);
-      const type = isNumber ? col.type : undefined;
+      const isFloat = col.type === "float-le" || col.type === "float-be";
+      const type =
+        isNumber || (isFloat && typeof value === "number")
+          ? col.type
+          : undefined;
       const fill = col.fill ?? (isNumber ? "right" : "left");
 
       if (!type) {
@@ -218,6 +227,17 @@ export class FixlenWriter {
             }
             buf.set(encoded, start);
           }
+        }
+      } else if (isFloat) {
+        const num = value as number;
+        const view = new DataView(buf.buffer);
+        const littleEndien = type === "float-le";
+        if (col.length === 4) {
+          view.setFloat32(start, num, littleEndien);
+        } else if (col.length === 8) {
+          view.setFloat64(start, num, littleEndien);
+        } else {
+          throw new RangeError("byte length must be 4 or 8.");
         }
       } else if (!Number.isInteger(value)) {
         if (this.fatal) {
@@ -283,22 +303,43 @@ export class FixlenWriter {
         } else {
           buf.fill(0, start, start + col.length);
         }
-      } else if (type === "zoned" || type === "uzoned") {
+      } else if (
+        type === "zoned" ||
+        type === "lzoned" ||
+        type === "tzoned" ||
+        type === "uzoned"
+      ) {
         const num = value as number;
         const sign = Math.sign(num) < 0;
         const text = Math.abs(num).toFixed();
-        if (this.fatal && col.length < text.length) {
+        const separate = type === "lzoned" || type === "tzoned";
+        const digitLength = col.length - (separate ? 1 : 0);
+        const digitStart = type === "lzoned" ? 1 : 0;
+        if (this.fatal && digitLength < text.length) {
           throw new RangeError(`length is too short: ${col.length}`);
         }
         if (this.fatal && sign && type === "uzoned") {
           throw new RangeError(`value must be positive: ${value}`);
         }
 
-        for (let i = 0; i < col.length; i++) {
+        if (separate) {
+          const encodedSign = this.encoder.encode(sign ? "-" : "+", {
+            shift: col.shift,
+          });
+          if (encodedSign.length !== 1) {
+            throw new RangeError(
+              `separate sign of ${type} type must be one byte: ${encodedSign.length}`,
+            );
+          }
+          const signIndex = type === "lzoned" ? start : start + col.length - 1;
+          buf[signIndex] = encodedSign[0];
+        }
+
+        for (let i = 0; i < digitLength; i++) {
           let n =
-            i < col.length - text.length
+            i < digitLength - text.length
               ? 0
-              : text.charCodeAt(i - (col.length - text.length)) - 0x30;
+              : text.charCodeAt(i - (digitLength - text.length)) - 0x30;
           if (n > 0xa) {
             if (this.fatal) {
               throw new RangeError(`Invalid value: ${n}`);
@@ -306,27 +347,38 @@ export class FixlenWriter {
               n = 0;
             }
           }
-          if (type === "zoned" && i === col.length - 1) {
-            buf[start + i] =
+          if (type === "zoned" && i === digitLength - 1) {
+            buf[start + digitStart + i] =
               (this.ebcdic ? (sign ? 0xd0 : 0xc0) : sign ? 0x70 : 0x30) | n;
           } else {
-            buf[start + i] = (this.ebcdic ? 0xf0 : 0x30) | n;
+            buf[start + digitStart + i] = (this.ebcdic ? 0xf0 : 0x30) | n;
           }
         }
-      } else if (type === "packed" || type === "upacked") {
+      } else if (
+        type === "packed" ||
+        type === "upacked" ||
+        type === "npacked"
+      ) {
         const num = value as number;
         const sign = Math.sign(num) < 0;
         const text = Math.abs(num).toFixed();
-        if (this.fatal && col.length < Math.ceil((text.length + 1) / 2)) {
+        const requiredLength =
+          type === "npacked"
+            ? Math.ceil(text.length / 2)
+            : Math.ceil((text.length + 1) / 2);
+        if (this.fatal && col.length < requiredLength) {
           throw new RangeError(`length is too short: ${col.length}`);
         }
-        if (this.fatal && sign && type === "upacked") {
+        if (this.fatal && sign && type !== "packed") {
           throw new RangeError(`value must be positive: ${value}`);
         }
 
         let base = 0;
         if (type === "packed") {
           buf[start + col.length - 1] = sign ? 0x0d : 0x0c;
+          base = 1;
+        } else if (type === "upacked") {
+          buf[start + col.length - 1] = 0x0f;
           base = 1;
         }
         for (let i = 0; i < text.length; i++) {

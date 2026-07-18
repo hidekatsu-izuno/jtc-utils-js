@@ -116,7 +116,7 @@ suite("FixlenWriter", () => {
         { length: 4, type: "zoned" },
         { length: 4, type: "uzoned" },
         { length: 4, type: "packed" },
-        { length: 4, type: "upacked" },
+        { length: 4, type: "npacked" },
       ],
       charset: cp939,
       lineSeparator: "\n",
@@ -147,7 +147,7 @@ suite("FixlenWriter", () => {
         0xf0, 0xf0, 0xf0, 0xc0, // zoned
         0xf0, 0xf0, 0xf0, 0xf0, // uzoned
         0x00, 0x00, 0x00, 0x0c, // packed
-        0x00, 0x00, 0x00, 0x00, // upacked
+        0x00, 0x00, 0x00, 0x00, // npacked
         0x15, // LF
         // [line 2]
         0x40, 0x40, 0x40, 0xf1, // default
@@ -159,7 +159,7 @@ suite("FixlenWriter", () => {
         0xf0, 0xf0, 0xf0, 0xc1, // zoned
         0xf0, 0xf0, 0xf0, 0xf1, // uzoned
         0x00, 0x00, 0x00, 0x1c, // packed
-        0x00, 0x00, 0x00, 0x01, // upacked
+        0x00, 0x00, 0x00, 0x01, // npacked
         0x15, // LF
         // [line 3]
         0x40, 0x40, 0x60, 0xf2, // default
@@ -171,7 +171,7 @@ suite("FixlenWriter", () => {
         0xf0, 0xf0, 0xf0, 0xd2, // zoned
         0xf0, 0xf0, 0xf0, 0xf2, // uzoned
         0x00, 0x00, 0x00, 0x2d, // packed
-        0x00, 0x00, 0x00, 0x02, // upacked
+        0x00, 0x00, 0x00, 0x02, // npacked
         0x15, // LF
         // line 3
         0x40, 0xf3, 0xf4, 0xf1, // default
@@ -183,7 +183,7 @@ suite("FixlenWriter", () => {
         0xf0, 0xf3, 0xf4, 0xc1, // zoned
         0xf0, 0xf3, 0xf4, 0xf1, // uzoned
         0x00, 0x00, 0x34, 0x1c, // packed
-        0x00, 0x00, 0x03, 0x41, // upacked
+        0x00, 0x00, 0x03, 0x41, // npacked
         0x15,
         // line 4
         0x60, 0xf3, 0xf4, 0xf1, // default
@@ -195,11 +195,131 @@ suite("FixlenWriter", () => {
         0xf0, 0xf3, 0xf4, 0xd1, // zoned
         0xf0, 0xf3, 0xf4, 0xf1, // uzoned
         0x00, 0x00, 0x34, 0x1d, // packed
-        0x00, 0x00, 0x03, 0x41, // upacked
+        0x00, 0x00, 0x03, 0x41, // npacked
         0x15,
 
       ),
     );
+  });
+
+  test("test write packed decimal variants", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [
+        { length: 4, type: "packed" },
+        { length: 4, type: "upacked" },
+        { length: 4, type: "npacked" },
+      ],
+    });
+    try {
+      await writer.write([341, 341, 12345678]);
+    } finally {
+      await writer.close();
+    }
+
+    assert.deepEqual(
+      buf.toUint8Array(),
+      Uint8Array.of(
+        0x00,
+        0x00,
+        0x34,
+        0x1c,
+        0x00,
+        0x00,
+        0x34,
+        0x1f,
+        0x12,
+        0x34,
+        0x56,
+        0x78,
+      ),
+    );
+  });
+
+  test("test write separated zoned decimal variants", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [
+        { length: 4, type: "lzoned" },
+        { length: 4, type: "tzoned" },
+        { length: 4, type: "lzoned" },
+        { length: 4, type: "tzoned" },
+      ],
+      charset: cp939,
+    });
+    try {
+      await writer.write([341, 341, -341, -341]);
+    } finally {
+      await writer.close();
+    }
+
+    assert.deepEqual(
+      buf.toUint8Array(),
+      // biome-ignore format: data fields
+      Uint8Array.of(
+        0x4e, 0xf3, 0xf4, 0xf1,
+        0xf3, 0xf4, 0xf1, 0x4e,
+        0x60, 0xf3, 0xf4, 0xf1,
+        0xf3, 0xf4, 0xf1, 0x60,
+      ),
+    );
+  });
+
+  test("test write IEEE 754 floating-point variants", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [
+        { length: 4, type: "float-be" },
+        { length: 4, type: "float-le" },
+        { length: 8, type: "float-be" },
+        { length: 8, type: "float-le" },
+      ],
+    });
+    try {
+      await writer.write([1.5, 1.5, 1.5, 1.5]);
+    } finally {
+      await writer.close();
+    }
+
+    assert.deepEqual(
+      buf.toUint8Array(),
+      // biome-ignore format: data fields
+      Uint8Array.of(
+        0x3f, 0xc0, 0x00, 0x00,
+        0x00, 0x00, 0xc0, 0x3f,
+        0x3f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0x3f,
+      ),
+    );
+  });
+
+  test("test reject unsupported floating-point length", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [{ length: 2, type: "float-be" }],
+      fatal: false,
+    });
+    try {
+      await assert.rejects(writer.write([1.5]), /must be 4 or 8/);
+    } finally {
+      await writer.close();
+    }
+  });
+
+  test("test reject negative value for unsigned packed decimal", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [
+        { length: 1, type: "upacked" },
+        { length: 1, type: "npacked" },
+      ],
+    });
+    try {
+      await assert.rejects(writer.write([-1, 1]), /value must be positive/);
+      await assert.rejects(writer.write([1, -1]), /value must be positive/);
+    } finally {
+      await writer.close();
+    }
   });
 
   test("test write file", async () => {

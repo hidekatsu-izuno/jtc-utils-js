@@ -934,10 +934,15 @@ declare type FixlenReaderColumn = {
     | "int-be" // 符号あり整数（ビッグエンディアン）
     | "uint-le" // 符号なし整数（リトルエンディアン）
     | "uint-be" // 符号なし整数（ビッグエンディアン）
+    | "float-le" // IEEE 754 浮動小数点数（リトルエンディアン、4 または 8 バイト）
+    | "float-be" // IEEE 754 浮動小数点数（ビッグエンディアン、4 または 8 バイト）
     | "zoned" // ゾーン10進数（符号あり）
+    | "lzoned" // ゾーン10進数（先頭分離符号）
+    | "tzoned" // ゾーン10進数（末尾分離符号）
     | "uzoned" // ゾーン10進数（符号なし）
     | "packed" // パック10進数（符号あり）
-    | "upacked", // パック10進数（符号なし）
+    | "upacked" // パック10進数（unsigned 符号ニブル F あり）
+    | "npacked", // パック10進数（符号なし）
 }
 ```
 
@@ -1192,6 +1197,10 @@ import { utf8, utf16be, utf16le, windows31j, eucjp, cp930, cp939 } from "jtc-uti
 
 new CsvReader("a,b,c", { charset: windows31j })
 ```
+
+## 変更履歴（非互換のみ）
+
+- v0.7.0: FixlenReader/FixlenWriter の type: "upacked" の意味が符号なしから unsigned 符号ありに変更となりました。従来の動作を指定したい場合は "npacked" を使用します。
 
 ## License
 
