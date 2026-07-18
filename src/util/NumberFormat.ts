@@ -21,7 +21,7 @@ export class NumberFormat {
     }
 
     const m = ReNumberFormat.exec(format);
-    if (!m || !m[2]) {
+    if (!m?.[2]) {
       throw new TypeError(`Invalid format: ${format}`);
     }
 

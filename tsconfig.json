@@ -4,6 +4,7 @@
     "moduleResolution": "NodeNext",
     "newLine": "LF",
     "target": "es2021",
+    "types": ["node"],
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,

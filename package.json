@@ -15,6 +15,7 @@
     "euc-jp",
     "cp930",
     "cp939",
+    "jef",
     "csv",
     "fixlen"
   ],
@@ -26,6 +27,7 @@
     "build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
     "format": "biome check --write",
+    "biome:migrate": "biome migrate --write",
     "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:JEFKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_JEFKanjiDecodeMap.ts",
     "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
@@ -95,9 +97,9 @@
     "README.md"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
-    "@types/node": "^20.19.17",
-    "typescript": "^5.9.2"
+    "@biomejs/biome": "2.5.4",
+    "@types/node": "^20.19.43",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "date-fns": "^4.4.0"
