@@ -2,7 +2,7 @@
   "extends": "./tsconfig.mjs.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "outDir": "./cjs/",
     "verbatimModuleSyntax": false
   }

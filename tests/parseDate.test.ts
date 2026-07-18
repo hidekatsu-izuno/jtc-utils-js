@@ -66,6 +66,21 @@ suite("formatDate", () => {
     );
   });
 
+  test("test parse across a daylight saving time transition", () => {
+    assert.deepEqual(
+      parseDate("2024/03/10 01:30:00", "uuuu/MM/dd H:mm:ss", {
+        timeZone: "America/New_York",
+      }),
+      new Date("2024-03-10T06:30:00Z"),
+    );
+    assert.deepEqual(
+      parseDate("2024/03/10 03:30:00", "uuuu/MM/dd H:mm:ss", {
+        timeZone: "America/New_York",
+      }),
+      new Date("2024-03-10T07:30:00Z"),
+    );
+  });
+
   test("test parse japanese calendar", () => {
     assert.deepEqual(
       parseDate("平成12/1/1", "Gyyyy/M/d", { locale: jaJPUCaJapanese }),

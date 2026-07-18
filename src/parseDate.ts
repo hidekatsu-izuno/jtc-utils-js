@@ -1,10 +1,8 @@
+import { tz } from "@date-fns/tz";
 import { isValid, parse, parseISO } from "date-fns";
 import { JapaneseEra } from "./JapaneseEra.ts";
 import { enUS, ja, type Locale } from "./locale/index.ts";
-import { DateFormat } from "./util/DateFormat.ts";
 import { getLocale } from "./util/getLocale.ts";
-import { getTimeZone } from "./util/getTimeZone.ts";
-import { getTimeZoneOffset } from "./util/getTimeZoneOffset.ts";
 
 declare type ParseDateOptions = {
   locale?: Locale;
@@ -34,22 +32,18 @@ export function parseDate(
   const timeZone = options?.timeZone;
 
   try {
+    const context = timeZone ? tz(timeZone) : undefined;
     let dDate: Date;
     if (!format) {
-      dDate = parseISO(str);
+      dDate = parseISO(str, { in: context });
       if (!isValid(dDate)) {
         return null;
       }
-
-      if (
-        timeZone &&
-        timeZone !== getTimeZone() &&
-        !/(Z|[+-][0-9]{2}(:?[0-9]{2})?)$/.test(str)
-      ) {
-        dDate = new Date(dDate.getTime() + getTimeZoneOffset(dDate, timeZone));
-      }
     } else {
-      const parseOptions: Parameters<typeof parse>[3] = { locale };
+      const parseOptions: Parameters<typeof parse>[3] = {
+        locale,
+        in: context,
+      };
       let era: JapaneseEra | undefined;
       if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
         parseOptions.locale = {
@@ -83,18 +77,8 @@ export function parseDate(
       if (era) {
         dDate.setFullYear(dDate.getFullYear() + era.start.getFullYear() - 1);
       }
-
-      if (
-        timeZone &&
-        timeZone !== getTimeZone() &&
-        !DateFormat.get(format).parts.some(
-          (part) => part.type === "pattern" && /^[xX]/.test(part.text),
-        )
-      ) {
-        dDate = new Date(dDate.getTime() + getTimeZoneOffset(dDate, timeZone));
-      }
     }
-    return dDate;
+    return new Date(dDate.getTime());
   } catch (err) {
     if (err instanceof RangeError) {
       return null;

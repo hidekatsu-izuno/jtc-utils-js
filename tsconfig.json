@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "target": "es2023",
+    "lib": ["es2023", "dom"],
     "newLine": "LF",
-    "target": "es2021",
     "types": ["node"],
-    "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "declaration": true,

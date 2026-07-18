@@ -33,6 +33,15 @@ suite("formatDate", () => {
     );
   });
 
+  test("test format across a daylight saving time transition", () => {
+    assert.equal(
+      formatDate(new Date("2024-03-10T07:30:00Z"), "uuuu/M/d H:m:s XXX", {
+        timeZone: "America/New_York",
+      }),
+      "2024/3/10 3:30:0 -04:00",
+    );
+  });
+
   test("test format japanese calendar", () => {
     assert.equal(
       formatDate("2000-01-01", "Gy/M/d", { locale: jaJPUCaJapanese }),

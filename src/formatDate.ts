@@ -1,10 +1,9 @@
+import { tz } from "@date-fns/tz";
 import { format as _format, isValid, parseISO } from "date-fns";
 import { JapaneseEra } from "./JapaneseEra.ts";
 import { enUS, ja, type Locale } from "./locale/index.ts";
 import { DateFormat } from "./util/DateFormat.ts";
 import { getLocale } from "./util/getLocale.ts";
-import { getTimeZone } from "./util/getTimeZone.ts";
-import { getTimeZoneOffset } from "./util/getTimeZoneOffset.ts";
 
 declare type FormatDateOptions = {
   locale?: Locale;
@@ -24,26 +23,20 @@ export function formatDate(
   } else if (typeof date === "number") {
     dDate = new Date(date);
   } else if (date instanceof Date) {
-    if (timeZone && timeZone !== getTimeZone()) {
-      dDate = new Date(date.getTime() - getTimeZoneOffset(date, timeZone));
-    } else {
-      dDate = date;
-    }
+    dDate = date;
   } else {
     const sDate = date.toString();
     dDate = parseISO(sDate);
     if (!isValid(dDate)) {
       return sDate;
     }
-
-    if (timeZone && timeZone !== getTimeZone()) {
-      dDate = new Date(dDate.getTime() - getTimeZoneOffset(dDate, timeZone));
-    }
   }
 
   const locale = options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS);
+  const context = timeZone ? tz(timeZone) : undefined;
+  const targetDate = context ? context(dDate) : dDate;
   if (locale.code && /^ja-JP-u-ca-japanese$/i.test(locale.code)) {
-    const era = JapaneseEra.of(dDate);
+    const era = JapaneseEra.of(targetDate);
     if (era) {
       const dFormat = DateFormat.get(format);
       const parts = [...dFormat.parts];
@@ -68,7 +61,8 @@ export function formatDate(
               };
             }
           } else if (part.text.startsWith("y")) {
-            const gYear = dDate.getFullYear() - era.start.getFullYear() + 1;
+            const gYear =
+              targetDate.getFullYear() - era.start.getFullYear() + 1;
             if (part.text.length === 1) {
               parts[i] = { type: "quoted", text: `'${gYear}'` };
             } else if (part.text.endsWith("o")) {
@@ -87,7 +81,7 @@ export function formatDate(
   }
 
   try {
-    return _format(dDate, format, { locale });
+    return _format(dDate, format, { locale, in: context });
   } catch (err) {
     if (err instanceof RangeError) {
       return date.toString();
