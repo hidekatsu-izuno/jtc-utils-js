@@ -1,4 +1,12 @@
-import { createFujitsuEbcdicCharset } from "./xFujitsuEbcdic.ts";
+import { PackedMap } from "../util/PackedMap.ts";
+import type {
+  Charset,
+  CharsetDecoder,
+  CharsetDecoderOptions,
+  CharsetEncodeOptions,
+  CharsetEncoder,
+  CharsetEncoderOptions,
+} from "./charset.ts";
 
 // biome-ignore format: table expression
 const DecodeMap = Uint16Array.of(
@@ -28,8 +36,98 @@ const EncodeDifferences = [
   [0x203e, 0xa1],
 ] as const;
 
-export const xFujitsuEbcdicLower = createFujitsuEbcdicCharset(
-  "x-fujitsu-ebcdic-lower",
-  DecodeMap,
-  EncodeDifferences,
-);
+const EncodeMap = new PackedMap((m) => {
+  for (const [unicode, code] of EncodeDifferences) {
+    m.set(unicode, code);
+  }
+  for (let code = 0; code <= 0xff; code++) {
+    const unicode = DecodeMap[code];
+    if (unicode !== 0xfffd) {
+      m.set(unicode, code);
+    }
+  }
+});
+
+class XFujitsuEbcdicLowerCharset implements Charset {
+  get name() {
+    return "x-fujitsu-ebcdic-lower";
+  }
+
+  createDecoder(options?: CharsetDecoderOptions) {
+    return new XFujitsuEbcdicLowerDecoder(options);
+  }
+
+  createEncoder(options?: CharsetEncoderOptions) {
+    return new XFujitsuEbcdicLowerEncoder(options);
+  }
+
+  isUnicode() {
+    return false;
+  }
+
+  isEbcdic() {
+    return true;
+  }
+}
+
+class XFujitsuEbcdicLowerDecoder implements CharsetDecoder {
+  private readonly fatal: boolean;
+
+  constructor(options?: CharsetDecoderOptions) {
+    this.fatal = options?.fatal ?? true;
+  }
+
+  decode(input: Uint8Array) {
+    const output: number[] = [];
+    for (const code of input) {
+      const unicode = DecodeMap[code];
+      if (unicode !== 0xfffd) {
+        output.push(unicode);
+      } else if (this.fatal) {
+        throw TypeError(`The input ${code.toString(16)} could not be decoded.`);
+      } else {
+        output.push(0xfffd);
+      }
+    }
+    return String.fromCharCode(...output);
+  }
+}
+
+class XFujitsuEbcdicLowerEncoder implements CharsetEncoder {
+  private readonly fatal: boolean;
+
+  constructor(options?: CharsetEncoderOptions) {
+    this.fatal = options?.fatal ?? true;
+    EncodeMap.initialize();
+  }
+
+  canEncode(str: string) {
+    for (let i = 0; i < str.length; i++) {
+      if (EncodeMap.get(str.charCodeAt(i)) == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  encode(str: string, options?: CharsetEncodeOptions): Uint8Array {
+    const limit = options?.limit ?? Number.POSITIVE_INFINITY;
+    const output: number[] = [];
+    for (let i = 0; i < str.length && output.length < limit; i++) {
+      const unicode = str.charCodeAt(i);
+      const code = EncodeMap.get(unicode);
+      if (code != null) {
+        output.push(code);
+      } else if (this.fatal) {
+        throw TypeError(
+          `The code point ${unicode.toString(16)} could not be encoded.`,
+        );
+      } else {
+        output.push(EncodeMap.get(0x3f) ?? 0x6f);
+      }
+    }
+    return Uint8Array.from(output);
+  }
+}
+
+export const xFujitsuEbcdicLower = new XFujitsuEbcdicLowerCharset();

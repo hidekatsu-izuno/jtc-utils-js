@@ -1171,15 +1171,19 @@ formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // ->
 
 主に CsvReader/Writer、FixlenReader/Writer の `charset` オプションを指定するために利用します。
 
-|モジュール  |説明                               |
-|-----------|-----------------------------------|
-|utf8       |UTF-8                              |
-|utf16be    |UTF-16BE                           |
-|utf16le    |UTF-16LE                           |
-|windows31j |Windows-31J (Windows 版 SHIFT_JIS) |
-|eucjp      |EUC-JP                             |
-|cp930      |IBM CP930 (EBCDIC + IBM漢字)       |
-|cp939      |IBM CP939 (EBCDIC + IBM漢字)       |
+|モジュール           |説明                               |
+|--------------------|-----------------------------------|
+|utf8                |UTF-8                              |
+|utf16be             |UTF-16BE                           |
+|utf16le             |UTF-16LE                           |
+|windows31j          |Windows-31J (Windows 版 SHIFT_JIS) |
+|eucjp               |EUC-JP                             |
+|cp930               |IBM CP930 (EBCDIC + IBM漢字)       |
+|cp939               |IBM CP939 (EBCDIC + IBM漢字)       |
+|xFujitsuEbcdicAscii |富士通 EBCDIC ASCII                |
+|xFujitsuEbcdicKana  |富士通 EBCDIC カナ文字              |
+|xFujitsuEbcdicLower |富士通 EBCDIC 英小文字              |
+|xFujitsuJEF         |富士通 JEF漢字                      |
 
 ##### 例
 
