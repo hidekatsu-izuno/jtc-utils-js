@@ -6,3 +6,7 @@ export * from "./utf8.ts";
 export * from "./utf16be.ts";
 export * from "./utf16le.ts";
 export * from "./windows31j.ts";
+export * from "./xFujitsuEbcdicAscii.ts";
+export * from "./xFujitsuEbcdicKana.ts";
+export * from "./xFujitsuEbcdicLower.ts";
+export * from "./xFujitsuJef.ts";

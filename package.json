@@ -27,6 +27,7 @@
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
     "format": "biome check --write",
     "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
+    "generate:JEFKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_JEFKanjiDecodeMap.ts",
     "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidthKatakana.ts",
     "generate:toHalfwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toHalfwidth.ts",
@@ -99,7 +100,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.4.0"
   },
   "volta": {
     "node": "22.14.0"

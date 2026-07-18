@@ -12,15 +12,17 @@ const __dirname = path.dirname(__filename);
 suite("cp939", () => {
   test("compare cp939 decoder output", async () => {
     const map = new Map<number, number>();
-    const reader = new CsvReader(
-      fs.createReadStream(`${__dirname}/../../data/decode.cp939.csv`),
-    );
-    try {
-      for await (const line of reader) {
-        map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16));
+    for (const name of ["decode.cp5123.csv", "decode.cp11684.csv"]) {
+      const reader = new CsvReader(
+        fs.createReadStream(`${__dirname}/../../data/${name}`),
+      );
+      try {
+        for await (const line of reader) {
+          map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16));
+        }
+      } finally {
+        await reader.close();
       }
-    } finally {
-      await reader.close();
     }
 
     const decoder = cp939.createDecoder();
@@ -61,15 +63,17 @@ suite("cp939", () => {
 
   test("compare cp939 encoder output", async () => {
     const map = new Map();
-    const reader = new CsvReader(
-      fs.createReadStream(`${__dirname}/../../data/encode.cp939.csv`),
-    );
-    try {
-      for await (const line of reader) {
-        map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16));
+    for (const name of ["encode.cp5123.csv", "encode.cp11684.csv"]) {
+      const reader = new CsvReader(
+        fs.createReadStream(`${__dirname}/../../data/${name}`),
+      );
+      try {
+        for await (const line of reader) {
+          map.set(Number.parseInt(line[0], 16), Number.parseInt(line[1], 16));
+        }
+      } finally {
+        await reader.close();
       }
-    } finally {
-      await reader.close();
     }
 
     const encoder = cp939.createEncoder();
