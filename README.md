@@ -1185,6 +1185,7 @@ formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // ->
 |eucjp               |EUC-JP                             |
 |cp930               |IBM CP930 (EBCDIC + IBM漢字)       |
 |cp939               |IBM CP939 (EBCDIC + IBM漢字)       |
+|cp943c              |IBM CP943C (IBM 版 SHIFT_JIS)      |
 |xFujitsuEbcdicAscii |富士通 EBCDIC ASCII                |
 |xFujitsuEbcdicKana  |富士通 EBCDIC カナ文字              |
 |xFujitsuEbcdicLower |富士通 EBCDIC 英小文字              |
