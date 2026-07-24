@@ -1,6 +1,7 @@
 export * from "./charset.ts";
 export * from "./cp930.ts";
 export * from "./cp939.ts";
+export * from "./cp943c.ts";
 export * from "./eucjp.ts";
 export * from "./utf8.ts";
 export * from "./utf16be.ts";

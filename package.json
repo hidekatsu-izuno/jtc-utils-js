@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Utilities for Japanese Traditional Companies",
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "euc-jp",
     "cp930",
     "cp939",
+    "cp943c",
     "jef",
     "csv",
     "fixlen"
