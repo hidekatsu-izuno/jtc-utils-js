@@ -626,6 +626,8 @@ type PlatformInfo = {
   edge: boolean,
   msie: boolean,
   chrome: boolean,
+  androidWebView: boolean,
+  samsungBrowser: boolean,
   googlebot: boolean,
   safari: boolean,
   firefox: boolean,
@@ -645,6 +647,9 @@ type PlatformInfo = {
   macos: boolean,
   android: boolean,
   ios: boolean,
+  ipad: boolean,
+  iphone: boolean,
+  ipod: boolean,
 
   // machine
   tablet: boolean,

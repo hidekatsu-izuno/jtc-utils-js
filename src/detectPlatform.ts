@@ -11,6 +11,8 @@ export declare type PlatformInfo = {
   edge: boolean;
   msie: boolean;
   chrome: boolean;
+  androidWebView: boolean;
+  samsungBrowser: boolean;
   safari: boolean;
   firefox: boolean;
   opera: boolean;
@@ -33,6 +35,9 @@ export declare type PlatformInfo = {
   windows: boolean;
   macos: boolean;
   ios: boolean;
+  ipad: boolean;
+  iphone: boolean;
+  ipod: boolean;
   android: boolean;
 
   // machine
@@ -40,7 +45,7 @@ export declare type PlatformInfo = {
   mobile: boolean;
 };
 
-export function detectPlatform(userAgent?: string) {
+export function detectPlatform(userAgent?: string): PlatformInfo {
   const info: PlatformInfo = {
     // environment
     browser: false,
@@ -57,6 +62,8 @@ export function detectPlatform(userAgent?: string) {
     edge: false,
     msie: false,
     chrome: false,
+    androidWebView: false,
+    samsungBrowser: false,
     safari: false,
     firefox: false,
     opera: false,
@@ -79,6 +86,9 @@ export function detectPlatform(userAgent?: string) {
     windows: false,
     macos: false,
     ios: false,
+    ipad: false,
+    iphone: false,
+    ipod: false,
     android: false,
 
     // machine
@@ -86,29 +96,46 @@ export function detectPlatform(userAgent?: string) {
     mobile: false,
   };
 
+  const hasWindow = typeof window !== "undefined";
+  const platformNavigator =
+    typeof navigator !== "undefined" ? navigator : undefined;
+
   if (!userAgent) {
-    userAgent = navigator?.userAgent;
+    userAgent = platformNavigator?.userAgent;
   }
 
   if (userAgent === "Cloudflare-Workers") {
     info.cloudflareWorkers = true;
-  } else if (process?.versions?.node != null) {
+  } else if (typeof process !== "undefined" && process.versions?.node != null) {
     info.node = true;
-  } else if (process?.env?.LAMBDA_TASK_ROOT && process.env?.AWS_EXECUTION_ENV) {
+  } else if (
+    typeof process !== "undefined" &&
+    process.env?.LAMBDA_TASK_ROOT &&
+    process.env?.AWS_EXECUTION_ENV
+  ) {
     info.awsLambda = true;
-  } else if (typeof window !== "undefined" && "Deno" in window) {
+  } else if (hasWindow && "Deno" in window) {
     info.deno = true;
-  } else if (process?.versions?.bun) {
+  } else if (typeof process !== "undefined" && process.versions?.bun) {
     info.bun = true;
-  } else if (typeof window !== "undefined") {
+  } else if (hasWindow) {
     info.browser = true;
 
     const ua = userAgent ? userAgent.toLowerCase() : "";
-    if (ua.indexOf("edge") !== -1) {
+    if (ua.indexOf("edgios") !== -1) {
+      info.edge = true;
+      info.webkit = true;
+    } else if (ua.indexOf("edge") !== -1) {
       info.edge = true;
       info.edgeHtml = true;
     } else if (ua.indexOf("edg") !== -1) {
       info.edge = true;
+      info.blink = true;
+    } else if (ua.indexOf("samsungbrowser") !== -1) {
+      info.samsungBrowser = true;
+      info.blink = true;
+    } else if (ua.indexOf("android") !== -1 && ua.indexOf("; wv)") !== -1) {
+      info.androidWebView = true;
       info.blink = true;
     } else if (ua.indexOf("msie") !== -1 || ua.indexOf("trident") !== -1) {
       info.msie = true;
@@ -123,6 +150,9 @@ export function detectPlatform(userAgent?: string) {
       if (ua.indexOf("opr") !== -1) {
         info.opera = true;
         info.blink = true;
+      } else if (ua.indexOf("crios") !== -1) {
+        info.chrome = true;
+        info.webkit = true;
       } else if (
         ua.indexOf("safari") !== -1 ||
         ua.indexOf("ipad") !== -1 ||
@@ -148,14 +178,20 @@ export function detectPlatform(userAgent?: string) {
     } else if ("ActiveXObject" in window) {
       info.msie = true;
       info.trident = true;
-    } else if ("-ms-user-select" in document.documentElement.style) {
+    } else if (
+      typeof document !== "undefined" &&
+      "-ms-user-select" in document.documentElement.style
+    ) {
       info.edge = true;
       if ("chrome" in window) {
         info.blink = true;
       } else {
         info.edgeHtml = true;
       }
-    } else if ("-moz-user-select" in document.documentElement.style) {
+    } else if (
+      typeof document !== "undefined" &&
+      "-moz-user-select" in document.documentElement.style
+    ) {
       info.firefox = true;
       info.gecko = true;
     } else if ("opera" in window) {
@@ -180,11 +216,25 @@ export function detectPlatform(userAgent?: string) {
       info.yahoo = true;
     }
 
-    if (ua.indexOf("ipad") !== -1) {
+    const ipad =
+      ua.indexOf("ipad") !== -1 ||
+      (ua.indexOf("macintosh") !== -1 &&
+        ua.indexOf("applewebkit") !== -1 &&
+        (platformNavigator?.maxTouchPoints ?? 0) > 1);
+    const ipod = ua.indexOf("ipod") !== -1;
+    const iphone = ua.indexOf("iphone") !== -1;
+
+    if (ipad) {
       info.ios = true;
+      info.ipad = true;
       info.tablet = true;
-    } else if (ua.indexOf("iphone") !== -1) {
+    } else if (ipod) {
       info.ios = true;
+      info.ipod = true;
+      info.mobile = true;
+    } else if (iphone) {
+      info.ios = true;
+      info.iphone = true;
       info.mobile = true;
     } else if (ua.indexOf("macintosh") !== -1) {
       info.macos = true;
@@ -195,7 +245,7 @@ export function detectPlatform(userAgent?: string) {
       }
     } else if (ua.indexOf("android") !== -1) {
       info.android = true;
-      if (ua.indexOf("tablet") !== -1) {
+      if (ua.indexOf("tablet") !== -1 || ua.indexOf("mobile") === -1) {
         info.tablet = true;
       } else {
         info.mobile = true;
