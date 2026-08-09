@@ -1,6 +1,6 @@
 {
   "name": "jtc-utils",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Utilities for Japanese Traditional Companies",
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com> (https://github.com/hidekatsu-izuno/)",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "generate:toZenginKana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toZenginKana.ts"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "type": "module",
   "sideEffects": false,

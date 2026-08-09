@@ -101,4 +101,11 @@ suite("cp939", () => {
       );
     }
   });
+
+  test("decode large input", () => {
+    const length = 200_000;
+    const input = new Uint8Array(length).fill(0xc1);
+
+    assert.equal(cp939.createDecoder().decode(input), "A".repeat(length));
+  });
 });

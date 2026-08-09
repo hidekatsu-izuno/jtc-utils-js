@@ -54,6 +54,13 @@ suite("Fujitsu EBCDIC", () => {
         }
       }
     });
+
+    test(`${type} decoder handles large input`, () => {
+      const length = 200_000;
+      const input = new Uint8Array(length).fill(0xc1);
+
+      assert.equal(charset.createDecoder().decode(input), "A".repeat(length));
+    });
   }
 
   test("options and metadata", () => {
@@ -131,6 +138,20 @@ suite("Fujitsu JEF", () => {
     );
     assert.equal(xFujitsuJef.name, "x-fujitsu-jef");
     assert.equal(xFujitsuJef.isEbcdic(), true);
+  });
+
+  test("decoder handles large input", () => {
+    const length = 100_000;
+    const input = new Uint8Array(length * 2);
+    for (let i = 0; i < input.length; i += 2) {
+      input[i] = 0x80;
+      input[i + 1] = 0xa1;
+    }
+
+    assert.equal(
+      xFujitsuJef.createDecoder().decode(input),
+      "\ue000".repeat(length),
+    );
   });
 });
 

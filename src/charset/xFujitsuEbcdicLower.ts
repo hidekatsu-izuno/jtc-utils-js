@@ -7,6 +7,7 @@ import type {
   CharsetEncoder,
   CharsetEncoderOptions,
 } from "./charset.ts";
+import { fromCodeUnits } from "./string.ts";
 
 // biome-ignore format: table expression
 const DecodeMap = Uint16Array.of(
@@ -89,7 +90,7 @@ class XFujitsuEbcdicLowerDecoder implements CharsetDecoder {
         output.push(0xfffd);
       }
     }
-    return String.fromCharCode(...output);
+    return fromCodeUnits(output);
   }
 }
 

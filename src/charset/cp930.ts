@@ -10,6 +10,7 @@ import type {
 } from "./charset.ts";
 import { IBMKanjiDecodeMap } from "./IBMKanjiDecodeMap.ts";
 import { IBMKanjiEncodeMap } from "./IBMKanjiEncodeMap.ts";
+import { fromCodeUnits } from "./string.ts";
 
 class Cp930Charset implements Charset {
   get name() {
@@ -114,7 +115,7 @@ class Cp930Decoder implements CharsetDecoder {
         }
       }
     }
-    return String.fromCharCode(...array);
+    return fromCodeUnits(array);
   }
 }
 

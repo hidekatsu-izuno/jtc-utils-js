@@ -9,6 +9,7 @@ import {
   type CharsetEncoderOptions,
   StandardDecoder,
 } from "./charset.ts";
+import { fromCodeUnits } from "./string.ts";
 import { windows31j } from "./windows31j.ts";
 
 class Cp943cCharset implements Charset {
@@ -139,7 +140,7 @@ class Cp943cDecoder implements CharsetDecoder {
           break;
       }
     }
-    return String.fromCharCode(...output);
+    return fromCodeUnits(output);
   }
 }
 

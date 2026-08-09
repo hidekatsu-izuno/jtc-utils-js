@@ -9,6 +9,7 @@ import type {
 } from "./charset.ts";
 import { JEFKanjiDecodeMap, JEFKanjiDecodeSpMap } from "./JEFKanjiDecodeMap.ts";
 import { JEFKanjiEncodeMap, JEFKanjiEncodeSpMap } from "./JEFKanjiEncodeMap.ts";
+import { fromCodePoints } from "./string.ts";
 
 class XFujitsuJefCharset implements Charset {
   get name() {
@@ -168,14 +169,6 @@ class XFujitsuJefEncoder implements CharsetEncoder {
     }
     return JEFKanjiEncodeMap.get(unicode);
   }
-}
-
-function fromCodePoints(codePoints: number[]) {
-  const chunks: string[] = [];
-  for (let i = 0; i < codePoints.length; i += 0x1000) {
-    chunks.push(String.fromCodePoint(...codePoints.slice(i, i + 0x1000)));
-  }
-  return chunks.join("");
 }
 
 export const xFujitsuJef = new XFujitsuJefCharset();

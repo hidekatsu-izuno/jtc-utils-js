@@ -76,4 +76,11 @@ suite("cp943c", () => {
       );
     }
   });
+
+  test("decode large input", () => {
+    const length = 200_000;
+    const input = new Uint8Array(length).fill(0x41);
+
+    assert.equal(cp943c.createDecoder().decode(input), "A".repeat(length));
+  });
 });
