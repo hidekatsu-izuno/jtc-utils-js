@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./mjs/",
-    "emitDeclarationOnly": false,
-    "allowImportingTsExtensions": false
-  }
-}

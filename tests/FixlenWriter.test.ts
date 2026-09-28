@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
+
 import { cp939 } from "../src/charset/cp939.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
 import { FixlenWriter } from "../src/FixlenWriter.ts";
@@ -87,7 +88,8 @@ suite("FixlenWriter", () => {
 
     assert.deepEqual(
       buf.toUint8Array(),
-      // biome-ignore format: data lines
+      // data lines
+      // prettier-ignore
       Uint8Array.of(
         // [line 1]
         0x81, 0x81, 0x81, 
@@ -122,7 +124,8 @@ suite("FixlenWriter", () => {
       lineSeparator: "\n",
       fatal: false,
     });
-    // biome-ignore format: data lines
+    // data lines
+    // prettier-ignore
     try {
       await writer.write([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
       await writer.write([1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
@@ -135,7 +138,8 @@ suite("FixlenWriter", () => {
 
     assert.deepEqual(
       buf.toUint8Array(),
-      // biome-ignore format: data lines
+      // data lines
+      // prettier-ignore
       Uint8Array.of(
         // [line 1]
         0x40, 0x40, 0x40, 0xf0, // default
@@ -255,7 +259,8 @@ suite("FixlenWriter", () => {
 
     assert.deepEqual(
       buf.toUint8Array(),
-      // biome-ignore format: data fields
+      // data fields
+      // prettier-ignore
       Uint8Array.of(
         0x4e, 0xf3, 0xf4, 0xf1,
         0xf3, 0xf4, 0xf1, 0x4e,
@@ -283,7 +288,8 @@ suite("FixlenWriter", () => {
 
     assert.deepEqual(
       buf.toUint8Array(),
-      // biome-ignore format: data fields
+      // data fields
+      // prettier-ignore
       Uint8Array.of(
         0x3f, 0xc0, 0x00, 0x00,
         0x00, 0x00, 0xc0, 0x3f,

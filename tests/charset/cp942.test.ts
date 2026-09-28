@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { suite, test } from "node:test";
-import { CsvReader } from "../../src/CsvReader.ts";
+
 import { cp942, cp942c } from "../../src/charset/index.ts";
+import { CsvReader } from "../../src/CsvReader.ts";
 
 async function readMap(name: string) {
   const map = new Map<number, number>();

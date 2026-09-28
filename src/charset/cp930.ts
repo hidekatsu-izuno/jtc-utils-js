@@ -34,7 +34,8 @@ class Cp930Charset implements Charset {
   }
 }
 
-// biome-ignore format: table expression
+// table expression
+// prettier-ignore
 const EbcdicDecodeMap = Uint16Array.of(
   //   0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F
   0x0000, 0x0001, 0x0002, 0x0003, 0x009c, 0x0009, 0x0086, 0x007f, 0x0097, 0x008d, 0x008e, 0x000b, 0x000c, 0x000d, 0xfffd, 0xfffd, // 0x

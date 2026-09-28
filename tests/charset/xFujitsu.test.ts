@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
+
 import { xFujitsuEbcdicAscii } from "../../src/charset/xFujitsuEbcdicAscii.ts";
 import { xFujitsuEbcdicKana } from "../../src/charset/xFujitsuEbcdicKana.ts";
 import { xFujitsuEbcdicLower } from "../../src/charset/xFujitsuEbcdicLower.ts";

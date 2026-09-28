@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
+
 import { cp939 } from "../src/charset/cp939.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
 import { FixlenReader } from "../src/FixlenReader.ts";
@@ -127,7 +128,8 @@ suite("FixlenReader", () => {
       for await (const item of reader) {
         list.push(item);
       }
-      // biome-ignore format: data lines
+      // data lines
+      // prettier-ignore
       assert.deepEqual(list, [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -194,7 +196,8 @@ suite("FixlenReader", () => {
 
   test("test read separated zoned decimal variants", async () => {
     const reader = new FixlenReader(
-      // biome-ignore format: data fields
+      // data fields
+      // prettier-ignore
       Uint8Array.of(
         0x4e, 0xf3, 0xf4, 0xf1,
         0xf3, 0xf4, 0xf1, 0x4e,
@@ -222,7 +225,8 @@ suite("FixlenReader", () => {
 
   test("test read IEEE 754 floating-point variants", async () => {
     const reader = new FixlenReader(
-      // biome-ignore format: data fields
+      // data fields
+      // prettier-ignore
       Uint8Array.of(
         0x3f, 0xc0, 0x00, 0x00,
         0x00, 0x00, 0xc0, 0x3f,

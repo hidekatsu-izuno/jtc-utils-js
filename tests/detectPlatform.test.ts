@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { detectPlatform, type PlatformInfo } from "../src/detectPlatform.ts";
 
 const iphoneUserAgent =

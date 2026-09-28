@@ -3,8 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { CsvReader } from "../../src/CsvReader.ts";
+
 import { cp943c } from "../../src/charset/cp943c.ts";
+import { CsvReader } from "../../src/CsvReader.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

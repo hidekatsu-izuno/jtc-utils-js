@@ -1,5 +1,6 @@
 import type { FileHandle } from "node:fs/promises";
 import type { Readable } from "node:stream";
+
 import type { Charset, CharsetDecoder } from "./charset/charset.ts";
 import { utf8 } from "./charset/utf8.ts";
 

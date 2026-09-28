@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+
 import { CsvReader } from "../src/CsvReader.ts";
 
 const input = await fs.open("./data/map.hiragana.csv");

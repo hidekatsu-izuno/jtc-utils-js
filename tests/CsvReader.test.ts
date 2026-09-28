@@ -4,8 +4,9 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { CsvReader } from "../src/CsvReader.ts";
+
 import { windows31j } from "../src/charset/windows31j.ts";
+import { CsvReader } from "../src/CsvReader.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

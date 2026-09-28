@@ -112,7 +112,7 @@ class XFujitsuJefEncoder implements CharsetEncoder {
   }
 
   canEncode(str: string) {
-    for (let i = 0; i < str.length; ) {
+    for (let i = 0; i < str.length;) {
       const unicode = str.codePointAt(i) as number;
       const length = unicode > 0xffff ? 2 : 1;
       const spCode = JEFKanjiEncodeSpMap.get(unicode);
@@ -131,7 +131,7 @@ class XFujitsuJefEncoder implements CharsetEncoder {
     const limit = options?.limit ?? Number.POSITIVE_INFINITY;
     const output: number[] = [];
 
-    for (let i = 0; i < str.length; ) {
+    for (let i = 0; i < str.length;) {
       if (output.length + 2 > limit) {
         break;
       }

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { isWindows31j } from "../src/isWindows31j.ts";
 
 suite("isWindows31j", () => {

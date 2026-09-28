@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { de, enUS, fr } from "../src/locale/index.ts";
 import { parseNumber } from "../src/parseNumber.ts";
 

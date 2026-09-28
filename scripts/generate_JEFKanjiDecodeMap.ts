@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
-import { CsvReader } from "../src/CsvReader.ts";
+
 import { JISEncodeMap } from "../src/charset/JISEncodeMap.ts";
+import { CsvReader } from "../src/CsvReader.ts";
 
 const input = await fs.open("./data/decode.x-fujitsu-jef.csv");
 const reader = new CsvReader(input, {
@@ -48,7 +49,8 @@ try {
     `import { PackedMap } from "../util/PackedMap.ts";
 import { JISEncodeMap } from "./JISEncodeMap.ts";
 
-// biome-ignore format: generated table
+// generated table
+// prettier-ignore
 const JISDecodeExclusions = new Set([
 `,
   );

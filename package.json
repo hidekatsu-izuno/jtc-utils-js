@@ -25,17 +25,18 @@
     "url": "https://github.com/hidekatsu-izuno/jtc-utils-js.git"
   },
   "scripts": {
-    "build": "tsc --build --clean && tsc -p ./tsconfig.mjs.json && tsc -p ./tsconfig.cjs.json",
+    "build": "vp pack",
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test",
-    "format": "biome check --write",
-    "biome:migrate": "biome migrate --write",
+    "format": "vp fmt",
     "generate:IBMKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_IBMKanjiDecodeMap.ts",
     "generate:JEFKanjiDecodeMap": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_JEFKanjiDecodeMap.ts",
     "generate:toFullwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidth.ts",
     "generate:toFullwidthKatakana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toFullwidthKatakana.ts",
     "generate:toHalfwidth": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toHalfwidth.ts",
     "generate:toHiragana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toHiragana.ts",
-    "generate:toZenginKana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toZenginKana.ts"
+    "generate:toZenginKana": "node --disable-warning=ExperimentalWarning --experimental-strip-types ./scripts/generate_toZenginKana.ts",
+    "format:check": "vp fmt --check",
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "node": ">=22"
@@ -98,9 +99,9 @@
     "README.md"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
-    "@types/node": "^22.20.2",
-    "typescript": "^7.0.2"
+    "@types/node": "^22.20.4",
+    "typescript": "^7.0.2",
+    "vite-plus": "1.0.0"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { toHiragana } from "../src/toHiragana.ts";
 
 suite("toHiragana", () => {

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 
 suite("MemoryWritableStream", () => {

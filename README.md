@@ -84,28 +84,28 @@ function parseDate(
     // ロケールです。
     // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
     // フランス語などを指定したい場合は明示的に設定が必要です。和歴の場合は jaJPUCaJapanse を指定します。
-    locale: Locale,
+    locale: Locale;
 
     // タイムゾーンです。
     // デフォルトはシステム環境の値を使います。
-    timeZone: string,
-  }
-): Date | undefined
+    timeZone: string;
+  },
+): Date | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { parseDate } from "jtc-utils"
+import { parseDate } from "jtc-utils";
 
-parseDate("2000/01/01", "uuuu/MM/dd") // -> new Date(2000, 0, 1)
+parseDate("2000/01/01", "uuuu/MM/dd"); // -> new Date(2000, 0, 1)
 ```
 
 ```typescript
-import { parseDate } from "jtc-utils"
+import { parseDate } from "jtc-utils";
 import { jaJPUCaJapanese } from "jtc-utils/locale";
 
-parseDate("平成12/1/1", "Gyyyy/M/d", { locale: jaJPUCaJapanese }) // -> new Date(2000, 0, 1)
+parseDate("平成12/1/1", "Gyyyy/M/d", { locale: jaJPUCaJapanese }); // -> new Date(2000, 0, 1)
 ```
 
 #### formatDate - 日付を書式に従い文字列に変換する
@@ -129,28 +129,28 @@ function formatDate(
     // ロケールです。
     // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
     // フランス語などを指定したい場合は明示的に設定が必要です。和歴の場合は jaJPUCaJapanse を指定します。
-    locale: Locale,
+    locale: Locale;
 
     // タイムゾーンです。
     // デフォルトはシステム環境の値を使います。
-    timeZone: string,
-  }
-): string
+    timeZone: string;
+  },
+): string;
 ```
 
 ##### 例
 
 ```typescript
-import { formatDate } from "jtc-utils"
+import { formatDate } from "jtc-utils";
 
-formatDate(new Date(2023, 1, 1), "uuuu/MM/dd") // -> "2023/01/01"
+formatDate(new Date(2023, 1, 1), "uuuu/MM/dd"); // -> "2023/01/01"
 ```
 
 ```typescript
-import { formatDate } from "jtc-utils"
+import { formatDate } from "jtc-utils";
 import { jaJPUCaJapanese } from "jtc-utils/locale";
 
-formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // -> "平成12/1/1"
+formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }); // -> "平成12/1/1"
 ```
 
 #### parseNumber - 文字列を書式に従い Number に変換する
@@ -174,20 +174,20 @@ function parseNumber(
   options?: {
     // ロケールです。
     // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
-    locale?: Locale,
-  }
-): number | undefined
+    locale?: Locale;
+  },
+): number | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { parseNumber } from "jtc-utils"
-import { de } from "jtc-utils/locale"
+import { parseNumber } from "jtc-utils";
+import { de } from "jtc-utils/locale";
 
-parseNumber("100,000") // -> 100000
-parseNumber("(100,000)", "###,##0;(###,##0)") // -> 100000
-parseNumber("100.000", "###,##0", { locale: de }) // -> 100000
+parseNumber("100,000"); // -> 100000
+parseNumber("(100,000)", "###,##0;(###,##0)"); // -> 100000
+parseNumber("100.000", "###,##0", { locale: de }); // -> 100000
 ```
 
 #### formatNumber - 数値を書式に従い文字列に変換する
@@ -211,20 +211,20 @@ function formatNumber(
   options?: {
     // ロケールです。
     // デフォルトはシステム環境が日本語の場合 ja その他は enUS が指定されたものと扱われます。
-    locale?: Locale,
-  }
-): string
+    locale?: Locale;
+  },
+): string;
 ```
 
 ##### 例
 
 ```typescript
-import { formatNumber } from "jtc-utils"
-import { de } from "jtc-utils/locale"
+import { formatNumber } from "jtc-utils";
+import { de } from "jtc-utils/locale";
 
-formatNumber(100000) // -> "100000"
-formatNumber(-100000, "###,##0;(###,##0)") // -> "(100,000)"
-formatNumber(100000, "###,##0", { locale: de }) // -> "100.000"
+formatNumber(100000); // -> "100000"
+formatNumber(-100000, "###,##0;(###,##0)"); // -> "(100,000)"
+formatNumber(100000, "###,##0", { locale: de }); // -> "100.000"
 ```
 
 #### isHiragana - 文字列がひらがなだけから構成されているか判定する
@@ -237,16 +237,16 @@ formatNumber(100000, "###,##0", { locale: de }) // -> "100.000"
 function isHiragana(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isHiragana } from "jtc-utils"
+import { isHiragana } from "jtc-utils";
 
-isHiragana("やまだ　たろう") // -> true
-isHiragana("山田　太郎") // -> false
+isHiragana("やまだ　たろう"); // -> true
+isHiragana("山田　太郎"); // -> false
 ```
 
 #### isFullwidthKatakana - 文字列が全角カタカナだけから構成されているか判定する
@@ -259,16 +259,16 @@ isHiragana("山田　太郎") // -> false
 function isFullwidthKatakana(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isFullwidthKatakana } from "jtc-utils"
+import { isFullwidthKatakana } from "jtc-utils";
 
-isFullwidthKatakana("ヤマダ・タロー") // -> true
-isFullwidthKatakana("山田　太郎") // -> false
+isFullwidthKatakana("ヤマダ・タロー"); // -> true
+isFullwidthKatakana("山田　太郎"); // -> false
 ```
 
 #### isHalfwidthKatakana - 文字列が半角カナだけから構成されているか判定する
@@ -281,16 +281,16 @@ isFullwidthKatakana("山田　太郎") // -> false
 function isHalfwidthKatakana(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isHalfwidthKatakana } from "jtc-utils"
+import { isHalfwidthKatakana } from "jtc-utils";
 
-isHalfwidthKatakana("ﾔﾏﾀﾞ･ﾀﾛｰ") // -> true
-isHalfwidthKatakana("山田　太郎") // -> false
+isHalfwidthKatakana("ﾔﾏﾀﾞ･ﾀﾛｰ"); // -> true
+isHalfwidthKatakana("山田　太郎"); // -> false
 ```
 
 #### isZenginKana - 文字列が全銀カナだけから構成されているか判定する
@@ -307,16 +307,16 @@ isHalfwidthKatakana("山田　太郎") // -> false
 function isZenginKana(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isZenginKana } from "jtc-utils"
+import { isZenginKana } from "jtc-utils";
 
-isZenginKana("ﾔﾏﾀﾞ･ﾀﾛｰ") // -> true
-isZenginKana("山田　太郎") // -> false
+isZenginKana("ﾔﾏﾀﾞ･ﾀﾛｰ"); // -> true
+isZenginKana("山田　太郎"); // -> false
 ```
 
 #### isHttpURL - 妥当な HTTP/HTTPS の URLか判定する
@@ -327,18 +327,18 @@ isZenginKana("山田　太郎") // -> false
 function isHttpURL(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isHttpURL } from "jtc-utils"
+import { isHttpURL } from "jtc-utils";
 
-isHttpURL("http://localhost:8080/test?param=value") // -> true
-isHttpURL("https://www.google.co.jp/") // -> true
-isHttpURL("mailto:test@example.com") // -> false
-isHttpURL("ftp://test@example.com/test") // -> false
+isHttpURL("http://localhost:8080/test?param=value"); // -> true
+isHttpURL("https://www.google.co.jp/"); // -> true
+isHttpURL("mailto:test@example.com"); // -> false
+isHttpURL("ftp://test@example.com/test"); // -> false
 ```
 
 #### isEmail - 妥当なEメールアドレスか判定する
@@ -351,16 +351,16 @@ isHttpURL("ftp://test@example.com/test") // -> false
 function isEmail(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isEmail } from "jtc-utils"
+import { isEmail } from "jtc-utils";
 
-isEmail("test@example.com") // -> true
-isEmail("あいう@example_com") // -> false
+isEmail("test@example.com"); // -> true
+isEmail("あいう@example_com"); // -> false
 ```
 
 #### isTelephoneNo - 妥当な電話番号か判定する
@@ -375,19 +375,19 @@ ITU-T E.164 に従い、国番号（"+" + 数字1～3桁）とハイフン区切
 function isTelephoneNo(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isTelephoneNo } from "jtc-utils"
+import { isTelephoneNo } from "jtc-utils";
 
-isTelephoneNo("0312345678") // -> true
-isTelephoneNo("03-1234-5678") // -> true
-isTelephoneNo("+81 090-1234-5678") // -> true
-isTelephoneNo("+81 (090) 1234-5678") // -> true
-isTelephoneNo("-81 (090) 1234-ABCD") // -> false
+isTelephoneNo("0312345678"); // -> true
+isTelephoneNo("03-1234-5678"); // -> true
+isTelephoneNo("+81 090-1234-5678"); // -> true
+isTelephoneNo("+81 (090) 1234-5678"); // -> true
+isTelephoneNo("-81 (090) 1234-ABCD"); // -> false
 ```
 
 #### isWindows31j - 文字列が Windows-31J として利用可能な文字だけから構成されているか判定する
@@ -400,16 +400,16 @@ isTelephoneNo("-81 (090) 1234-ABCD") // -> false
 function isWindows31j(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isWindows31j } from "jtc-utils"
+import { isWindows31j } from "jtc-utils";
 
-isWindows31j("Aあｱ亜") // -> true
-isWindows31j("€₩𠮟") // -> false
+isWindows31j("Aあｱ亜"); // -> true
+isWindows31j("€₩𠮟"); // -> false
 ```
 
 #### isUnicodeBMP - 文字列が Unicode の基本多言語面に含まれる文字だけから構成されているか判定する
@@ -422,16 +422,16 @@ isWindows31j("€₩𠮟") // -> false
 function isUnicodeBMP(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isUnicodeBMP } from "jtc-utils"
+import { isUnicodeBMP } from "jtc-utils";
 
-isUnicodeBMP("Aあｱ亜€₩") // -> true
-isUnicodeBMP("𠮟") // -> false
+isUnicodeBMP("Aあｱ亜€₩"); // -> true
+isUnicodeBMP("𠮟"); // -> false
 ```
 
 #### isWebSafeString - 文字列が Web 上で安全に使用できる文字だけから構成されているか判定する
@@ -446,16 +446,16 @@ isUnicodeBMP("𠮟") // -> false
 function isWebSafeString(
   // 検査する文字列です。
   value: string | null | undefined,
-): boolean
+): boolean;
 ```
 
 ##### 例
 
 ```typescript
-import { isWebSafeString } from "jtc-utils"
+import { isWebSafeString } from "jtc-utils";
 
-isWebSafeString("Aあｱ亜") // -> true
-isWebSafeString("\uFEFF\0") // -> false
+isWebSafeString("Aあｱ亜"); // -> true
+isWebSafeString("\uFEFF\0"); // -> false
 ```
 
 #### toNormalizedString - 文字列を正規化します
@@ -471,15 +471,15 @@ isWebSafeString("\uFEFF\0") // -> false
 function toNormalizedString(
   // 正規化対象の文字列です。
   value: string | null | undefined,
-): string
+): string;
 ```
 
 ##### 例
 
 ```typescript
-import { toNormalizedString } from "jtc-utils"
+import { toNormalizedString } from "jtc-utils";
 
-toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n") // -> "Aあｱ亜欄\u304C\n"
+toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n"); // -> "Aあｱ亜欄\u304C\n"
 ```
 
 #### toFullwidth - 半角文字を全角文字に変換する
@@ -490,15 +490,15 @@ toNormalizedString("Aあｱ亜欄\u304B\u3099\r\n") // -> "Aあｱ亜欄\u304C\n
 function toFullwidth(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toFullwidth } from "jtc-utils"
+import { toFullwidth } from "jtc-utils";
 
-toFullwidth("0Aｱｶﾞﾊﾟｰ") // -> "０Ａアガパー"
+toFullwidth("0Aｱｶﾞﾊﾟｰ"); // -> "０Ａアガパー"
 ```
 
 #### toHalfwidth - 全角文字を半角文字に変換する
@@ -509,17 +509,16 @@ toFullwidth("0Aｱｶﾞﾊﾟｰ") // -> "０Ａアガパー"
 function toHalfwidth(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toHalfwidth } from "jtc-utils"
+import { toHalfwidth } from "jtc-utils";
 
-toHalfwidth("０Ａアガパー") // -> "0Aｱｶﾞﾊﾟｰ"
+toHalfwidth("０Ａアガパー"); // -> "0Aｱｶﾞﾊﾟｰ"
 ```
-
 
 #### toHalfwidthAscii - 全角ASCII文字を半角文字に変換する
 
@@ -529,17 +528,16 @@ toHalfwidth("０Ａアガパー") // -> "0Aｱｶﾞﾊﾟｰ"
 function toHalfwidthAscii(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toHalfwidthAscii } from "jtc-utils"
+import { toHalfwidthAscii } from "jtc-utils";
 
-toHalfwidthAscii("０Ａアガパー") // -> "0Aアガパー"
+toHalfwidthAscii("０Ａアガパー"); // -> "0Aアガパー"
 ```
-
 
 #### toHiragana - カタカナをひらがなに変換する
 
@@ -551,15 +549,15 @@ toHalfwidthAscii("０Ａアガパー") // -> "0Aアガパー"
 function toHiragana(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toHiragana } from "jtc-utils"
+import { toHiragana } from "jtc-utils";
 
-toHiragana("アガサ・ｸﾘｽﾃｨｰ") // -> "あがさ・くりすてぃー"
+toHiragana("アガサ・ｸﾘｽﾃｨｰ"); // -> "あがさ・くりすてぃー"
 ```
 
 #### toFullwidthKatakana - ひらがなと半角カタカナを全角カタカナに変換する
@@ -572,15 +570,15 @@ toHiragana("アガサ・ｸﾘｽﾃｨｰ") // -> "あがさ・くりすてぃ�
 function toFullwidthKatakana(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toFullwidthKatakana } from "jtc-utils"
+import { toFullwidthKatakana } from "jtc-utils";
 
-toFullwidthKatakana("あがさ・ｸﾘｽﾃｨｰ") // -> "アガサ・クリスティー"
+toFullwidthKatakana("あがさ・ｸﾘｽﾃｨｰ"); // -> "アガサ・クリスティー"
 ```
 
 #### toZenginKana - ひらがな、カタカナ、記号を全銀カナに変換する
@@ -591,15 +589,15 @@ toFullwidthKatakana("あがさ・ｸﾘｽﾃｨｰ") // -> "アガサ・クリ�
 function toZenginKana(
   // 変換対象の文字列です。
   value: string | null | undefined,
-): string | null | undefined
+): string | null | undefined;
 ```
 
 ##### 例
 
 ```typescript
-import { toZenginKana } from "jtc-utils"
+import { toZenginKana } from "jtc-utils";
 
-toZenginKana("アガサ・クリスティー") // -> "ｱｶﾞｻ.ｸﾘｽﾃｲ-"
+toZenginKana("アガサ・クリスティー"); // -> "ｱｶﾞｻ.ｸﾘｽﾃｲ-"
 ```
 
 <!--
@@ -708,59 +706,59 @@ reader.close(): Promise<void>
 ##### 例
 
 ```typescript
-import { CsvReader } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { CsvReader } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const reader = new CsvReader(fs.createReadStream("sample.csv"), {
   charset: windows31j,
-})
+});
 try {
-  const result = []
+  const result = [];
   for await (const line of reader) {
-    result.push(line)
+    result.push(line);
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
 read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
 
 ```typescript
-import { CsvReader } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { CsvReader } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const reader = new CsvReader(fs.createReadStream("sample.csv"), {
   charset: windows31j,
-})
+});
 try {
-  const result = []
-  let line = reader.read() // 1行スキップ
-  while (line = reader.read()) {
-    result.push(line)
+  const result = [];
+  let line = reader.read(); // 1行スキップ
+  while ((line = reader.read())) {
+    result.push(line);
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
 ヘッダを使ってオブジェクトに変換したい場合は lodash や es-toolkit などの zipObject を使います。
 
 ```typescript
-import { zipObject } from 'es-toolkit'
+import { zipObject } from "es-toolkit";
 
 try {
-  const result = []
-  let headers = reader.read()
+  const result = [];
+  let headers = reader.read();
   if (headers) {
     for await (const line of reader) {
-      result.push(zipObject(headers, line))
+      result.push(zipObject(headers, line));
     }
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
@@ -825,18 +823,18 @@ writer.close(): Promise<void>
 ##### 例
 
 ```typescript
-import { CsvWriter } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { CsvWriter } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const writer = new CsvWriter(fs.createWriteStream("sample.csv"), {
   charset: windows31j,
-})
+});
 try {
-  await writer.write(["012", "abc", "あいう"])
-  await writer.write(["345", "def", "かきく"])
+  await writer.write(["012", "abc", "あいう"]);
+  await writer.write(["345", "def", "かきく"]);
 } finally {
-  await writer.close()
+  await writer.close();
 }
 ```
 
@@ -954,64 +952,65 @@ declare type FixlenReaderColumn = {
 ##### 例
 
 ```typescript
-import { FixlenReader } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { FixlenReader } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const reader = new FixlenReader(fs.createReadStream("sample.dat"), {
   lineLength: 14,
   columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }],
   charset: windows31j,
-})
+});
 try {
-  const result = []
+  const result = [];
   for await (const line of reader) {
-    result.push(line)
+    result.push(line);
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
 read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
 
 ```typescript
-import { CsvReader } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { CsvReader } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const reader = new FixlenReader(fs.createReadStream("sample.csv"), {
   lineLength: 14,
   columns: [{ start: 0 }, { start: 3 }, { start: 6, length: 6 }],
   charset: windows31j,
-})
+});
 try {
-  const result = []
-  let line = reader.read({  // 最初の10バイトをスキップ
+  const result = [];
+  let line = reader.read({
+    // 最初の10バイトをスキップ
     lineLength: 10,
     columns: [],
-  })
-  while (line = reader.read()) {
-    result.push(line)
+  });
+  while ((line = reader.read())) {
+    result.push(line);
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
 ヘッダを使ってオブジェクトに変換したい場合は lodash や es-toolkit などの zipObject を使います。
 
 ```typescript
-import { zipObject } from 'es-toolkit'
+import { zipObject } from "es-toolkit";
 
 try {
-  const headers = ["c1", "c2", "c3"]
-  const result = []
+  const headers = ["c1", "c2", "c3"];
+  const result = [];
   for await (const line of reader) {
-    result.push(zipObject(headers, line))
+    result.push(zipObject(headers, line));
   }
 } finally {
-  await reader.close()
+  await reader.close();
 }
 ```
 
@@ -1092,21 +1091,21 @@ writer.close(): Promise<void>
 ##### 例
 
 ```typescript
-import { FixlenWriter } from "jtc-utils"
-import { windows31j } from "jtc-utils/charset"
-import fs from "node:fs"
+import { FixlenWriter } from "jtc-utils";
+import { windows31j } from "jtc-utils/charset";
+import fs from "node:fs";
 
 const writer = new FixlenWriter(fs.createWriteStream("sample.dat"), {
   columns: [{ length: 3 }, { length: 3 }, { length: 3 }],
   charset: windows31j,
   bom: true,
   lineSeparator: "\r\n",
-})
+});
 try {
-  await writer.write(["aaa", "bbb", "あいう"])
-  await writer.write(["ddd", "eee", "かきく"])
+  await writer.write(["aaa", "bbb", "あいう"]);
+  await writer.write(["ddd", "eee", "かきく"]);
 } finally {
-  await writer.close()
+  await writer.close();
 }
 ```
 
@@ -1126,11 +1125,11 @@ const stream = new MemoryReadableStream(
 ##### 例
 
 ```typescript
-import { MemoryReadableStream } from "jtc-utils"
-import { CsvReader } from "jtc-utils"
+import { MemoryReadableStream } from "jtc-utils";
+import { CsvReader } from "jtc-utils";
 
-const stream = new MemoryReadableStream(Uint8Array.of(0x61, 0x62, 0x63))
-const reader = new CsvReader(stream)
+const stream = new MemoryReadableStream(Uint8Array.of(0x61, 0x62, 0x63));
+const reader = new CsvReader(stream);
 ```
 
 #### MemoryWritableStream - Uint8Array に出力する WritableStream を構築する
@@ -1168,11 +1167,11 @@ stream.toString("euc-jp")
 ##### 例
 
 ```typescript
-import { enUS, ja, jaJPUCaJapanese } from "jtc-utils/locale"
+import { enUS, ja, jaJPUCaJapanese } from "jtc-utils/locale";
 
-formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }) // -> "Anno Domini2000/1/1"
-formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja }) // -> "西暦2000/1/1"
-formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // -> "平成12/1/1"
+formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }); // -> "Anno Domini2000/1/1"
+formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: ja }); // -> "西暦2000/1/1"
+formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }); // -> "平成12/1/1"
 ```
 
 ### jtc-utils/charset
@@ -1181,29 +1180,37 @@ formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: jaJPUCaJapanese }) // ->
 
 主に CsvReader/Writer、FixlenReader/Writer の `charset` オプションを指定するために利用します。
 
-|モジュール           |説明                               |
-|--------------------|-----------------------------------|
-|utf8                |UTF-8                              |
-|utf16be             |UTF-16BE                           |
-|utf16le             |UTF-16LE                           |
-|windows31j          |Windows-31J (Windows 版 SHIFT_JIS) |
-|eucjp               |EUC-JP                             |
-|cp930               |IBM CP930 (EBCDIC + IBM漢字)       |
-|cp939               |IBM CP939 (EBCDIC + IBM漢字)       |
-|cp942               |IBM CP942 (IBM 版 SHIFT_JIS)      |
-|cp942c              |IBM CP942C (IBM 版 SHIFT_JIS)     |
-|cp943c              |IBM CP943C (IBM 版 SHIFT_JIS)      |
-|xFujitsuEbcdicAscii |富士通 EBCDIC ASCII                |
-|xFujitsuEbcdicKana  |富士通 EBCDIC カナ文字              |
-|xFujitsuEbcdicLower |富士通 EBCDIC 英小文字              |
-|xFujitsuJEF         |富士通 JEF漢字                      |
+| モジュール          | 説明                               |
+| ------------------- | ---------------------------------- |
+| utf8                | UTF-8                              |
+| utf16be             | UTF-16BE                           |
+| utf16le             | UTF-16LE                           |
+| windows31j          | Windows-31J (Windows 版 SHIFT_JIS) |
+| eucjp               | EUC-JP                             |
+| cp930               | IBM CP930 (EBCDIC + IBM漢字)       |
+| cp939               | IBM CP939 (EBCDIC + IBM漢字)       |
+| cp942               | IBM CP942 (IBM 版 SHIFT_JIS)       |
+| cp942c              | IBM CP942C (IBM 版 SHIFT_JIS)      |
+| cp943c              | IBM CP943C (IBM 版 SHIFT_JIS)      |
+| xFujitsuEbcdicAscii | 富士通 EBCDIC ASCII                |
+| xFujitsuEbcdicKana  | 富士通 EBCDIC カナ文字             |
+| xFujitsuEbcdicLower | 富士通 EBCDIC 英小文字             |
+| xFujitsuJEF         | 富士通 JEF漢字                     |
 
 ##### 例
 
 ```typescript
-import { utf8, utf16be, utf16le, windows31j, eucjp, cp930, cp939 } from "jtc-utils/charset"
+import {
+  utf8,
+  utf16be,
+  utf16le,
+  windows31j,
+  eucjp,
+  cp930,
+  cp939,
+} from "jtc-utils/charset";
 
-new CsvReader("a,b,c", { charset: windows31j })
+new CsvReader("a,b,c", { charset: windows31j });
 ```
 
 ## 変更履歴（非互換のみ）
@@ -1214,5 +1221,21 @@ new CsvReader("a,b,c", { charset: windows31j })
 
 このライブラリは、MIT license にてライセンスされています。
 
- * MIT license
-   ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+- MIT license
+  ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+## 開発
+
+開発ツールには [Vite+](https://viteplus.dev/) を使用します。Node.js は
+`^22.18.0 || ^24.11.0 || >=26.0.0` が必要です。
+
+```sh
+npm ci
+npm run build        # vp pack: ESM / CommonJS と型定義を生成
+npm run format       # vp fmt: フォーマットと import の整列
+npm run format:check # ファイルを変更せずフォーマットを確認
+npm run typecheck    # TypeScript の型チェック
+npm test
+```
+
+ビルドとフォーマットの設定は `vite.config.ts` にまとめています。

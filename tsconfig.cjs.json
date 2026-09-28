@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.mjs.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Bundler",
-    "outDir": "./cjs/",
-    "verbatimModuleSyntax": false
-  }
-}

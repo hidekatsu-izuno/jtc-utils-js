@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+
 import { toHalfwidth } from "../src/toHalfwidth.ts";
 
 suite("toHalfwidth", () => {

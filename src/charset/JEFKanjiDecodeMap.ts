@@ -1,7 +1,8 @@
 import { PackedMap } from "../util/PackedMap.ts";
 import { JISEncodeMap } from "./JISEncodeMap.ts";
 
-// biome-ignore format: generated table
+// generated table
+// prettier-ignore
 const JISDecodeExclusions = new Set([
   0xa2ba, 0xa2bb, 0xa2bc, 0xa2bd, 0xa2be, 0xa2bf, 0xa2c0, 0xa2c1,
   0xa2ca, 0xa2cb, 0xa2cc, 0xa2cd, 0xa2ce, 0xa2cf, 0xa2d0, 0xa2dc,
