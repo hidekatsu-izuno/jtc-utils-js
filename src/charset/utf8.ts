@@ -40,19 +40,12 @@ class Utf8Encoder implements CharsetEncoder {
     const limit = options?.limit ?? Number.POSITIVE_INFINITY;
     const encoded = this.encoder.encode(str);
     if (encoded.length > limit) {
-      let len = limit;
-      if (encoded[limit - 1] >= 0xc2) {
-        len = len - 1;
-      } else if (encoded[limit - 1] >= 0x80) {
-        if (encoded[limit - 2] >= 0xe0) {
-          len = len - 2;
-        } else if (encoded[limit - 2] >= 0x80) {
-          if (encoded[limit - 3] >= 0xf0) {
-            len = len - 3;
-          }
-        }
+      let len = Math.max(0, Math.floor(limit));
+      // A continuation byte at the boundary means the last character is split.
+      while (len > 0 && (encoded[len] & 0xc0) === 0x80) {
+        len--;
       }
-      return encoded.subarray(len);
+      return encoded.subarray(0, len);
     }
     return encoded;
   }

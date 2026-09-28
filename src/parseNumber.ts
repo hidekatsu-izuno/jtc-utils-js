@@ -32,7 +32,7 @@ export function parseNumber(
       options?.locale ?? (/^ja(-|$)/i.test(getLocale()) ? ja : enUS);
     num = NumberFormat.get(format, locale.code).parse(str);
   } else {
-    num = Number.parseFloat(toHalfwidthAscii(str.replace(/[^0-9.-]+/g, "")));
+    num = Number.parseFloat(toHalfwidthAscii(str).replace(/[^0-9.-]+/g, ""));
   }
 
   return Number.isFinite(num) ? num : undefined;

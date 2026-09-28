@@ -13,6 +13,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 suite("FixlenWriter", () => {
+  test("right-aligned fields preserve preceding fields and BOM", async () => {
+    for (const bom of [false, true]) {
+      const buf = new MemoryWritableStream();
+      const writer = new FixlenWriter(buf, {
+        bom,
+        columns: [{ length: 3 }, { length: 3 }, { length: 3, fill: "right" }],
+      });
+      try {
+        await writer.write(["ABC", 12, "Z"]);
+      } finally {
+        await writer.close();
+      }
+      assert.equal(buf.toString("utf-8"), `${bom ? "\uFEFF" : ""}ABC 12  Z`);
+    }
+  });
+
+  test("truncate UTF-8 fields without splitting characters or overwriting neighbors", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new FixlenWriter(buf, {
+      columns: [{ length: 3 }, { length: 4 }, { length: 1 }],
+      fatal: false,
+    });
+    try {
+      await writer.write(["abcdefgh", "あいう", "Z"]);
+      await writer.write(["😀", "😀あ", "Z"]);
+    } finally {
+      await writer.close();
+    }
+    assert.equal(buf.toString("utf-8"), "abcあ Z   😀Z");
+  });
+
   test("test write utf-8 fixlen without bom", async () => {
     const buf = new MemoryWritableStream();
     const writer = new FixlenWriter(buf, {

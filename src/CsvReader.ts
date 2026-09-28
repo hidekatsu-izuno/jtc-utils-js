@@ -133,6 +133,10 @@ export class CsvReader {
           if (lpos === -1) {
             pos = buf.length;
             continue loop;
+          } else if (lpos + 1 === buf.length && !done) {
+            // The next chunk determines whether this quote is escaped.
+            pos = lpos;
+            continue loop;
           } else if (buf.startsWith('"', lpos + 1)) {
             pos = lpos + 2;
             continue;

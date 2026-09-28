@@ -13,5 +13,6 @@ suite("MemoryWritableStream", () => {
     await out.close();
 
     assert.equal(stream.toString("utf-8"), "abcdef");
+    assert.equal(stream.toString(), "abcdef");
   });
 });

@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { utf16be } from "../src/charset/utf16be.ts";
 import { utf16le } from "../src/charset/utf16le.ts";
 import { windows31j } from "../src/charset/windows31j.ts";
+import { CsvReader } from "../src/CsvReader.ts";
 import { CsvWriter } from "../src/CsvWriter.ts";
 import { MemoryWritableStream } from "../src/MemoryWritableStream.ts";
 
@@ -14,6 +15,27 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 suite("CsvWriter", () => {
+  test("escape quotes without requiring a separator or newline", async () => {
+    const buf = new MemoryWritableStream();
+    const writer = new CsvWriter(buf, { bom: false });
+    const record = ['"hello"', 'a"b', '"'];
+    try {
+      await writer.write(record);
+    } finally {
+      await writer.close();
+    }
+    assert.equal(
+      buf.toString("utf-8"),
+      '\"\"\"hello\"\"\",\"a\"\"b\",\"\"\"\"\r\n',
+    );
+    const reader = new CsvReader(buf.toUint8Array());
+    try {
+      assert.deepEqual(await reader.read(), record);
+    } finally {
+      await reader.close();
+    }
+  });
+
   test("test write utf-8 csv with bom", async () => {
     const buf = new MemoryWritableStream();
 

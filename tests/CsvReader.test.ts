@@ -12,6 +12,36 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 suite("CsvReader", () => {
+  test("quoted fields are independent of byte chunk boundaries", async () => {
+    const input = new TextEncoder().encode('"あ""b",c\n"","""","last"');
+    const expected = [
+      ['あ"b', "c"],
+      ["", '"', "last"],
+    ];
+    const partitions = Array.from({ length: input.length - 1 }, (_, i) => [
+      input.subarray(0, i + 1),
+      input.subarray(i + 1),
+    ]);
+    partitions.push(Array.from(input, (byte) => Uint8Array.of(byte)));
+    for (const chunks of partitions) {
+      const reader = new CsvReader(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            for (const chunk of chunks) controller.enqueue(chunk);
+            controller.close();
+          },
+        }),
+      );
+      try {
+        const records: string[][] = [];
+        for await (const record of reader) records.push(record);
+        assert.deepEqual(records, expected);
+      } finally {
+        await reader.close();
+      }
+    }
+  });
+
   for (const target of [
     ["", []],
     ['""', [[""]]],

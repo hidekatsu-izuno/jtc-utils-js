@@ -217,7 +217,7 @@ export class FixlenWriter {
             ) {
               buf.set(col.fillerBytes, start + i);
             }
-            buf.set(encoded, col.length - encoded.length);
+            buf.set(encoded, start + col.length - encoded.length);
           } else {
             for (
               let i = 0;

@@ -189,25 +189,27 @@ export class NumberFormat {
       return Number.NaN;
     }
 
+    const matches = (pattern: NumberFormatPattern) =>
+      (pattern.prefix.length > 0 || pattern.suffix.length > 0) &&
+      pattern.prefix.length + pattern.suffix.length < value.length &&
+      value.startsWith(pattern.prefix) &&
+      value.endsWith(pattern.suffix);
+
+    // Check the negative pattern first: its affixes can include the positive ones.
     if (
-      (this.positive.prefix.length > 0 || this.positive.suffix.length > 0) &&
-      this.positive.prefix.length + this.positive.suffix.length <
-        value.length &&
-      value.startsWith(this.positive.prefix) &&
-      value.endsWith(this.positive.suffix)
-    ) {
-      // skip
-    } else if (
-      (this.negative.prefix.length > 0 || this.negative.suffix.length > 0) &&
-      this.negative.prefix.length + this.negative.suffix.length <
-        value.length &&
-      value.startsWith(this.negative.prefix) &&
-      value.endsWith(this.negative.suffix)
+      (this.negative.prefix !== this.positive.prefix ||
+        this.negative.suffix !== this.positive.suffix) &&
+      matches(this.negative)
     ) {
       value = `-${value.substring(
         this.negative.prefix.length,
         value.length - this.negative.suffix.length,
       )}`;
+    } else if (matches(this.positive)) {
+      value = value.substring(
+        this.positive.prefix.length,
+        value.length - this.positive.suffix.length,
+      );
     }
 
     if (this.map.size > 0) {

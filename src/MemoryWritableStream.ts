@@ -25,7 +25,7 @@ export class MemoryWritableStream extends WritableStream<Uint8Array> {
     return result;
   }
 
-  toString(encoding = "uft-8") {
+  toString(encoding = "utf-8") {
     return new TextDecoder(encoding.toLowerCase(), { ignoreBOM: true }).decode(
       this.toUint8Array(),
     );

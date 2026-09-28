@@ -77,7 +77,7 @@ export class CsvWriter {
       if (
         quoteAll ||
         item.includes(this.fieldSeparator) ||
-        /[\r\n]/.test(item)
+        /["\r\n]/.test(item)
       ) {
         str += `"${item.replaceAll('"', '""')}"`;
       } else {
