@@ -58,6 +58,17 @@ suite("formatDate", () => {
     );
   });
 
+  test("switches from Taisho to Showa at midnight on December 25, 1926", () => {
+    const options = { locale: jaJPUCaJapanese, timeZone: "Asia/Tokyo" };
+    const format = "GGGGy年M月d日";
+    const start = new Date("1926-12-25T00:00:00+09:00");
+    assert.equal(
+      formatDate(new Date(start.getTime() - 1), format, options),
+      "大正15年12月24日",
+    );
+    assert.equal(formatDate(start, format, options), "昭和1年12月25日");
+  });
+
   test("test localalized format", () => {
     assert.equal(
       formatDate(new Date(2000, 0, 1), "GGGGy/M/d", { locale: enUS }),

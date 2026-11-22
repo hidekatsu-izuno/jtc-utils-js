@@ -20,7 +20,7 @@ export class JapaneseEra {
       en: { long: "Taisho", short: "Tai", narrow: "T" },
     },
     parseISO("1912-07-30T00:00:00+09:00"),
-    parseISO("1926-12-26T00:00:00+09:00"),
+    parseISO("1926-12-25T00:00:00+09:00"),
   );
   static SHOWA = new JapaneseEra(
     "SHOWA",
@@ -28,7 +28,7 @@ export class JapaneseEra {
       ja: { long: "昭和", short: "昭", narrow: "S" },
       en: { long: "Showa", short: "Sho", narrow: "S" },
     },
-    parseISO("1926-12-26T00:00:00+09:00"),
+    parseISO("1926-12-25T00:00:00+09:00"),
     parseISO("1989-01-08T00:00:00+09:00"),
   );
   static HEISEI = new JapaneseEra(

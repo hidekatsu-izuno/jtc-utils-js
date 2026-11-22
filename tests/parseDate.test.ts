@@ -88,4 +88,28 @@ suite("formatDate", () => {
       new Date(2000, 0, 1),
     );
   });
+
+  test("parses Japanese era years in the specified time zone", () => {
+    const options = { locale: jaJPUCaJapanese, timeZone: "Asia/Tokyo" };
+    const midnight = new Date("1999-12-31T15:00:00Z");
+    assert.deepEqual(parseDate("平成12/1/1", "Gyyyy/M/d", options), midnight);
+    assert.deepEqual(parseDate("12/1/1 H", "yy/M/d G", options), midnight);
+    assert.deepEqual(parseDate("平120101", "GyyMMdd", options), midnight);
+    assert.deepEqual(parseDate("平成12/01/01", "GP", options), midnight);
+    assert.deepEqual(
+      parseDate("平成12/1/1 00:00Z", "Gy/M/d HH:mmX", options),
+      new Date("2000-01-01T00:00:00Z"),
+    );
+  });
+
+  test("validates leap days in the Gregorian year of the Japanese era", () => {
+    for (const timeZone of [undefined, "Asia/Tokyo"]) {
+      const options = { locale: jaJPUCaJapanese, timeZone };
+      assert.deepEqual(
+        parseDate("令和6/2/29", "Gy/M/d", options),
+        timeZone ? new Date("2024-02-28T15:00:00Z") : new Date(2024, 1, 29),
+      );
+      assert.equal(parseDate("令和4/2/29", "Gy/M/d", options), null);
+    }
+  });
 });
