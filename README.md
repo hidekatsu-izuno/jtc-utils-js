@@ -706,9 +706,10 @@ reader.close(): Promise<void>
 ##### 例
 
 ```typescript
+import fs from "node:fs";
+
 import { CsvReader } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const reader = new CsvReader(fs.createReadStream("sample.csv"), {
   charset: windows31j,
@@ -726,9 +727,10 @@ try {
 read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
 
 ```typescript
+import fs from "node:fs";
+
 import { CsvReader } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const reader = new CsvReader(fs.createReadStream("sample.csv"), {
   charset: windows31j,
@@ -823,9 +825,10 @@ writer.close(): Promise<void>
 ##### 例
 
 ```typescript
+import fs from "node:fs";
+
 import { CsvWriter } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const writer = new CsvWriter(fs.createWriteStream("sample.csv"), {
   charset: windows31j,
@@ -952,9 +955,10 @@ declare type FixlenReaderColumn = {
 ##### 例
 
 ```typescript
+import fs from "node:fs";
+
 import { FixlenReader } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const reader = new FixlenReader(fs.createReadStream("sample.dat"), {
   lineLength: 14,
@@ -974,9 +978,10 @@ try {
 read メソッドを明示的に呼びだすことでスキップなどの細かい制御も可能です。
 
 ```typescript
+import fs from "node:fs";
+
 import { CsvReader } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const reader = new FixlenReader(fs.createReadStream("sample.csv"), {
   lineLength: 14,
@@ -1091,9 +1096,10 @@ writer.close(): Promise<void>
 ##### 例
 
 ```typescript
+import fs from "node:fs";
+
 import { FixlenWriter } from "jtc-utils";
 import { windows31j } from "jtc-utils/charset";
-import fs from "node:fs";
 
 const writer = new FixlenWriter(fs.createWriteStream("sample.dat"), {
   columns: [{ length: 3 }, { length: 3 }, { length: 3 }],
